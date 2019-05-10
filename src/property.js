@@ -47,8 +47,8 @@ class Property {
 
     } else if (property.type === 'array') {
       if (property.minItems !== undefined) details.push(new Detail("minItems", property.minItems));
-      if (property.maxItems !== undefined) details.push(new Detail("maximum", property.maxItems));
-      if (property.uniqueItems !== undefined) details.push(new Detail("maximum", property.uniqueItems));
+      if (property.maxItems !== undefined) details.push(new Detail("maxItems", property.maxItems));
+      if (property.uniqueItems !== undefined) details.push(new Detail("uniqueItems", property.uniqueItems));
     }
 
 

@@ -8,7 +8,6 @@ components:
         name: 
           description: the name of the owner
           type: string
-          maxLength: 30
           example: John Doe
         partner:
           description: partner of the owner
