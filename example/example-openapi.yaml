@@ -1,0 +1,23 @@
+openapi: 3.0.2
+info:
+  title: Sample Vehicle API
+  description: This is an example API to showcase the translation from OpenAPI to PlantUML.
+  version: 0.0.1
+
+
+paths:
+  /vehicles/air:
+    description: Air vehicles
+    get:
+      summary: Returns a list of vehicles.
+      description: Returns a list of vehicles.
+      responses:
+        '200':
+          description: An JSON array of vehicles
+          content:
+            'application/json':
+              schema:
+                type: array
+                minItems: 0
+                items:
+                  $ref: 'vehicle.yaml#/components/schemas/airVehicle'

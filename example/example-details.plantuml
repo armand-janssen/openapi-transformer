@@ -1,0 +1,42 @@
+@startuml
+
+class vehicle {
+  type *  : enum <[land, air, water]>
+  owner *  : array <[minItems:1]>
+  registration *  : registration 
+}
+
+vehicle *-- owner : owner
+
+vehicle -- registration : registration
+
+class landVehicle {
+  wheels *  : integer <[minimum:2][maximum:4][multipleOf:2]>
+}
+vehicle <|-- landVehicle
+
+class waterVehicle {
+  propeller *  : integer <[minimum:1][maximum:4]>
+}
+vehicle <|-- waterVehicle
+
+class airVehicle {
+  name : string <[maxLength:20]>
+  engines *  : integer <[minimum:1][maximum:6]>
+  typeOfEngine *  : enum <[turbojet, turboprop, turbofan, turboshaft]>
+}
+vehicle <|-- airVehicle
+
+class owner {
+  name *  : string <[maxLength:30]>
+  from *  : date <[pattern: YYYY-mm-dd>
+  to : date <[pattern: YYYY-mm-dd>
+}
+
+class registration {
+  code *  : string <[maxLength:12]>
+  firstRegistration *  : date <[pattern: YYYY-mm-dd>
+  registrationEnd : date <[pattern: YYYY-mm-dd>
+  country *  : enum <[NL, BE, DE, FR, SP]>
+}
+@enduml

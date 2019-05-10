@@ -1,0 +1,67 @@
+components:
+  schemas:
+    owner:
+      title: Owner
+      description: Owner information
+      type: object
+      properties:
+        name: 
+          description: the name of the owner
+          type: string
+          minLength: 1
+          maxLength: 30
+          example: John Doe
+        from:
+          description: the date the owner, bought the vehicle
+          type: string
+          format: date
+          example: 2018-08-24
+        to:
+          description: |
+            the date the owner, sold the vehicle
+          type: string
+          format: date
+          example: 2019-07-28
+        age:
+          description: |
+            the age of the owner
+
+            TODO
+            Howto determine age?
+          type: integer
+          minimum: 15
+          maximum: 120
+          multipleOf: 1
+          example: 23
+        nicknames:
+          description: the nicknames of the owner
+          type: array
+          minItems: 1
+          maxItems: 5
+          uniqueItems: true
+          items:
+            type: string
+        gender:
+          description: the gender of the owner
+          type: string
+          enum:
+            - male
+            - female
+        file1:
+          type: string
+          format: binary
+        file2:
+          description: the second file
+          type: string
+          format: byte
+        shoeSize:
+          type: integer
+        someDouble:
+          type: integer
+          format: double
+      required:
+        - name
+        - from
+        - age
+          
+      

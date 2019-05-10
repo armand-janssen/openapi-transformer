@@ -1,0 +1,95 @@
+components:
+  schemas:
+    vehicle:
+      title: Vehicle
+      description: |
+        A generic vehicle. Multiline, just to prove it works :)
+      type: object
+      properties:
+        type:
+          description: Type of vehicle based on the movement technology. Hybrid vehicle is not possible.
+          type: string
+          enum: 
+            - land
+            - air
+            - water
+        owner:
+          description: the history of owners
+          type: array
+          minItems: 1
+          items:
+            $ref: 'owner.yaml#/components/schemas/owner'
+        registration:
+          $ref: 'registration.yaml/#/components/schemas/registration'
+      required:
+        - type
+        - registration
+        - owner
+
+    landVehicle:
+      title: Land Vehicle
+      description: A vechicle that can drive.
+      allOf: 
+        - $ref: "#/components/schemas/vehicle"
+        - type: object
+          properties:
+            wheels:
+              description: the number of wheels
+              type: integer
+              minimum: 2
+              maximum: 4
+              multipleOf: 2
+              example: 2
+          required:
+            - wheels
+
+    waterVehicle:
+      title: Land Vehicle
+      description: A vechicle that can float.
+      allOf: 
+        - $ref: "#/components/schemas/vehicle"
+        - type: object
+          properties:
+            propeller:
+              description: the number of propeller
+              type: integer
+              minimum: 1
+              maximum: 4
+              example: 2
+          required:
+            - propeller
+
+    airVehicle:
+      title: Air Vehicle
+      description: A vehicle that can fly.
+      allOf: 
+        - $ref: "#/components/schemas/vehicle"
+        - type: object
+          properties:
+            name:
+              description: the name of this type of Air vehicle
+              type: string
+              maxLength: 20
+            engines:
+              description: the number of engines
+              type: integer
+              minimum: 1
+              maximum: 6
+              example: 4
+            typeOfEngine:
+              description: The type of engines
+              type: string
+              enum: 
+                - turbojet
+                - turboprop
+                - turbofan
+                - turboshaft
+          required:
+            - engines
+            - typeOfEngine
+          example: |
+            { 
+              'type': 'air',
+              'engines': 4,
+              'typeOfEngine': turbofan
+            }

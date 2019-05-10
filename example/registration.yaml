@@ -1,0 +1,35 @@
+components:
+  schemas:
+    registration:
+      title: Vehicle registration
+      description: The registration of a vehicle.
+      type: object
+      properties:
+        code:
+          description: the code of the vehicle
+          type: string
+          maxLength: 12
+          example: DUH-45-DJUU
+        firstRegistration:
+          description: first date of registration
+          type: string
+          format: date
+          example: "2008-01-23"
+        registrationEnd:
+          description: End date of registration
+          type: string
+          format: date
+          example: "2018-01-31"
+        country:
+          description: country of registration
+          type: string
+          enum:
+            - NL
+            - BE
+            - DE
+            - FR
+            - SP
+      required:
+        - code
+        - country
+        - firstRegistration
