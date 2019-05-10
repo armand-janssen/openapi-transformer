@@ -5,19 +5,14 @@ const Property = require('../src/property');
 
 function getTestData(testYamlFile) {
   const loadedFile = fs.readFileSync(testYamlFile, 'UTF-8');
-  return YAML.parse(loadedFile)
+  return YAML.parse(loadedFile);
 }
 
-function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDescription, expectedType) {  
+function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDescription, expectedType) {
   assert.equal(relationShip.from, expectedFrom);
   assert.equal(relationShip.to, expectedTo);
   assert.equal(relationShip.description, expectedDescription);
   assert.equal(relationShip.type, expectedType);
-}
-
-function assertDetail(detail, expectedName, expectedValue) {
-  assert.equal(detail.name, expectedName);
-  assert.equal(detail.value, expectedValue);
 }
 
 describe('properties - parseProperties - two relationships - one references to other files', () => {
@@ -75,15 +70,15 @@ describe('properties - parseProperties - two relationships - one references to o
     assert.equal(property.details.length, 0);
   });
   it('Check relationship: partner', () => {
-    assertRelationShip(arrayUnderTest[1][0],'owner', 'partner', 'partner', 'use');
+    assertRelationShip(arrayUnderTest[1][0], 'owner', 'partner', 'partner', 'use');
   });
 
   it('Check relationship: children', () => {
-    assertRelationShip(arrayUnderTest[1][1],'owner', 'child', 'children', 'aggregation');
+    assertRelationShip(arrayUnderTest[1][1], 'owner', 'child', 'children', 'aggregation');
   });
 
   it('Check relationship: parents', () => {
-    assertRelationShip(arrayUnderTest[1][2],'owner', 'parent', 'parents', 'aggregation');
+    assertRelationShip(arrayUnderTest[1][2], 'owner', 'parent', 'parents', 'aggregation');
   });
   it('Check external file: child', () => {
     const file = arrayUnderTest[2][0];
@@ -94,6 +89,3 @@ describe('properties - parseProperties - two relationships - one references to o
     assert.equal(file, 'parent.yaml');
   });
 });
-
-
-

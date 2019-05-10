@@ -5,7 +5,7 @@ const Property = require('../src/property');
 
 function getTestData(testYamlFile) {
   const loadedFile = fs.readFileSync(testYamlFile, 'UTF-8');
-  return YAML.parse(loadedFile)
+  return YAML.parse(loadedFile);
 }
 
 function assertDetail(detail, expectedName, expectedValue) {
@@ -136,7 +136,7 @@ describe('properties - parseProperties - no relationships - no references to oth
   const { required } = testData.components.schemas.owner;
   const verbose = false;
 
-  const arrayUnderTest = Property.parseProperties(properties, required, 'owner',verbose);
+  const arrayUnderTest = Property.parseProperties(properties, required, 'owner', verbose);
   assert.isDefined(arrayUnderTest);
   it('Reponse is array containing sub-arrays of which only first one contains data', () => {
     assert.equal(arrayUnderTest.length, 3);

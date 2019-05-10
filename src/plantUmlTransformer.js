@@ -13,7 +13,7 @@ function generateParent(schemaName, parent) {
 function generateRelationShips(relationShips) {
   let uml = '';
   if (relationShips !== undefined) {
-    relationShips.forEach(relationShip => {
+    relationShips.forEach((relationShip) => {
       uml += relationShip.from;
 
       if (relationShip.type === constants.RELATIONSHIP_AGGREGATION) {
@@ -31,18 +31,16 @@ function generateRelationShips(relationShips) {
 
       uml += relationShip.description;
       uml += constants.lineBreak;
-
     });
   }
   return uml;
-
 }
 function generateDetails(details, isEnum) {
   if (details.length === 0) return '';
   let first = true;
 
-  let uml = constants.detailStart
-  details.forEach(detail => {
+  let uml = constants.detailStart;
+  details.forEach((detail) => {
     if (!first) uml += constants.comma;
     first = false;
 
@@ -52,7 +50,7 @@ function generateDetails(details, isEnum) {
     }
     uml += detail.value;
   });
-  uml += constants.detailEnd
+  uml += constants.detailEnd;
   return uml;
 }
 
@@ -74,9 +72,9 @@ function generateProperty(property) {
 }
 function generateSchema(schema) {
   let uml = constants.lineBreak;
-  uml += "class ";
+  uml += 'class ';
   uml += schema.name;
-  uml += " {"
+  uml += ' {';
   uml += constants.lineBreak;
 
   if (schema.properties !== undefined) {
@@ -86,7 +84,7 @@ function generateSchema(schema) {
   }
 
   uml += constants.lineBreak;
-  uml += "}"
+  uml += '}';
   uml += constants.lineBreak;
 
   uml += generateRelationShips(schema.relationShips);
@@ -97,6 +95,7 @@ function generateSchema(schema) {
 
 function generate(schemas) {
   let uml = `@startuml${constants.lineBreak}`;
+  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       uml += generateSchema(schemas[schemaIndex]);

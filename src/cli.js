@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const plantUmlGenerator = require('./plantUmlTransformer');
 
 const fs = require('fs');
 const program = require('commander');
+const plantUmlGenerator = require('./plantUmlTransformer');
 const openApiGenerator = require('./index.js');
 
 program

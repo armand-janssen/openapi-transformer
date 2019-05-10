@@ -5,7 +5,7 @@ const Property = require('../src/property');
 
 function getTestData(testYamlFile) {
   const loadedFile = fs.readFileSync(testYamlFile, 'UTF-8');
-  return YAML.parse(loadedFile)
+  return YAML.parse(loadedFile);
 }
 
 function assertDetail(detail, expectedName, expectedValue) {
@@ -48,7 +48,4 @@ describe('properties - parseProperties - one relationship - no references to oth
     assert.equal(relationShip.description, 'partner');
     assert.equal(relationShip.type, 'use');
   });
-
-
 });
-

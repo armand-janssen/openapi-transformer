@@ -2,9 +2,9 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 
+const util = require('util');
 const Property = require('./property');
 const utils = require('./utils');
-const util = require('util')
 
 class Schema {
   constructor(name, properties, description, relationShips, parent) {
@@ -12,9 +12,7 @@ class Schema {
     this.properties = properties;
     this.description = description;
     this.relationShips = relationShips;
-    console.log("****#### parent: " + parent);
     this.parent = parent;
-    console.log("****#### this.parent: " + this.parent);
   }
 
   static parseSchemas(schemas, verbose) {
@@ -49,21 +47,22 @@ class Schema {
   }
 
   static processInheritance(schema, schemaIndex, allOf, verbose) {
-    if (verbose) console.log('***************** schemaIndex :: ' + schemaIndex);
-    if (verbose) console.log('***************** schema === allOf :: ' + allOf);
+    if (verbose) console.log(`***************** schemaIndex :: ${schemaIndex}`);
+    if (verbose) console.log(`***************** schema === allOf :: ${allOf}`);
     const parsedSchemas = [];
     let parent;
     const allReferencedFiles = [];
     const { description } = schema;
 
-    if (verbose) console.log('allOf: ' + util.inspect(allOf, { showHidden: false, depth: null }))
+    if (verbose) console.log(`allOf: ${util.inspect(allOf, { showHidden: false, depth: null })}`);
 
-    let parsedProperties, relationShips, referencedFiles;
+    let parsedProperties; let relationShips; let
+      referencedFiles;
     for (const attributeIndex in allOf) {
       const attribute = allOf[attributeIndex];
 
-      if (verbose) console.log(`********************************************************************`);
-      if (verbose) console.log('***************** attribute: ' + util.inspect(attribute, { showHidden: false, depth: null }))
+      if (verbose) console.log('********************************************************************');
+      if (verbose) console.log(`***************** attribute: ${util.inspect(attribute, { showHidden: false, depth: null })}`);
 
       if (attribute.$ref !== undefined) {
         parent = utils.lastToken(attribute.$ref, '/');
@@ -86,8 +85,6 @@ class Schema {
 
     return [allReferencedFiles, parsedSchemas];
   }
-
-
 }
 
 module.exports = Schema;

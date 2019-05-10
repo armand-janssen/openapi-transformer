@@ -17,43 +17,43 @@ class Property {
   }
 
   static parseDetails(property) {
-    let details = [];
-    let typeAfterDetailsParsing = undefined;
+    const details = [];
+    let typeAfterDetailsParsing;
 
     if (property.type === 'string') {
-      if (property.minLength !== undefined) details.push(new Detail("minLength", property.minLength));
-      if (property.maxLength !== undefined) details.push(new Detail("maxLength", property.maxLength));
-      if (property.pattern !== undefined) details.push(new Detail("pattern", property.pattern));
+      if (property.minLength !== undefined) details.push(new Detail('minLength', property.minLength));
+      if (property.maxLength !== undefined) details.push(new Detail('maxLength', property.maxLength));
+      if (property.pattern !== undefined) details.push(new Detail('pattern', property.pattern));
 
       if (property.enum !== undefined) {
         typeAfterDetailsParsing = 'enum';
 
         property.enum.forEach((value) => {
-          details.push(new Detail("enumvalue", value));
+          details.push(new Detail('enumvalue', value));
         });
       } else if (property.format === 'date') {
         typeAfterDetailsParsing = 'date';
-        details.push(new Detail("pattern", 'yyyy-MM-dd'));
+        details.push(new Detail('pattern', 'yyyy-MM-dd'));
       } else if (property.format === 'binary') {
         typeAfterDetailsParsing = 'string [binary]';
       } else if (property.format === 'byte') {
         typeAfterDetailsParsing = 'string [byte]';
       }
     } else if (property.type === 'number' || property.type === 'integer') {
-      if (property.format !== undefined) details.push(new Detail("format", property.format));
-      if (property.minimum !== undefined) details.push(new Detail("minimum", property.minimum));
-      if (property.maximum !== undefined) details.push(new Detail("maximum", property.maximum));
-      if (property.multipleOf !== undefined) details.push(new Detail("multipleOf", property.multipleOf));
-
+      if (property.format !== undefined) details.push(new Detail('format', property.format));
+      if (property.minimum !== undefined) details.push(new Detail('minimum', property.minimum));
+      if (property.maximum !== undefined) details.push(new Detail('maximum', property.maximum));
+      if (property.multipleOf !== undefined) details.push(new Detail('multipleOf', property.multipleOf));
     } else if (property.type === 'array') {
-      if (property.minItems !== undefined) details.push(new Detail("minItems", property.minItems));
-      if (property.maxItems !== undefined) details.push(new Detail("maxItems", property.maxItems));
-      if (property.uniqueItems !== undefined) details.push(new Detail("uniqueItems", property.uniqueItems));
+      if (property.minItems !== undefined) details.push(new Detail('minItems', property.minItems));
+      if (property.maxItems !== undefined) details.push(new Detail('maxItems', property.maxItems));
+      if (property.uniqueItems !== undefined) details.push(new Detail('uniqueItems', property.uniqueItems));
     }
 
 
     return [typeAfterDetailsParsing, details];
   }
+
   static parseProperties(properties, required, schemaName, verbose) {
     const parsedProperties = [];
 
@@ -80,7 +80,6 @@ class Property {
         }
         const to = utils.lastToken(reference, '/');
         relationShips.push(new RelationShip(schemaName, to, name, constants.RELATIONSHIP_USE));
-
       } else if (type === 'array') {
         type = 'array[] of ';
         let first = true;
@@ -132,14 +131,12 @@ class Property {
 
       const [typeAfterDetailsParsing, details] = this.parseDetails(property);
 
-      if(typeAfterDetailsParsing !== undefined) type = typeAfterDetailsParsing;
+      if (typeAfterDetailsParsing !== undefined) type = typeAfterDetailsParsing;
       const requiredProperty = (required === undefined ? undefined : required.includes(name));
 
       parsedProperties.push(new Property(name, type, requiredProperty, details, description, example));
-
     }
     return [parsedProperties, relationShips, referencedFiles];
-
   }
 }
 

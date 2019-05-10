@@ -5,7 +5,6 @@ const YAML = require('yaml');
 const fs = require('fs');
 const Schema = require('./schema');
 const utils = require('./utils');
-//const { constants } = require('./constants');
 
 function loadYamlFile(file, verbose) {
   if (verbose) console.log(`***************** processing file :: ${file}`);

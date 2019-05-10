@@ -5,8 +5,6 @@ class Detail {
     this.name = name;
     this.value = value;
   }
-
 }
-
 
 module.exports = Detail;

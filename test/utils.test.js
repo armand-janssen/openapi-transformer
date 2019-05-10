@@ -7,7 +7,7 @@ describe('test lastToken function', () => {
     assert.equal(utils.lastToken('some-other.string', '.'), 'string');
     assert.equal(utils.lastToken('some-string-with-a-value', '.'), null);
   });
-})
+});
 describe('test add to array if not exists', () => {
   const myArray = [];
   myArray.push('Sarah');

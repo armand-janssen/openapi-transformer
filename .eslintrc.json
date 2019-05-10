@@ -1,0 +1,21 @@
+{
+    "root": true,
+    "env": {
+      "es6": true,
+      "node": true,
+      "mocha": true
+    },
+    "extends": [
+      "airbnb-base",
+      "plugin:promise/recommended"
+    ],
+      "plugins": [
+      "promise"
+    ],
+      "rules": {
+        "max-len":"off",
+        "no-console":"warn",
+        "class-methods-use-this":"off",
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+    }
+  }
