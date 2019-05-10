@@ -1,0 +1,26 @@
+components:
+  schemas:
+    parent:
+      title: Parent
+      description: Parent information
+      type: object
+      properties:
+        name: 
+          description: the name of the Parent
+          type: string
+          maxLength: 30
+          example: Parent Doe
+      required:
+        - name
+    
+    father:
+      allOf:
+        - $ref: '#/components/schema/parent' 
+        - type: object
+          properties:
+            age:
+              type: integer
+    mother:
+      allOf:
+        - $ref: '#/components/schema/parent' 
+        

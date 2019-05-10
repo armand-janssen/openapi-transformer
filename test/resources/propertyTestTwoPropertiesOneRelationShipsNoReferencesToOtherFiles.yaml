@@ -1,0 +1,26 @@
+components:
+  schemas:
+    owner:
+      title: Owner
+      description: Owner information
+      type: object
+      properties:
+        name: 
+          description: the name of the owner
+          type: string
+          maxLength: 30
+          example: John Doe
+        partner:
+          description: partner of the owner
+          $ref: '#/components/schemas/partner'
+      required:
+        - partner
+
+    partner:
+      description: partner of owner
+      type: object
+      properties:
+        name: 
+          description: name of the partner
+          
+      

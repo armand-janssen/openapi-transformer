@@ -1,0 +1,14 @@
+components:
+  schemas:
+    child:
+      title: Child
+      description: Child information
+      type: object
+      properties:
+        name: 
+          description: the name of the child
+          type: string
+          maxLength: 30
+          example: Child Doe
+      required:
+        - name
