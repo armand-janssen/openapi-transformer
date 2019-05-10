@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const plantUmlGenerator = require('./plantUmlGenerator');
+const plantUmlGenerator = require('./plantUmlTransformer');
 
 const fs = require('fs');
 const program = require('commander');
 const openApiGenerator = require('./index.js');
 
 program
-  .version('1.0.3')
+  .version('0.1.0')
   .usage('[options] <inputfile>')
   .description('At least 1 output type must be selected: plantuml or markdown!')
   .option('-d, --details', 'Show extra attribute details')
-  .option('-p, --plantuml <plantuml file>', 'The output file for plantuml')
-  .option('-m, --markdown <markdown file>', 'The output file for markdown')
+  .option('-p, --plantuml <plantuml file>', 'Transform to plantuml')
+  .option('-m, --markdown <markdown file>', 'Transform to markdown')
   .option('-v, --verbose', 'Show verbose debug output')
   .parse(process.argv);
 
