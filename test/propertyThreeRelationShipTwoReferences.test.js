@@ -25,7 +25,6 @@ describe('properties - parseProperties - two relationships - one references to o
 
   const { properties } = testData.components.schemas.owner;
   const { required } = testData.components.schemas.owner;
-  const extraAttributeDetails = true;
   const verbose = false;
 
   const arrayUnderTest = Property.parseProperties(properties, required, 'owner', verbose);
