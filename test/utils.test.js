@@ -22,6 +22,7 @@ describe('test add to array if not exists', () => {
     assert.equal(myArray[2], 'Kyle');
   });
 });
+
 describe('test add array to array if value not exists', () => {
   const sourceArray = [];
   sourceArray.push('Kyle');
@@ -31,7 +32,6 @@ describe('test add array to array if value not exists', () => {
   targetArray.push('Sarah');
   targetArray.push('John');
 
-
   it('Test adding new value is only added if not already present', () => {
     utils.addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray);
     assert.equal(targetArray.length, 3);
@@ -40,13 +40,13 @@ describe('test add array to array if value not exists', () => {
     assert.equal(targetArray[2], 'Kyle');
   });
 });
+
 describe('test add array to array if targetArray is empty', () => {
   const sourceArray = [];
   sourceArray.push('Kyle');
   sourceArray.push('Sarah');
 
   const targetArray = [];
-
 
   it('Test adding new value is only added if not already present', () => {
     utils.addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray);
