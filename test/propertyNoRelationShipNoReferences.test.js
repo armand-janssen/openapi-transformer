@@ -122,8 +122,8 @@ function assertPropertyPipe(property) {
   assert.equal(property.name, 'pipe');
   assert.equal(property.type, 'string');
   assert.equal(property.required, false);
-  assert.equal(property.description, undefined);
-  assert.equal(property.example, undefined);
+  assert.equal(property.description, 'Also a | here');
+  assert.equal(property.example, 'A pipe in the example |');
 
   assert.equal(property.details.length, 1);
   assertDetail(property.details[0], 'pattern', '^(nl|NL|Nederland)$');

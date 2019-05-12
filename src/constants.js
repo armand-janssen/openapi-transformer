@@ -1,9 +1,5 @@
 const constants = {
   lineBreak: '\n',
-  mdRowSeperator: '| ',
-  mdHeaderCenterAligned: ' :---: ',
-  mdHeaderLeftAligned: ' :--- ',
-  mdHeaderRightAligned: ' ---: ',
   tab: '  ',
   space: ' ',
   comma: ', ',
