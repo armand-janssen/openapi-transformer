@@ -3,7 +3,8 @@
 
 const fs = require('fs');
 const program = require('commander');
-const plantUmlGenerator = require('./plantUmlTransformer');
+const plantUmlTransformer = require('./plantUmlTransformer');
+const markdownTransformer = require('./markdownTransformer');
 const openApiGenerator = require('./index.js');
 
 program
@@ -26,13 +27,13 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
 
   if (program.plantuml !== undefined) {
     if (verbose) console.log('Writing plantuml...');
-    const uml = plantUmlGenerator.generate(allParsedSchemas);
+    const uml = plantUmlTransformer.generate(allParsedSchemas);
     fs.writeFileSync(program.plantuml, uml, 'utf8');
   }
 
   if (program.markdown !== undefined) {
     if (verbose) console.log('Writing markdown...');
-    const md = openApiGenerator.renderMarkDown(allParsedSchemas);
+    const md = markdownTransformer.generate(allParsedSchemas);
     fs.writeFileSync(program.markdown, md, 'utf8');
   }
   if (verbose) console.log('Finished rendering documentation!');

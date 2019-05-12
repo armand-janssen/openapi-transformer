@@ -1,6 +1,0 @@
-@startuml
-
-class child {
-  name * : string [maxLength : 30]
-}
-@enduml

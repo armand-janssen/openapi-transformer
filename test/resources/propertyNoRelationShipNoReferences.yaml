@@ -62,6 +62,8 @@ components:
         pipe:
           type: string
           pattern: '^(nl|NL|Nederland)$'
+          description: Also a | here
+          example: A pipe in the example |
       required:
         - name
         - from
