@@ -54,7 +54,7 @@ function generateDetails(details, isEnum) {
   return uml;
 }
 
-function generateProperty(property) {
+function generateProperty(property, generateExtraDetails) {
   let uml = constants.tab;
   uml += property.name;
   uml += constants.space;
@@ -62,15 +62,17 @@ function generateProperty(property) {
   uml += constants.colon;
   uml += property.type;
   uml += constants.space;
-  if (property.type === 'enum') {
-    uml += generateDetails(property.details, true);
-  } else {
-    uml += generateDetails(property.details, false);
+  if (generateExtraDetails) {
+    if (property.type === 'enum') {
+      uml += generateDetails(property.details, true);
+    } else {
+      uml += generateDetails(property.details, false);
+    }
   }
   uml += constants.lineBreak;
   return uml;
 }
-function generateSchema(schema) {
+function generateSchema(schema, generateExtraDetails) {
   let uml = constants.lineBreak;
   uml += 'class ';
   uml += schema.name;
@@ -79,7 +81,7 @@ function generateSchema(schema) {
 
   if (schema.properties !== undefined) {
     schema.properties.forEach((property) => {
-      uml += generateProperty(property);
+      uml += generateProperty(property, generateExtraDetails);
     });
   }
 
@@ -93,12 +95,12 @@ function generateSchema(schema) {
   return uml;
 }
 
-function generate(schemas) {
+function generate(schemas, generateExtraDetails) {
   let uml = `@startuml${constants.lineBreak}`;
   // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      uml += generateSchema(schemas[schemaIndex]);
+      uml += generateSchema(schemas[schemaIndex], generateExtraDetails);
     }
   }
   uml += `@enduml${constants.lineBreak}`;

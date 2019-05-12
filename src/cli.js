@@ -27,7 +27,12 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
 
   if (program.plantuml !== undefined) {
     if (verbose) console.log('Writing plantuml...');
-    const uml = plantUmlTransformer.generate(allParsedSchemas);
+    let uml = '';
+    if (program.details === undefined) {
+      uml = plantUmlTransformer.generate(allParsedSchemas, false);
+    } else {
+      uml = plantUmlTransformer.generate(allParsedSchemas, true);
+    }
     fs.writeFileSync(program.plantuml, uml, 'utf8');
   }
 
