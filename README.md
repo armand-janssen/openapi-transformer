@@ -47,10 +47,3 @@ openapi-transformer vehicle.yaml --plantuml ./example.plantuml --markdown ./exam
 ## Details
 ![Example with details](https://raw.githubusercontent.com/armand-janssen/openapi-transformer/master/example/example-details.png)
 
-
-# TODO
-- refactor / cleanup code
-- add more examples
-- test loading the openapi yaml, instead of the vehicle.yaml
-- add OpenAPI version validation
-- add generation of JSON schema
