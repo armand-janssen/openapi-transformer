@@ -1,0 +1,6 @@
+components:
+  schemas:
+    componentA:
+      $ref: 'componentA.yaml#/components/schemas/componentA'
+    id:
+      $ref: 'common.yaml#/components/schemas/id'

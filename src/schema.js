@@ -28,12 +28,21 @@ class Schema {
 
       if (verbose) console.log(`\n\n############################### schema name :: ${name} ###############################`);
 
-      if (schema.allOf !== undefined) {
+      if (schema.$ref !== undefined) {
+        if (verbose) console.log(`***************** found ref :: ${schema.$ref}`);
+
+        const reference = schema.$ref;
+        const referencedFile = reference.match('^.*ya?ml');
+        if (referencedFile != null && referencedFile.length === 1 && !allReferencedFiles.includes(referencedFile[0])) {
+          if (verbose) console.log(`**************** matched schema $ref [${referencedFile}]`)
+          allReferencedFiles.push(referencedFile[0]);
+        }
+      } else if (schema.allOf !== undefined) {
         const [referencedFiles, parsedSchemas] = this.processInheritance(schema, schemaIndex, schema.allOf, verbose);
 
         utils.addValuesOfArrayToOtherArrayIfNotExist(parsedSchemas, allParsedSchemas);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
-      } else {
+      } else if (schema.type === 'object' || schema.properties !== undefined) {
         // parse properties of this schema
         const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(schema.properties, schema.required, schemaIndex, verbose);
         if (allParsedSchemas[name] === undefined) {
@@ -41,6 +50,9 @@ class Schema {
 
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
+      }
+      else {
+        if (verbose) console.log(`!!!!!!!!!!!!!!!! unparseable schema definition :: ${JSON.stringify(schema)}`);
       }
     }
     return [allReferencedFiles, allParsedSchemas];
