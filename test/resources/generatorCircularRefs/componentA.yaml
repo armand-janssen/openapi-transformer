@@ -1,0 +1,8 @@
+components:
+  schemas:
+    componentA:
+      type: object
+      description: Component A.
+      properties:
+        componentB:
+          $ref: 'componentB.yaml#components/schemas/componentB'
