@@ -1,0 +1,5 @@
+components:
+  schemas:
+    id:
+      description: An identifier.
+      type: object

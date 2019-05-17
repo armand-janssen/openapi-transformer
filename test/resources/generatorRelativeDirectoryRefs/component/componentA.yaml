@@ -1,0 +1,11 @@
+components:
+  schemas:
+    componentA:
+      type: object
+      description: Component A.
+      properties:
+        id:
+          $ref: '../common/common.yaml#/components/schemas/id'
+        name:
+          type: string
+          description: Component A's name.
