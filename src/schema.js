@@ -22,11 +22,11 @@ class Schema {
     for (const schemaIndex in schemas) {
       const schema = schemas[schemaIndex];
 
-      const name = schemaIndex;
+      const { title } = schema;
       const parent = undefined;
       const { description } = schema;
 
-      if (verbose) console.log(`\n\n############################### schema name :: ${name} ###############################`);
+      if (verbose) console.log(`\n\n############################### schema name :: ${title} ###############################`);
 
       if (schema.allOf !== undefined) {
         const [referencedFiles, parsedSchemas] = this.processInheritance(schema, schemaIndex, schema.allOf, verbose);
@@ -36,8 +36,8 @@ class Schema {
       } else {
         // parse properties of this schema
         const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(schema.properties, schema.required, schemaIndex, verbose);
-        if (allParsedSchemas[name] === undefined) {
-          allParsedSchemas[name] = new Schema(name, parsedProperties, description, relationShips, parent);
+        if (allParsedSchemas[schemaIndex] === undefined) {
+          allParsedSchemas[schemaIndex] = new Schema(title, parsedProperties, description, relationShips, parent);
 
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
@@ -80,7 +80,7 @@ class Schema {
     if (parsedSchemas[schemaIndex] === undefined) {
       if (verbose) console.log(`***************** creating schema :: ${schemaIndex}`);
 
-      parsedSchemas[schemaIndex] = new Schema(schemaIndex, parsedProperties, description, relationShips, parent);
+      parsedSchemas[schemaIndex] = new Schema(schema.title, parsedProperties, description, relationShips, parent);
     }
 
     return [allReferencedFiles, parsedSchemas];
