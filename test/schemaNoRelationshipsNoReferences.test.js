@@ -25,6 +25,7 @@ describe('schemas - parseSchemas - no relationships - no references to other fil
   mockedOwner.description = 'Owner information';
   mockedOwner.type = 'object';
   mockedOwner.properties = {};
+  // property only added to trigger sinon mock
   mockedOwner.properties.name = {};
   mockedOwner.properties.name.description = 'the name of the owner';
 

@@ -34,13 +34,13 @@ class Schema {
         const reference = schema.$ref;
         const referencedFile = reference.match('^.*ya?ml');
         if (referencedFile != null && referencedFile.length === 1 && !allReferencedFiles.includes(referencedFile[0])) {
-          if (verbose) console.log(`**************** matched schema $ref [${referencedFile}]`)
+          if (verbose) console.log(`**************** matched schema $ref [${referencedFile}]`);
           allReferencedFiles.push(referencedFile[0]);
         }
       } else if (schema.allOf !== undefined) {
         const [referencedFiles, parsedSchemas] = this.processInheritance(schema, schemaIndex, schema.allOf, verbose);
 
-        utils.addValuesOfArrayToOtherArrayIfNotExist(parsedSchemas, allParsedSchemas);
+        utils.addValuesOfNamedArrayToOtherNamedArrayIfNotExist(parsedSchemas, allParsedSchemas);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       } else if (schema.type === 'object' || schema.properties !== undefined) {
         // parse properties of this schema
@@ -50,26 +50,24 @@ class Schema {
 
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
-      }
-      else {
-        if (verbose) console.log(`!!!!!!!!!!!!!!!! unparseable schema definition :: ${JSON.stringify(schema)}`);
-      }
+      } else if (verbose) console.log(`!!!!!!!!!!!!!!!! unparseable schema definition :: ${JSON.stringify(schema)}`);
     }
     return [allReferencedFiles, allParsedSchemas];
   }
 
   static processInheritance(schema, schemaIndex, allOf, verbose) {
     if (verbose) console.log(`***************** schemaIndex :: ${schemaIndex}`);
-    if (verbose) console.log(`***************** schema === allOf :: ${allOf}`);
     const parsedSchemas = [];
     let parent;
     const allReferencedFiles = [];
     const { description } = schema;
 
-    if (verbose) console.log(`allOf: ${util.inspect(allOf, { showHidden: false, depth: null })}`);
+    if (verbose) console.log(`fullschema: ${util.inspect(schema, { showHidden: false, depth: null })}`);
 
-    let parsedProperties; let relationShips; let
-      referencedFiles;
+    let parsedProperties;
+    let relationShips;
+    let referencedFiles;
+
     for (const attributeIndex in allOf) {
       const attribute = allOf[attributeIndex];
 

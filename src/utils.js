@@ -21,6 +21,20 @@ function addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray) {
   }
 }
 
+function addValuesOfNamedArrayToOtherNamedArrayIfNotExist(sourceArray, targetArray) {
+  for (const sourceKey in sourceArray) {
+    const sourceValue = sourceArray[sourceKey];
+
+    if (targetArray[sourceKey] === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      targetArray[sourceKey] = sourceValue;
+    }
+  }
+}
+
 module.exports = {
-  lastToken, addValueToArrayIfNotExists, addValuesOfArrayToOtherArrayIfNotExist,
+  lastToken,
+  addValueToArrayIfNotExists,
+  addValuesOfArrayToOtherArrayIfNotExist,
+  addValuesOfNamedArrayToOtherNamedArrayIfNotExist,
 };
