@@ -20,8 +20,9 @@ function addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray) {
     this.addValueToArrayIfNotExists(targetArray, value);
   }
 }
-
 function addValuesOfNamedArrayToOtherNamedArrayIfNotExist(sourceArray, targetArray) {
+  if (sourceArray === undefined) return;
+  if (targetArray === undefined) throw new Error('targetArray is undefined');
   for (const sourceKey in sourceArray) {
     const sourceValue = sourceArray[sourceKey];
 
