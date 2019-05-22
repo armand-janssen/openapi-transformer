@@ -4,13 +4,12 @@
 
 [![Build Status](https://travis-ci.org/armand-janssen/openapi-transformer.svg?branch=master)](https://travis-ci.org/armand-janssen/openapi-transformer)
 
-This tool creates a [PlantUML Class Diagram](http://plantuml.com/class-diagram) from a **OpenApi 3 Yaml** specification
+This tool creates a [PlantUML Class Diagram](http://plantuml.com/class-diagram) or Markdown (Optimized for [Showdown](http://showdownjs.com)) from a **OpenApi 3 Yaml** specification
 
 # Requirements
 - OpenAPI 3.0.2
 - OpenAPI specification should be in **YAML**
 - [NodeJS](http://nodejs.org)
-- All yaml files should be in 1 directory
 
 # Usage
 Always run the script from the directory in which the yaml file are.
@@ -47,3 +46,6 @@ openapi-transformer vehicle.yaml --plantuml ./example.plantuml --markdown ./exam
 ## Details
 ![Example with details](https://raw.githubusercontent.com/armand-janssen/openapi-transformer/master/example/example-details.png)
 
+# Online utils
+- [Online Markdown Editor http://demo.showdownjs.com](http://demo.showdownjs.com)
+- [Online PlantUML Editor https://www.planttext.com](https://www.planttext.com)
