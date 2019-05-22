@@ -3,12 +3,13 @@
 
 const fs = require('fs');
 const program = require('commander');
+const { version } = require('../package.json');
 const plantUmlTransformer = require('./plantUmlTransformer');
 const markdownTransformer = require('./markdownTransformer');
 const openApiGenerator = require('./index.js');
 
 program
-  .version('0.1.0')
+  .version(version)
   .usage('[options] <inputfile>')
   .description('At least 1 output type must be selected: plantuml or markdown!')
   .option('-d, --details', 'Show extra attribute details')
