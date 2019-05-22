@@ -16,3 +16,9 @@ install:
 script:
 - npm test
 - npm run coveralls
+deploy:
+  provider: npm
+  email: "armandjanssen1978@gmail.com"
+  api_key: "$NPM_TOKEN"
+  on: 
+    tags: true
