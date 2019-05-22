@@ -10,7 +10,7 @@ const utils = require('./utils');
 const allLoadedFiles = [];
 
 function loadYamlFile(file, verbose) {
-  if(allLoadedFiles.includes(file)) {
+  if (allLoadedFiles.includes(file)) {
     if (verbose) console.log(`@@@@@@@@@@@@@@@@ already loaded :: ${file}; skipping`);
     return [];
   }
