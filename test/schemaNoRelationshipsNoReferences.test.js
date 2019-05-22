@@ -55,7 +55,7 @@ describe('schemas - parseSchemas - no relationships - no references to other fil
   it('validate schema', () => {
     const schema = arrayUnderTest[1].owner;
     // console.log(schema);
-    assert.equal(schema.name, 'Owner');
+    assert.equal(schema.name, 'owner');
     assert.equal(schema.description, 'Owner information');
     assert.equal(schema.properties.length, mockedProperties.length);
     assert.equal(schema.relationShips.length, 0);

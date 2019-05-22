@@ -7,7 +7,8 @@ const Property = require('./property');
 const utils = require('./utils');
 
 class Schema {
-  constructor(name, properties, description, relationShips, parent) {
+  constructor(title, name, properties, description, relationShips, parent) {
+    this.title = title;
     this.name = name;
     this.properties = properties;
     this.description = description;
@@ -46,7 +47,7 @@ class Schema {
         // parse properties of this schema
         const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(schema.properties, schema.required, schemaIndex, verbose);
         if (allParsedSchemas[schemaIndex] === undefined) {
-          allParsedSchemas[schemaIndex] = new Schema(title, parsedProperties, description, relationShips, parent);
+          allParsedSchemas[schemaIndex] = new Schema(title, schemaIndex, parsedProperties, description, relationShips, parent);
 
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
@@ -90,7 +91,7 @@ class Schema {
     if (parsedSchemas[schemaIndex] === undefined) {
       if (verbose) console.log(`***************** creating schema :: ${schemaIndex}`);
 
-      parsedSchemas[schemaIndex] = new Schema(schema.title, parsedProperties, description, relationShips, parent);
+      parsedSchemas[schemaIndex] = new Schema(schema.title, schemaIndex, parsedProperties, description, relationShips, parent);
     }
 
     return [allReferencedFiles, parsedSchemas];

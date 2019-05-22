@@ -59,7 +59,7 @@ describe('schemas - parseSchemas - two relationships - two references to other f
   it('validate schema', () => {
     const schema = arrayUnderTest[1].owner;
     // console.log(schema);
-    assert.equal(schema.name, 'Owner');
+    assert.equal(schema.name, 'owner');
     assert.equal(schema.description, 'Owner information');
     assert.equal(schema.properties.length, mockedProperties.length);
     assert.equal(schema.relationShips.length, 3);

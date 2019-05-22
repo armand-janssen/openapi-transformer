@@ -6,13 +6,14 @@ const Property = require('../src/property');
 const Detail = require('../src/detail');
 
 function mockCar() {
+  const title = 'Car';
   const name = 'Car';
   const properties = [];
   const description = 'A car is a transport thingy';
   const relationShips = [];
   const parent = 'Vehicle';
 
-  return new Schema(name, properties, description, relationShips, parent);
+  return new Schema(title, name, properties, description, relationShips, parent);
 }
 
 function mockBrandDetails() {
@@ -78,21 +79,23 @@ function mockPipeProperty() {
 }
 
 function mockVehicle() {
+  const title = 'Vehicle';
   const name = 'Vehicle';
   const properties = [mockBrandProperty(), mockPipeProperty(), mockDoorsProperty(), mockWheelsProperty()];
   const description = 'A Vehicle is a transport thingy. The pipe escaping is tested here \\|';
   const relationShips = [];
   const parent = '';
-  return new Schema(name, properties, description, relationShips, parent);
+  return new Schema(title, name, properties, description, relationShips, parent);
 }
 
 function mockBike() {
+  const title = 'Bike';
   const name = 'Bike';
   const properties = undefined;
   const description = undefined;
   const relationShips = undefined;
   const parent = '';
-  return new Schema(name, properties, description, relationShips, parent);
+  return new Schema(title, name, properties, description, relationShips, parent);
 }
 
 function mockOneClassNoProperties() {
@@ -123,9 +126,8 @@ describe('Test markdown generator', () => {
   it('Two class with properties', () => {
     const schemas = mockTwoClassWithProperties();
     const md = markdownTransformer.generate(schemas);
+
     const expectedResult = fs.readFileSync('./test/resources/markdownTransformer/twoClassWithProperties.md');
-    // console.log('['+md+']');
-    // console.log('['+expectedResult.toString()+']');
 
     assert.equal(md, expectedResult.toString());
   });

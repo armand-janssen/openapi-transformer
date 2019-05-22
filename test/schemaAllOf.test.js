@@ -73,7 +73,7 @@ describe('schemas - parseSchemas - test inheritence', () => {
   it('validate schema', () => {
     const schema = arrayUnderTest[1].child;
     // console.log(schema);
-    assert.equal(schema.name, 'Child');
+    assert.equal(schema.name, 'child');
     assert.equal(schema.description, 'Child information');
     assert.equal(schema.properties.length, mockedProperties.length);
     assert.equal(schema.relationShips.length, 0);
