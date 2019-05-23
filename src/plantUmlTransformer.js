@@ -55,8 +55,7 @@ function generateDetails(details, isEnum) {
 }
 
 function generateProperty(property, generateExtraDetails) {
-  let uml = constants.tab;
-  uml += property.name;
+  let uml = property.name;
   uml += constants.space;
   uml += property.required ? '*' : '';
   uml += constants.colon;
@@ -70,7 +69,12 @@ function generateProperty(property, generateExtraDetails) {
     }
   }
   uml += constants.lineBreak;
-  return uml;
+
+  // when a property contains a parenthesis ( or ), then plantuml generates it as a method instead of field
+  if (uml.includes('(') || uml.includes(')')) {
+    uml = `{field} ${uml}`;
+  }
+  return constants.tab + uml;
 }
 function generateSchema(schema, generateExtraDetails) {
   let uml = constants.lineBreak;
