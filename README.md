@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/armand-janssen/openapi-transformer.svg?branch=master)](https://travis-ci.org/armand-janssen/openapi-transformer)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/armand-janssen/openapi-transformer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/armand-janssen/openapi-transformer?targetFile=package.json)
+
 This tool creates a [PlantUML Class Diagram](http://plantuml.com/class-diagram) or Markdown (Optimized for [Showdown](http://showdownjs.com)) from a **OpenApi 3 Yaml** specification
 
 # Requirements
