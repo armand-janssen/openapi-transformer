@@ -10,17 +10,15 @@ function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDesc
 
 describe('openApiGenerator - loadYamlFile - two relationships -  circular $refs between files', () => {
 
-  const loadedSchemas =
-    openApiGenerator.loadYamlFile('./test/resources/generatorCircularRefs/componentA.yaml', false);
+  const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/generatorCircularRefs/componentA.yaml', false);
 
   assert.isDefined(loadedSchemas);
   it('Load two schema objects with circular reference.', () => {
-    assert.equal(loadedSchemas.length, 2);
+    assert.equal(Object.keys(loadedSchemas).length, 2);
   });
 
   it('Check relationships: between circular entities.', () => {
-    assertRelationShip(loadedSchemas[0].relationShips[0], 'componentA', 'componentB', 'componentB', 'use');
-    assertRelationShip(loadedSchemas[1].relationShips[0], 'componentB', 'componentA', 'componentA', 'use');
+    assertRelationShip(loadedSchemas.componentA.relationShips[0], 'componentA', 'componentB', 'componentB', 'use');
+    assertRelationShip(loadedSchemas.componentB.relationShips[0], 'componentB', 'componentA', 'componentA', 'use');
   });
-
 });

@@ -18,7 +18,7 @@ class Schema {
 
   static parseSchemas(schemas, verbose) {
     const allReferencedFiles = [];
-    const allParsedSchemas = [];
+    const allParsedSchemas = {};
 
     for (const schemaIndex in schemas) {
       const schema = schemas[schemaIndex];
@@ -41,7 +41,7 @@ class Schema {
       } else if (schema.allOf !== undefined) {
         const [referencedFiles, parsedSchemas] = this.processInheritance(schema, schemaIndex, schema.allOf, verbose);
 
-        utils.addValuesOfNamedArrayToOtherNamedArrayIfNotExist(parsedSchemas, allParsedSchemas);
+        utils.mergeObjects(parsedSchemas, allParsedSchemas);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       } else if (schema.type === 'object' || schema.properties !== undefined) {
         // parse properties of this schema
@@ -58,7 +58,7 @@ class Schema {
 
   static processInheritance(schema, schemaIndex, allOf, verbose) {
     if (verbose) console.log(`***************** schemaIndex :: ${schemaIndex}`);
-    const parsedSchemas = [];
+    const parsedSchemas = {};
     let parent;
     const allReferencedFiles = [];
     const { description } = schema;

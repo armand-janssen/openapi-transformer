@@ -20,22 +20,27 @@ function addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray) {
     this.addValueToArrayIfNotExists(targetArray, value);
   }
 }
-function addValuesOfNamedArrayToOtherNamedArrayIfNotExist(sourceArray, targetArray) {
-  if (sourceArray === undefined) return;
-  if (targetArray === undefined) throw new Error('targetArray is undefined');
-  for (const sourceKey in sourceArray) {
-    const sourceValue = sourceArray[sourceKey];
 
-    if (targetArray[sourceKey] === undefined) {
+/**
+ * Merge 2 objects, but only if not already defined in target.
+ * @param {*} sourceObject
+ * @param {*} targetObject
+ */
+function mergeObjects(sourceObject, targetObject) {
+  if (sourceObject === undefined) return;
+  if (targetObject === undefined) throw new Error('targetObject is undefined');
+
+  Object.keys(sourceObject).forEach((attributeName) => {
+    if (!Object.keys(targetObject).includes(attributeName)) {
       // eslint-disable-next-line no-param-reassign
-      targetArray[sourceKey] = sourceValue;
+      targetObject[attributeName] = sourceObject[attributeName];
     }
-  }
+  });
 }
 
 module.exports = {
   lastToken,
   addValueToArrayIfNotExists,
   addValuesOfArrayToOtherArrayIfNotExist,
-  addValuesOfNamedArrayToOtherNamedArrayIfNotExist,
+  mergeObjects,
 };

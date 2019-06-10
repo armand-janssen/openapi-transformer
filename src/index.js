@@ -16,7 +16,7 @@ function loadYamlFile(file, verbose) {
   }
 
   if (verbose) console.log(`***************** processing file :: ${file}`);
-  const allParsedSchemas = [];
+  const allParsedSchemas = {};
 
   // determine base to resolve other file references from
   const filePath = path.dirname(file);
@@ -31,13 +31,14 @@ function loadYamlFile(file, verbose) {
     const { schemas } = myYaml.components;
     const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose);
 
-    utils.addValuesOfArrayToOtherArrayIfNotExist(parsedSchemas, allParsedSchemas);
+
+    utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
     if (referencedFiles !== undefined && referencedFiles.length > 0) {
       for (const referencedFileIndex in referencedFiles) {
         const referencedParsedSchemas = loadYamlFile(`${filePath}/${referencedFiles[referencedFileIndex]}`, verbose);
 
-        utils.addValuesOfArrayToOtherArrayIfNotExist(referencedParsedSchemas, allParsedSchemas);
+        utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
       }
     }
   }

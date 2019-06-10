@@ -15,11 +15,10 @@ describe('openApiGenerator - loadYamlFile - one relationship - relative director
 
   assert.isDefined(loadedSchemas);
   it('Load two schema objects from a parent reference file.', () => {
-    assert.equal(loadedSchemas.length, 2);
+    assert.equal(Object.keys(loadedSchemas).length, 2);
   });
 
   it('Check relationships: $ref is via relative (double dot) directory path.', () => {
-    assertRelationShip(loadedSchemas[0].relationShips[0], 'componentA', 'id', 'id', 'use');
+    assertRelationShip(loadedSchemas.componentA.relationShips[0], 'componentA', 'id', 'id', 'use');
   });
-
 });

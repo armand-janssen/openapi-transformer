@@ -10,16 +10,14 @@ function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDesc
 
 describe('openApiGenerator - loadYamlFile - one relationship - transitive $refs from child through parent to another child', () => {
 
-  const loadedSchemas =
-      openApiGenerator.loadYamlFile('./test/resources/generatorTransitiveRefs/parentSchema.yaml', false);
+  const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/generatorTransitiveRefs/parentSchema.yaml', false);
 
   assert.isDefined(loadedSchemas);
   it('Load two schema objects from a parent reference file.', () => {
-      assert.equal(loadedSchemas.length, 2);
+    assert.equal(Object.keys(loadedSchemas).length, 2);
   });
 
   it('Check relationship: $refs across files', () => {
-      assertRelationShip(loadedSchemas[0].relationShips[0], 'componentA', 'id', 'id', 'use');
+    assertRelationShip(loadedSchemas.componentA.relationShips[0], 'componentA', 'id', 'id', 'use');
   });
-
 });
