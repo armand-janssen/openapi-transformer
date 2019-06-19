@@ -34,6 +34,9 @@ class Property {
       } else if (property.format === 'date') {
         typeAfterDetailsParsing = 'date';
         details.push(new Detail('pattern', 'yyyy-MM-dd'));
+      } else if (property.format === 'date-time') {
+        typeAfterDetailsParsing = 'date-time';
+        details.push(new Detail('pattern', 'yyyy-MM-ddTHH:mm:ssZ'));
       } else if (property.format === 'binary') {
         typeAfterDetailsParsing = 'string [binary]';
       } else if (property.format === 'byte') {
@@ -49,7 +52,6 @@ class Property {
       if (property.maxItems !== undefined) details.push(new Detail('maxItems', property.maxItems));
       if (property.uniqueItems !== undefined) details.push(new Detail('uniqueItems', property.uniqueItems));
     }
-
 
     return [typeAfterDetailsParsing, details];
   }

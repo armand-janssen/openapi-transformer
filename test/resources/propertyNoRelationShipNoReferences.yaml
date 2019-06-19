@@ -64,6 +64,11 @@ components:
           pattern: '^(nl|NL|Nederland)$'
           description: Also a | here
           example: A pipe in the example |
+        creation:
+          description: the date and time the vehicle was created
+          type: string
+          format: date-time
+          example: 1985-04-12T23:20:50.52Z
       required:
         - name
         - from

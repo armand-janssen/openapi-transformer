@@ -18,7 +18,7 @@ describe('properties - parseProperties - one relationship - no references to oth
 
   const { properties } = testData.components.schemas.owner;
   const { required } = testData.components.schemas.owner;
-  const verbose = false;
+  const verbose = true;
 
   const arrayUnderTest = Property.parseProperties(properties, required, 'owner', verbose);
   assert.isDefined(arrayUnderTest);

@@ -35,6 +35,16 @@ function assertPropertyFrom(property) {
   assert.equal(property.details.length, 1);
   assertDetail(property.details[0], 'pattern', 'yyyy-MM-dd');
 }
+function assertPropertyCreation(property) {
+  assert.equal(property.name, 'creation');
+  assert.equal(property.type, 'date-time');
+  assert.equal(property.required, false);
+  assert.equal(property.description, 'the date and time the vehicle was created');
+  assert.equal(property.example, '1985-04-12T23:20:50.52Z');
+
+  assert.equal(property.details.length, 1);
+  assertDetail(property.details[0], 'pattern', 'yyyy-MM-ddTHH:mm:ssZ');
+}
 function assertPropertyTo(property) {
   assert.equal(property.name, 'to');
   assert.equal(property.type, 'date');
@@ -140,7 +150,7 @@ describe('properties - parseProperties - no relationships - no references to oth
   assert.isDefined(arrayUnderTest);
   it('Reponse is array containing sub-arrays of which only first one contains data', () => {
     assert.equal(arrayUnderTest.length, 3);
-    assert.equal(arrayUnderTest[0].length, 11);
+    assert.equal(arrayUnderTest[0].length, 12);
     assert.equal(arrayUnderTest[1].length, 0);
     assert.equal(arrayUnderTest[2].length, 0);
   });
@@ -176,5 +186,8 @@ describe('properties - parseProperties - no relationships - no references to oth
   });
   it('Check property: pipe', () => {
     assertPropertyPipe(arrayUnderTest[0][10]);
+  });
+  it('Check property: assertPropertyCreation', () => {
+    assertPropertyCreation(arrayUnderTest[0][11]);
   });
 });
