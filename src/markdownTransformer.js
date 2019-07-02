@@ -105,6 +105,9 @@ function generateSchema(schema) {
   if (schema.properties === undefined || schema.properties.length === 0) {
     md += lineBreak;
   } else {
+    md += lineBreak;
+    md += '# Properties';
+    md += lineBreak;
     md += createTableHeader();
     schema.properties.forEach((property) => {
       md += generateProperty(property);

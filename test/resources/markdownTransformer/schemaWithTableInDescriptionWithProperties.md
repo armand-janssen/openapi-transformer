@@ -7,6 +7,8 @@ A Vehicle is a transport thingy.
 |value3|value4|
 Nice table
 
+
+# Properties
 | property | required | type | description | details | example |
 | :--- | :---: | :---: | :--- | :--- | :--- |
 | Brand | Y | string | The brand of the vehicle | <ul><li>maxLength : 30</li><li>minLength : 1</li></ul> | Volvo |
