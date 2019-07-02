@@ -84,8 +84,23 @@ function generateProperty(property) {
 
 function generateSchema(schema) {
   let md = createMainHeader(schema.name);
-  md += schema.description === undefined ? nbsp : schema.description.replace(/\n/g, '<br/>').replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
-  md += lineBreak + lineBreak;
+
+  if (schema.description) {
+    const lines = schema.description.split('\n');
+    lines.forEach((line) => {
+      if (line.indexOf('|') === 0 && line.lastIndexOf('|') > 0) {
+        md += line;
+        md += lineBreak;
+      } else {
+        md += line.replace(/\n/g, '<br/>').replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
+        md += lineBreak;
+      }
+    });
+  } else {
+    md += nbsp;
+  }
+
+  md += lineBreak;
 
   if (schema.properties === undefined || schema.properties.length === 0) {
     md += lineBreak;

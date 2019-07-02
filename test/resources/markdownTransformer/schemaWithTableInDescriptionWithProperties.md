@@ -1,6 +1,11 @@
 
 # Vehicle
-A Vehicle is a transport thingy. The pipe escaping is tested here |
+A Vehicle is a transport thingy. 
+|col1|col2|
+|--|--|
+|value1|value2|
+|value3|value4|
+Nice table
 
 | property | required | type | description | details | example |
 | :--- | :---: | :---: | :--- | :--- | :--- |

@@ -78,11 +78,21 @@ function mockPipeProperty() {
   return new Property(name, type, required, details, description, example);
 }
 
-function mockVehicle() {
+function mockVehicleSchema() {
   const title = 'Vehicle';
   const name = 'Vehicle';
   const properties = [mockBrandProperty(), mockPipeProperty(), mockDoorsProperty(), mockWheelsProperty()];
-  const description = 'A Vehicle is a transport thingy. The pipe escaping is tested here \\|';
+  const description = 'A Vehicle is a transport thingy. The pipe escaping is tested here |';
+  const relationShips = [];
+  const parent = '';
+  return new Schema(title, name, properties, description, relationShips, parent);
+}
+
+function mockVehicleWithTableInDescriptionSchema() {
+  const title = 'Vehicle';
+  const name = 'Vehicle';
+  const properties = [mockBrandProperty(), mockPipeProperty(), mockDoorsProperty(), mockWheelsProperty()];
+  const description = 'A Vehicle is a transport thingy. \n|col1|col2|\n|--|--|\n|value1|value2|\n|value3|value4|\nNice table';
   const relationShips = [];
   const parent = '';
   return new Schema(title, name, properties, description, relationShips, parent);
@@ -103,9 +113,12 @@ function mockOneClassNoProperties() {
 }
 
 function mockTwoClassWithProperties() {
-  return [mockVehicle(), mockCar(), mockBike()];
+  return [mockVehicleSchema(), mockCar(), mockBike()];
 }
 
+function mockClassWithTableInDescriptionWithProperties() {
+  return [mockVehicleWithTableInDescriptionSchema(), mockCar(), mockBike()];
+}
 describe('Test markdown generator', () => {
   it('No schemas', () => {
     const schemas = undefined;
@@ -128,6 +141,15 @@ describe('Test markdown generator', () => {
     const md = markdownTransformer.generate(schemas);
 
     const expectedResult = fs.readFileSync('./test/resources/markdownTransformer/twoClassWithProperties.md');
+
+    assert.equal(md, expectedResult.toString());
+  });
+
+  it('Schema with table in description with properties', () => {
+    const schemas = mockClassWithTableInDescriptionWithProperties();
+    const md = markdownTransformer.generate(schemas);
+
+    const expectedResult = fs.readFileSync('./test/resources/markdownTransformer/schemaWithTableInDescriptionWithProperties.md');
 
     assert.equal(md, expectedResult.toString());
   });
