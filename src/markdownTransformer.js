@@ -106,7 +106,7 @@ function generateSchema(schema) {
     md += lineBreak;
   } else {
     md += lineBreak;
-    md += '# Properties';
+    md += '## Properties';
     md += lineBreak;
     md += createTableHeader();
     schema.properties.forEach((property) => {
