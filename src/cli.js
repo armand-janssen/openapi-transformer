@@ -6,6 +6,7 @@ const program = require('commander');
 const { version } = require('../package.json');
 const plantUmlTransformer = require('./plantUmlTransformer');
 const markdownTransformer = require('./markdownTransformer');
+const jsonSchemaTransformer = require('./jsonSchemaTransformer');
 const openApiGenerator = require('./index.js');
 
 program
@@ -15,10 +16,11 @@ program
   .option('-d, --details', 'Show extra attribute details')
   .option('-p, --plantuml <plantuml file>', 'Transform to plantuml')
   .option('-m, --markdown <markdown file>', 'Transform to markdown')
+  .option('-j, --jsonschema <jsonschema file>', 'Transform to json schema')
   .option('-v, --verbose', 'Show verbose debug output')
   .parse(process.argv);
 
-if (!program.args.length || (program.plantuml == null && program.markdown == null)) {
+if (!program.args.length || (program.plantuml == null && program.markdown == null && program.jsonschema == null)) {
   program.help();
 } else {
   const { verbose } = program;
@@ -42,5 +44,12 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
     const md = markdownTransformer.generate(allParsedSchemas);
     fs.writeFileSync(program.markdown, md, 'utf8');
   }
+
+  if (program.jsonschema !== undefined) {
+    if (verbose) console.log('Writing JSON Schema...');
+    const js = jsonSchemaTransformer.generate(allParsedSchemas);
+    fs.writeFileSync(program.jsonschema, js, 'utf8');
+  }
+
   if (verbose) console.log('Finished rendering documentation!');
 }

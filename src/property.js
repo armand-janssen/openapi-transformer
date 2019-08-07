@@ -73,7 +73,6 @@ class Property {
 
       if (type == null && property.$ref != null) {
         // reference to other object, maybe in other file
-        type = name;
         const reference = property.$ref;
         const referencedFile = reference.match('^.*yaml');
 
@@ -81,6 +80,7 @@ class Property {
           referencedFiles.push(referencedFile[0]);
         }
         const to = utils.lastToken(reference, '/');
+        type = to;
         relationShips.push(new RelationShip(schemaName, to, name, constants.RELATIONSHIP_USE));
       } else if (type === 'array') {
         type = 'array[] of ';
