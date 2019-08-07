@@ -9,6 +9,9 @@ function generateEnum(details) {
 
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
+  if (property.description) {
+    js.description = property.description;
+  }
 
   if (property.type === 'enum') {
     js.type = 'string';
@@ -78,6 +81,7 @@ function generate(schemas) {
       const result = generateSchema(schema, listOfUsedSchemas);
       if (firstProperty) {
         js.title = schemaIndex;
+        js.description = schema.description;
         js.type = 'object';
         js.properties = result.js;
         js.required = result.required;
@@ -86,6 +90,7 @@ function generate(schemas) {
       } else {
         js.definitions[schemaIndex] = {};
         const definition = js.definitions[schemaIndex];
+        js.description = schema.description;
         definition.type = 'object';
         definition.properties = result.js;
         definition.required = result.required;
