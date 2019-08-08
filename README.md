@@ -19,11 +19,12 @@ Always run the script from the directory in which the yaml file are.
 Usage: index [options] <inputfile>
 
 Options:
-  -V, --version                    Output the version number
-  -p, --plantuml <plantuml file>   The plantuml file
-  -m, --markdown <output file>     The output file for markdown
-  -v, --verbose                    Show verbose debug output
-  -h, --help                       Output usage information
+  -V, --version                       Output the version number
+  -p, --plantuml <plantuml file>      The plantuml file
+  -m, --markdown <markdown file>      The output file for markdown
+  -j, --jsonschema <jsonschema file>  Transform to json schema
+  -v, --verbose                       Show verbose debug output
+  -h, --help                          Output usage information
 ```
 
 ## Example
