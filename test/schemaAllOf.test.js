@@ -17,8 +17,21 @@ function sizeOfArray(array) {
   }
   return count;
 }
+let sandbox = null;
 
 describe('schemas - parseSchemas - test inheritence', () => {
+  // Mock the properties
+  const mockedRelationShips = [];
+  const mockedReferencedFiles = [];
+  const mockedProperties = [new Property('fake', 'string')];
+  const propertiesResponse = [mockedProperties, mockedRelationShips, mockedReferencedFiles];
+
+  beforeEach(async () => {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(async () => {
+    sandbox.restore();
+  });
   // mock the schema
   const mockedSchemas = {};
   const mockedChild = {};
@@ -42,37 +55,33 @@ describe('schemas - parseSchemas - test inheritence', () => {
 
   mockedSchemas.child = mockedChild;
 
-  console.log(`mockedSchema: ${util.inspect(mockedSchemas, { showHidden: false, depth: null })}`);
-
-  // Mock the properties
-  const mockedRelationShips = [];
-  const mockedReferencedFiles = [];
-  const mockedProperties = [new Property('fake', 'string')];
-  const propertiesResponse = [mockedProperties, mockedRelationShips, mockedReferencedFiles];
-  const propertyStub = sinon.stub(Property, 'parseProperties').returns(propertiesResponse);
-
   const verbose = true;
 
-  const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
-  // console.log(`arrayUnderTest: ${util.inspect(arrayUnderTest, { showHidden: false, depth: null })}`);
-
-  sinon.restore();
-
-  assert.isDefined(arrayUnderTest);
-  assert.equal(propertyStub.calledOnce, true);
-
-  assert.equal(arrayUnderTest.length, 2);
-
   it('should return 2 referencedfiles', () => {
+    sandbox.stub(Property, 'parseProperties').returns(propertiesResponse);
+
+    const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
+    assert.equal(arrayUnderTest.length, 2);
+    assert.isDefined(arrayUnderTest);
     assert.equal(arrayUnderTest[0].length, 0);
   });
   it('should return 1 parsedSchema', () => {
+    sandbox.stub(Property, 'parseProperties').returns(propertiesResponse);
+
+    const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
+    assert.isDefined(arrayUnderTest);
+    assert.equal(arrayUnderTest.length, 2);
     assert.equal(sizeOfArray(arrayUnderTest[1]), 1);
   });
 
   it('validate schema', () => {
+    sandbox.stub(Property, 'parseProperties').returns(propertiesResponse);
+
+    const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
+    assert.equal(arrayUnderTest.length, 2);
+    assert.isDefined(arrayUnderTest);
+
     const schema = arrayUnderTest[1].child;
-    // console.log(schema);
     assert.equal(schema.name, 'child');
     assert.equal(schema.description, 'Child information');
     assert.equal(schema.properties.length, mockedProperties.length);

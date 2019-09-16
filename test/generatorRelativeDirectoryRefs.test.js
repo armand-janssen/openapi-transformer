@@ -9,7 +9,6 @@ function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDesc
 }
 
 describe('openApiGenerator - loadYamlFile - one relationship - relative directory $ref between files', () => {
-
   const loadedSchemas =
     openApiGenerator.loadYamlFile('./test/resources/generatorRelativeDirectoryRefs/parentSchema.yaml', false);
 

@@ -7,6 +7,9 @@ const openApiGenerator = require('../src/index.js');
 
 describe('openApiGenerator - test plantUml transformer', () => {
   it('Test with no reference.', () => {
+    console.log(" ******************************************")
+    console.log(" ******************************************")
+    console.log(" ******************************************")
     const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/propertyNoRelationShipNoReferences.yaml', true);
     assert.isDefined(loadedSchemas);
 
@@ -22,6 +25,7 @@ describe('openApiGenerator - test plantUml transformer', () => {
     const result = plantUmlTransformer.generate(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyFiveRelationShipThreeReferencesUsingExtension.plantuml');
 
+    console.log('======== result: ' + result);
     expect(result).to.deep.equal(expectedResult.toString());
   });
 });

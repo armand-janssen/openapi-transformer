@@ -42,6 +42,8 @@ function loadYamlFile(file, verbose) {
       }
     }
   }
+  // clean allLoadedFiles (for testing)
+  allLoadedFiles.length = 0;
   return allParsedSchemas;
 }
 module.exports = { loadYamlFile };

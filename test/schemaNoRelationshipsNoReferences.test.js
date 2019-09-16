@@ -17,7 +17,22 @@ function sizeOfArray(array) {
   return count;
 }
 
+let sandbox = null;
+
 describe('schemas - parseSchemas - no relationships - no references to other files', () => {
+  // Mock the properties
+  const mockedRelationShips = [];
+  const mockedReferencedFiles = [];
+  const mockedProperties = [new Property('fake', 'string')];
+  const propertiesResponse = [mockedProperties, mockedRelationShips, mockedReferencedFiles];
+
+  beforeEach(async () => {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(async () => {
+    sandbox.restore();
+  });
+
   // mock the schema
   const mockedSchemas = {};
   const mockedOwner = {};
@@ -31,30 +46,24 @@ describe('schemas - parseSchemas - no relationships - no references to other fil
 
   mockedSchemas.owner = mockedOwner;
 
-  // Mock the properties
-  const mockedRelationShips = [];
-  const mockedReferencedFiles = [];
-  const mockedProperties = [new Property('fake', 'string')];
-  const propertiesResponse = [mockedProperties, mockedRelationShips, mockedReferencedFiles];
-  const propertyStub = sinon.stub(Property, 'parseProperties').returns(propertiesResponse);
-
   const verbose = false;
 
-  const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
-
-  sinon.restore();
-
-  assert.isDefined(arrayUnderTest);
-  assert.equal(propertyStub.calledOnce, true);
-
   it('response array contains subarrays', () => {
+    sandbox.stub(Property, 'parseProperties').returns(propertiesResponse);
+
+    const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
+    assert.isDefined(arrayUnderTest);
     assert.equal(arrayUnderTest.length, 2);
     assert.equal(arrayUnderTest[0].length, 0);
     assert.equal(sizeOfArray(arrayUnderTest[1]), 1);
   });
   it('validate schema', () => {
+    sandbox.stub(Property, 'parseProperties').returns(propertiesResponse);
+
+    const arrayUnderTest = Schema.parseSchemas(mockedSchemas, verbose);
+    assert.isDefined(arrayUnderTest);
+
     const schema = arrayUnderTest[1].owner;
-    // console.log(schema);
     assert.equal(schema.name, 'owner');
     assert.equal(schema.description, 'Owner information');
     assert.equal(schema.properties.length, mockedProperties.length);
