@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "owner",
+  "type": "object",
+  "properties": {
+    "child": {
+      "$ref": "#/definitions/child"
+    },
+    "family": {
+      "description": "family of the owner",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/partner/father/mother/child"
+      }
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "definitions": {
+    "partner": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "name of the partner",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "child": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "the name of the child",
+          "type": "string",
+          "maxLength": 30
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "parent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "the name of the Parent",
+          "type": "string",
+          "maxLength": 30
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "father": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "mother": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+}

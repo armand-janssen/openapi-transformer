@@ -1,0 +1,18 @@
+@startuml
+
+class owner {
+  name * : string[minLength : 1, maxLength : 30]
+  from * : date[pattern : yyyy-MM-dd]
+  to  : date[pattern : yyyy-MM-dd]
+  age * : integer[minimum : 15, maximum : 120, multipleOf : 1]
+  nicknames  : array[] of strings[minItems : 1, maxItems : 5, uniqueItems : true]
+  gender  : enum[male, female]
+  file1  : string [binary]
+  file2  : string [byte]
+  shoeSize  : integer
+  someDouble  : number[format : double, minimum : 15, maximum : 120]
+  {field} pipe  : string[pattern : ^(nl|NL|Nederland)$]
+  creation  : date-time[pattern : yyyy-MM-ddTHH:mm:ssZ]
+
+}
+@enduml

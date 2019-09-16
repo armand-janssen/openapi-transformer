@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "owner",
+  "description": "Owner information",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "the name of the owner",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "from": {
+      "description": "the date the owner, bought the vehicle",
+      "type": "string",
+      "format": "date",
+      "pattern": "yyyy-MM-dd"
+    },
+    "to": {
+      "description": "the date the owner, sold the vehicle\n",
+      "type": "string",
+      "format": "date",
+      "pattern": "yyyy-MM-dd"
+    },
+    "age": {
+      "description": "the age of the owner\n\nTODO\nHowto determine age?\n",
+      "type": "integer",
+      "minimum": 15,
+      "maximum": 120,
+      "multipleOf": 1
+    },
+    "nicknames": {
+      "description": "the nicknames of the owner",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/strings"
+      },
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "gender": {
+      "description": "the gender of the owner",
+      "type": "string",
+      "enum": [
+        "male",
+        "female"
+      ]
+    },
+    "file1": {
+      "type": "string [binary]"
+    },
+    "file2": {
+      "description": "the second file",
+      "type": "string"
+    },
+    "shoeSize": {
+      "type": "integer"
+    },
+    "someDouble": {
+      "type": "number",
+      "minimum": 15,
+      "maximum": 120
+    },
+    "pipe": {
+      "description": "Also a | here",
+      "type": "string",
+      "pattern": "^(nl|NL|Nederland)$"
+    },
+    "creation": {
+      "description": "the date and time the vehicle was created",
+      "type": "date-time",
+      "pattern": "yyyy-MM-ddTHH:mm:ssZ"
+    }
+  },
+  "required": [
+    "name",
+    "from",
+    "age"
+  ],
+  "additionalProperties": false,
+  "definitions": {}
+}

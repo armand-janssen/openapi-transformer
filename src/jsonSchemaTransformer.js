@@ -58,12 +58,14 @@ function generateSchema(schema, listOfUsedSchemas) {
   const js = {};
   const required = [];
 
-  schema.properties.forEach((property) => {
-    js[property.name] = generateProperty(property, listOfUsedSchemas);
-    if (property.required) {
-      required.push(property.name);
-    }
-  });
+  if (schema.properties) {
+    schema.properties.forEach((property) => {
+      js[property.name] = generateProperty(property, listOfUsedSchemas);
+      if (property.required) {
+        required.push(property.name);
+      }
+    });
+  }
 
   const result = {};
   result.js = js;

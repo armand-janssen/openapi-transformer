@@ -60,7 +60,7 @@ function generateProperty(property, generateExtraDetails) {
   uml += property.required ? '*' : '';
   uml += constants.colon;
   uml += property.type;
-  uml += constants.space;
+  // uml += constants.space;
   if (generateExtraDetails) {
     if (property.type === 'enum') {
       uml += generateDetails(property.details, true);

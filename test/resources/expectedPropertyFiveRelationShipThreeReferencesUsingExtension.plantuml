@@ -1,0 +1,39 @@
+@startuml
+
+class owner {
+  child  : child
+  family  : array[] of partner/father/mother/child
+
+}
+owner -- child  :  child
+owner *-- partner  :  family
+owner *-- father  :  family
+owner *-- mother  :  family
+owner *-- child  :  family
+
+class partner {
+  name  : string
+
+}
+
+class child {
+  name * : string
+
+}
+
+class parent {
+  name * : string
+
+}
+
+class father {
+  age  : integer
+
+}
+parent <|-- father
+
+class mother {
+
+}
+parent <|-- mother
+@enduml

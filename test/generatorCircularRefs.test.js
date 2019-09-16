@@ -9,8 +9,7 @@ function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDesc
 }
 
 describe('openApiGenerator - loadYamlFile - two relationships -  circular $refs between files', () => {
-
-  const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/generatorCircularRefs/componentA.yaml', false);
+  const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/generatorCircularRefs/componentA.yaml', true);
 
   assert.isDefined(loadedSchemas);
   it('Load two schema objects with circular reference.', () => {
