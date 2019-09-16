@@ -9,13 +9,26 @@ function generateEnum(details) {
 
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
+  let processDetails = true;
+
   if (property.description) {
     js.description = property.description;
   }
-
   if (property.type === 'enum') {
     js.type = 'string';
     js.enum = generateEnum(property.details);
+    processDetails = false;
+  } else if (property.type === 'integer') {
+    if (property.details) {
+      property.details.forEach((detail) => {
+        if (detail.name === 'format' && (detail.value === 'double' || detail.value === 'float')) {
+          js.type = 'number';
+          processDetails = false;
+        } else {
+          js[detail.name] = detail.value;
+        }
+      });
+    }
   } else if (property.type === 'string [byte]') {
     js.type = 'string';
   } else if (property.type === 'date') {
@@ -32,12 +45,11 @@ function generateProperty(property, listOfUsedSchemas) {
     } else {
       js.type = property.type;
     }
-
-    if (property.details) {
-      property.details.forEach((detail) => {
-        js[detail.name] = detail.value;
-      });
-    }
+  }
+  if (processDetails && property.details) {
+    property.details.forEach((detail) => {
+      js[detail.name] = detail.value;
+    });
   }
 
   return js;

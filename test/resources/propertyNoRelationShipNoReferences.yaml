@@ -5,7 +5,7 @@ components:
       description: Owner information
       type: object
       properties:
-        name: 
+        name:
           description: the name of the owner
           type: string
           minLength: 1
@@ -59,6 +59,8 @@ components:
         someDouble:
           type: integer
           format: double
+          minimum: 15
+          maximum: 120
         pipe:
           type: string
           pattern: '^(nl|NL|Nederland)$'
@@ -73,5 +75,4 @@ components:
         - name
         - from
         - age
-          
-      
+

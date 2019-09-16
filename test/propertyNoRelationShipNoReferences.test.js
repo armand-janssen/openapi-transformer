@@ -125,8 +125,10 @@ function assertPropertySomeDouble(property) {
   assert.equal(property.description, undefined);
   assert.equal(property.example, undefined);
 
-  assert.equal(property.details.length, 1);
+  assert.equal(property.details.length, 3);
   assertDetail(property.details[0], 'format', 'double');
+  assertDetail(property.details[1], 'minimum', '15');
+  assertDetail(property.details[2], 'maximum', '120');
 }
 function assertPropertyPipe(property) {
   assert.equal(property.name, 'pipe');
