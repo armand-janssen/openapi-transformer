@@ -18,16 +18,15 @@ function generateProperty(property, listOfUsedSchemas) {
     js.type = 'string';
     js.enum = generateEnum(property.details);
     processDetails = false;
-  } else if (property.type === 'integer') {
+  } else if (property.type === 'number') {
+    js.type = 'number';
     if (property.details) {
       property.details.forEach((detail) => {
-        if (detail.name === 'format' && (detail.value === 'double' || detail.value === 'float')) {
-          js.type = 'number';
-          processDetails = false;
-        } else {
+        if (detail.name !== 'format') {
           js[detail.name] = detail.value;
         }
       });
+      processDetails = false;
     }
   } else if (property.type === 'string [byte]') {
     js.type = 'string';

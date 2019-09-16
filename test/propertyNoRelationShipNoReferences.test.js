@@ -120,7 +120,7 @@ function assertPropertyShoeSize(property) {
 }
 function assertPropertySomeDouble(property) {
   assert.equal(property.name, 'someDouble');
-  assert.equal(property.type, 'integer');
+  assert.equal(property.type, 'number');
   assert.equal(property.required, false);
   assert.equal(property.description, undefined);
   assert.equal(property.example, undefined);

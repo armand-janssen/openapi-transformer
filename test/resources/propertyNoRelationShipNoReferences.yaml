@@ -57,7 +57,7 @@ components:
         shoeSize:
           type: integer
         someDouble:
-          type: integer
+          type: number
           format: double
           minimum: 15
           maximum: 120
