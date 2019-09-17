@@ -33,6 +33,8 @@ function generateProperty(property, listOfUsedSchemas) {
   } else if (property.type === 'date') {
     js.type = 'string';
     js.format = 'date';
+    js.pattern = '^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$';
+    processDetails = false;
   } else if (property.type.indexOf('array[] of ') > -1) {
     js.type = 'array';
     js.items = {};

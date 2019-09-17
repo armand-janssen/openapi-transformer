@@ -5,7 +5,7 @@ const jsonSchemaTransformer = require('../src/jsonSchemaTransformer');
 const openApiGenerator = require('../src/index.js');
 
 
-describe('openApiGenerator - test plantUml transformer', () => {
+describe('openApiGenerator - test json transformer', () => {
   it('Test with no reference.', () => {
     const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/propertyNoRelationShipNoReferences.yaml', true);
     assert.isDefined(loadedSchemas);

@@ -32,8 +32,7 @@ function assertPropertyFrom(property) {
   assert.equal(property.description, 'the date the owner, bought the vehicle');
   assert.equal(property.example, '2018-08-24');
 
-  assert.equal(property.details.length, 1);
-  assertDetail(property.details[0], 'pattern', 'yyyy-MM-dd');
+  assert.equal(property.details.length, 0);
 }
 function assertPropertyCreation(property) {
   assert.equal(property.name, 'creation');
@@ -42,8 +41,7 @@ function assertPropertyCreation(property) {
   assert.equal(property.description, 'the date and time the vehicle was created');
   assert.equal(property.example, '1985-04-12T23:20:50.52Z');
 
-  assert.equal(property.details.length, 1);
-  assertDetail(property.details[0], 'pattern', 'yyyy-MM-ddTHH:mm:ssZ');
+  assert.equal(property.details.length, 0);
 }
 function assertPropertyTo(property) {
   assert.equal(property.name, 'to');
@@ -52,8 +50,7 @@ function assertPropertyTo(property) {
   assert.equal(property.description, 'the date the owner, sold the vehicle\n');
   assert.equal(property.example, '2019-07-28');
 
-  assert.equal(property.details.length, 1);
-  assertDetail(property.details[0], 'pattern', 'yyyy-MM-dd');
+  assert.equal(property.details.length, 0);
 }
 function assertPropertyAge(property) {
   assert.equal(property.name, 'age');

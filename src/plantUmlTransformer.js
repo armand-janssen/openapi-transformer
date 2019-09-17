@@ -60,10 +60,17 @@ function generateProperty(property, generateExtraDetails) {
   uml += property.required ? '*' : '';
   uml += constants.colon;
   uml += property.type;
-  // uml += constants.space;
+
   if (generateExtraDetails) {
+    console.log('AJA', (property.type === 'string' && property.format === 'date'), JSON.stringify(property));
     if (property.type === 'enum') {
       uml += generateDetails(property.details, true);
+    } else if (property.type === 'date') {
+      uml += generateDetails(property.details, false);
+      uml += generateDetails([{ name: 'pattern', value: 'yyyy-MM-dd' }], false);
+    } else if (property.type === 'date-time') {
+      uml += generateDetails(property.details, false);
+      uml += generateDetails([{ name: 'pattern', value: 'yyyy-MM-ddTHH:mm:ssZ' }], false);
     } else {
       uml += generateDetails(property.details, false);
     }

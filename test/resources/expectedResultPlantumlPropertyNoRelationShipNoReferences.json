@@ -14,13 +14,13 @@
       "description": "the date the owner, bought the vehicle",
       "type": "string",
       "format": "date",
-      "pattern": "yyyy-MM-dd"
+      "pattern": "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
     },
     "to": {
       "description": "the date the owner, sold the vehicle\n",
       "type": "string",
       "format": "date",
-      "pattern": "yyyy-MM-dd"
+      "pattern": "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
     },
     "age": {
       "description": "the age of the owner\n\nTODO\nHowto determine age?\n",
@@ -69,8 +69,7 @@
     },
     "creation": {
       "description": "the date and time the vehicle was created",
-      "type": "date-time",
-      "pattern": "yyyy-MM-ddTHH:mm:ssZ"
+      "type": "date-time"
     }
   },
   "required": [
