@@ -62,7 +62,6 @@ function generateProperty(property, generateExtraDetails) {
   uml += property.type;
 
   if (generateExtraDetails) {
-    console.log('AJA', (property.type === 'string' && property.format === 'date'), JSON.stringify(property));
     if (property.type === 'enum') {
       uml += generateDetails(property.details, true);
     } else if (property.type === 'date') {
