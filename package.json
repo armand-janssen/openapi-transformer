@@ -10,7 +10,9 @@
     "coverage": "jest --coverage",
     "lint": "eslint . --ignore-pattern node_modules/",
     "lintfix": "eslint . --fix",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls"
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "openapi",
@@ -28,7 +30,8 @@
     "nyc": "^15.0.0",
     "sinon": "^7.5.0",
     "util": "^0.12.1",
-    "yaml": "^1.7.2"
+    "yaml": "^1.7.2",
+    "snyk": "^1.316.1"
   },
   "bin": {
     "openapi-transformer": "src/cli.js"
@@ -46,5 +49,6 @@
   },
   "jest": {
     "coverageDirectory": "<rootDir>/tests/coverage"
-  }
+  },
+  "snyk": true
 }
