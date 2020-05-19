@@ -77,7 +77,7 @@ function generateSchema(schema, listOfUsedSchemas) {
 
 function generate(schemas) {
   const js = {};
-  js.$schema = 'http://json-schema.org/schema#';
+  js.$schema = 'http://json-schema.org/draft-07/schema#';
 
   // used for rendering references easy and correctly
   const listOfUsedSchemas = [];

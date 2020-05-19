@@ -13,7 +13,7 @@ describe('openApiGenerator - test json transformer', () => {
     const result = jsonSchemaTransformer.generate(loadedSchemas, true);
     const expectedResult = fs.readFileSync('./test/resources/expectedResultPlantumlPropertyNoRelationShipNoReferences.json');
 
-    expect(result).to.deep.equal(expectedResult.toString());
+    expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
   });
   it('Test with references.', () => {
     const loadedSchemas = openApiGenerator.loadYamlFile('./test/resources/propertyFiveRelationShipThreeReferencesUsingExtension.test.yaml', true);
@@ -22,6 +22,6 @@ describe('openApiGenerator - test json transformer', () => {
     const result = jsonSchemaTransformer.generate(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyFiveRelationShipThreeReferencesUsingExtension.json');
 
-    expect(result).to.deep.equal(expectedResult.toString());
+    expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
   });
 });
