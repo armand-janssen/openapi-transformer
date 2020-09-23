@@ -76,7 +76,22 @@ function assertPropertyNicknames(property) {
   assertDetail(property.details[1], 'maxItems', '5');
   assertDetail(property.details[2], 'uniqueItems', true);
 }
+function assertPropertyAliases(property) {
+  assert.equal(property.name, 'aliases');
+  assert.equal(property.type, 'array[] of strings');
+  assert.equal(property.required, false);
+  assert.equal(property.description, 'the aliases of the owner');
+  assert.equal(property.example, undefined);
 
+  assert.equal(property.details.length, 7);
+  assertDetail(property.details[0], 'deprecated', true);
+  assertDetail(property.details[1], 'nullable', true);
+  assertDetail(property.details[2], 'readOnly', true);
+  assertDetail(property.details[3], 'writeOnly', true);
+  assertDetail(property.details[4], 'minItems', '2');
+  assertDetail(property.details[5], 'maxItems', '2');
+  assertDetail(property.details[6], 'uniqueItems', true);
+}
 function assertPropertyGender(property) {
   assert.equal(property.name, 'gender');
   assert.equal(property.type, 'enum');
@@ -149,7 +164,7 @@ describe('properties - parseProperties - no relationships - no references to oth
   assert.isDefined(arrayUnderTest);
   it('Reponse is array containing sub-arrays of which only first one contains data', () => {
     assert.equal(arrayUnderTest.length, 3);
-    assert.equal(arrayUnderTest[0].length, 12);
+    assert.equal(arrayUnderTest[0].length, 13);
     assert.equal(arrayUnderTest[1].length, 0);
     assert.equal(arrayUnderTest[2].length, 0);
   });
@@ -168,25 +183,28 @@ describe('properties - parseProperties - no relationships - no references to oth
   it('Check property: nicknames', () => {
     assertPropertyNicknames(arrayUnderTest[0][4]);
   });
+  it('Check property: aliases', () => {
+    assertPropertyAliases(arrayUnderTest[0][5]);
+  });
   it('Check property: gender', () => {
-    assertPropertyGender(arrayUnderTest[0][5]);
+    assertPropertyGender(arrayUnderTest[0][6]);
   });
   it('Check property: file1', () => {
-    assertPropertyFile1(arrayUnderTest[0][6]);
+    assertPropertyFile1(arrayUnderTest[0][7]);
   });
   it('Check property: file2', () => {
-    assertPropertyFile2(arrayUnderTest[0][7]);
+    assertPropertyFile2(arrayUnderTest[0][8]);
   });
   it('Check property: shoeSize', () => {
-    assertPropertyShoeSize(arrayUnderTest[0][8]);
+    assertPropertyShoeSize(arrayUnderTest[0][9]);
   });
   it('Check property: someDouble', () => {
-    assertPropertySomeDouble(arrayUnderTest[0][9]);
+    assertPropertySomeDouble(arrayUnderTest[0][10]);
   });
   it('Check property: pipe', () => {
-    assertPropertyPipe(arrayUnderTest[0][10]);
+    assertPropertyPipe(arrayUnderTest[0][11]);
   });
   it('Check property: assertPropertyCreation', () => {
-    assertPropertyCreation(arrayUnderTest[0][11]);
+    assertPropertyCreation(arrayUnderTest[0][12]);
   });
 });

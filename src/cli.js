@@ -27,7 +27,7 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
 
   if (verbose) console.log('Reading openAPI...');
   (async () => {
-    const allParsedSchemas = openApiGenerator.loadYamlFile(program.args[0], verbose);
+    const allParsedSchemas = await openApiGenerator.loadYamlFile(program.args[0], verbose);
 
     if (program.plantuml !== undefined) {
       if (verbose) console.log('Writing plantuml...');

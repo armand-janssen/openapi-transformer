@@ -39,6 +39,20 @@
       "maxItems": 5,
       "uniqueItems": true
     },
+    "aliases": {
+      "deprecated": true,
+      "nullable": true,
+      "readOnly": true,
+      "writeOnly": true,
+      "description": "the aliases of the owner",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true
+    },
     "gender": {
       "description": "the gender of the owner",
       "type": "string",

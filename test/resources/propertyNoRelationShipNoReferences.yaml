@@ -41,6 +41,18 @@ components:
           uniqueItems: true
           items:
             type: string
+        aliases:
+          description: the aliases of the owner
+          deprecated: true
+          nullable: true
+          readOnly: true
+          writeOnly: true
+          type: array
+          minItems: 2
+          maxItems: 2
+          uniqueItems: true
+          items:
+            type: string
         gender:
           description: the gender of the owner
           type: string
@@ -75,4 +87,3 @@ components:
         - name
         - from
         - age
-

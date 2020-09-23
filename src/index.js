@@ -79,15 +79,14 @@ async function loadYamlFile(fileOrUrl, verbose) {
       utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
       if (referencedFiles !== undefined && referencedFiles.length > 0) {
-        for (const referencedFileIndex in referencedFiles) {
-          const referencedParsedSchemas = loadYamlFile(`${basePath}/${referencedFiles[referencedFileIndex]}`, verbose);
+        referencedFiles.forEach(async (referencedFile) => {
+          const referencedParsedSchemas = await loadYamlFile(`${basePath}/${referencedFile}`, verbose);
 
           utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
-        }
+        });
       }
     }
   }
-
   // clean allLoadedFiles (for testing)
   allLoadedFiles.length = 0;
   return allParsedSchemas;
