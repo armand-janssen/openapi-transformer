@@ -66,18 +66,24 @@ async function loadYamlFile(fileOrUrl, verbose) {
   allLoadedFiles.push(fileOrUrl);
   if (verbose) console.log(`@@@@@@@@@@@@@@@@ loaded files :: ${allLoadedFiles}`);
 
-  if (myYaml !== undefined && myYaml.components !== undefined && myYaml.components.schemas !== undefined) {
-    const { schemas } = myYaml.components;
-    const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose);
+  if (myYaml !== undefined) {
+    if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined) ||
+        myYaml.definitions !== undefined) {
+      let { schemas } = myYaml.components || {};
+      if (!schemas) {
+        schemas = myYaml.definitions;
+      }
 
+      const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose);
 
-    utils.mergeObjects(parsedSchemas, allParsedSchemas);
+      utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
-    if (referencedFiles !== undefined && referencedFiles.length > 0) {
-      for (const referencedFileIndex in referencedFiles) {
-        const referencedParsedSchemas = loadYamlFile(`${basePath}/${referencedFiles[referencedFileIndex]}`, verbose);
+      if (referencedFiles !== undefined && referencedFiles.length > 0) {
+        for (const referencedFileIndex in referencedFiles) {
+          const referencedParsedSchemas = loadYamlFile(`${basePath}/${referencedFiles[referencedFileIndex]}`, verbose);
 
-        utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
+          utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
+        }
       }
     }
   }
