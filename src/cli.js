@@ -26,30 +26,32 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
   const { verbose } = program;
 
   if (verbose) console.log('Reading openAPI...');
-  const allParsedSchemas = openApiGenerator.loadYamlFile(program.args[0], verbose);
+  (async () => {
+    const allParsedSchemas = openApiGenerator.loadYamlFile(program.args[0], verbose);
 
-  if (program.plantuml !== undefined) {
-    if (verbose) console.log('Writing plantuml...');
-    let uml = '';
-    if (program.details === undefined) {
-      uml = plantUmlTransformer.generate(allParsedSchemas, false);
-    } else {
-      uml = plantUmlTransformer.generate(allParsedSchemas, true);
+    if (program.plantuml !== undefined) {
+      if (verbose) console.log('Writing plantuml...');
+      let uml = '';
+      if (program.details === undefined) {
+        uml = plantUmlTransformer.generate(allParsedSchemas, false);
+      } else {
+        uml = plantUmlTransformer.generate(allParsedSchemas, true);
+      }
+      fs.writeFileSync(program.plantuml, uml, 'utf8');
     }
-    fs.writeFileSync(program.plantuml, uml, 'utf8');
-  }
 
-  if (program.markdown !== undefined) {
-    if (verbose) console.log('Writing markdown...');
-    const md = markdownTransformer.generate(allParsedSchemas);
-    fs.writeFileSync(program.markdown, md, 'utf8');
-  }
+    if (program.markdown !== undefined) {
+      if (verbose) console.log('Writing markdown...');
+      const md = markdownTransformer.generate(allParsedSchemas);
+      fs.writeFileSync(program.markdown, md, 'utf8');
+    }
 
-  if (program.jsonschema !== undefined) {
-    if (verbose) console.log('Writing JSON Schema...');
-    const js = jsonSchemaTransformer.generate(allParsedSchemas);
-    fs.writeFileSync(program.jsonschema, js, 'utf8');
-  }
+    if (program.jsonschema !== undefined) {
+      if (verbose) console.log('Writing JSON Schema...');
+      const js = jsonSchemaTransformer.generate(allParsedSchemas);
+      fs.writeFileSync(program.jsonschema, js, 'utf8');
+    }
 
-  if (verbose) console.log('Finished rendering documentation!');
+    if (verbose) console.log('Finished rendering documentation!');
+  })();
 }
