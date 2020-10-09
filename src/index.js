@@ -50,11 +50,7 @@ async function loadYamlFile(fileOrUrl, verbose) {
     basePath = fileOrUrl;
     if (verbose) console.log(`**************** base http path :: ${basePath}`);
     const response = await loadUrl(fileOrUrl);
-    if (response.body) {
-      loadedFile = response.body;
-    } else {
-      throw response;
-    }
+    loadedFile = response.body;
   } else {
     // determine base to resolve other file references from
     basePath = path.dirname(fileOrUrl);
@@ -66,25 +62,23 @@ async function loadYamlFile(fileOrUrl, verbose) {
   allLoadedFiles.push(fileOrUrl);
   if (verbose) console.log(`@@@@@@@@@@@@@@@@ loaded files :: ${allLoadedFiles}`);
 
-  if (myYaml !== undefined) {
-    if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined) ||
-        myYaml.definitions !== undefined) {
-      let { schemas } = myYaml.components || {};
-      if (!schemas) {
-        schemas = myYaml.definitions;
-      }
+  if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined) ||
+      myYaml.definitions !== undefined) {
+    let { schemas } = myYaml.components || {};
+    if (!schemas) {
+      schemas = myYaml.definitions;
+    }
 
-      const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose);
+    const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose);
 
-      utils.mergeObjects(parsedSchemas, allParsedSchemas);
+    utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
-      if (referencedFiles !== undefined && referencedFiles.length > 0) {
-        referencedFiles.forEach(async (referencedFile) => {
-          const referencedParsedSchemas = await loadYamlFile(`${basePath}/${referencedFile}`, verbose);
+    if (referencedFiles !== undefined && referencedFiles.length > 0) {
+      referencedFiles.forEach(async (referencedFile) => {
+        const referencedParsedSchemas = await loadYamlFile(`${basePath}/${referencedFile}`, verbose);
 
-          utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
-        });
-      }
+        utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
+      });
     }
   }
   // clean allLoadedFiles (for testing)

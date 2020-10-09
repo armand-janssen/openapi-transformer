@@ -11,7 +11,7 @@ const openApiGenerator = require('./index.js');
 
 program
   .version(version)
-  .usage('[options] <inputfile>')
+  .usage('[options] <inputFileOrUrl>')
   .description('At least 1 output type must be selected: plantuml or markdown!')
   .option('-d, --details', 'Show extra attribute details')
   .option('-p, --plantuml <plantuml file>', 'Transform to plantuml')
