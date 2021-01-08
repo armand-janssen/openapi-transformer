@@ -6,11 +6,12 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/armand-janssen/openapi-transformer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/armand-janssen/openapi-transformer?targetFile=package.json)
 
-This tool creates a [PlantUML Class Diagram](http://plantuml.com/class-diagram) or Markdown (Optimized for [Showdown](http://showdownjs.com)) from a **OpenApi 3 Yaml** specification
+This tool creates one or more of the following from a **Swagger 2** or **OpenApi 3** specification -
+* Markdown (Optimized for [Showdown](http://showdownjs.com))
+* [PlantUML Class Diagram](http://plantuml.com/class-diagram)
 
 # Requirements
-- OpenAPI 3.0.2
-- OpenAPI specification should be in **YAML**
+- Swagger 2 or OpenAPI 3+ Specification
 - [NodeJS](http://nodejs.org)
 
 # Usage
