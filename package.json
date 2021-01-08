@@ -28,7 +28,7 @@
     "nyc": "^15.0.1",
     "sinon": "^7.5.0",
     "util": "^0.12.2",
-    "yaml": "^1.8.0"
+    "yaml": "^1.10.0"
   },
   "bin": {
     "openapi-transformer": "src/cli.js"
