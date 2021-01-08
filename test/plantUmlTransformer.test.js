@@ -7,9 +7,6 @@ const openApiGenerator = require('../src/index.js');
 
 describe('openApiGenerator - test plantUml transformer', () => {
   it('Test with no reference.', async () => {
-    console.log(" ******************************************")
-    console.log(" ******************************************")
-    console.log(" ******************************************")
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyNoRelationShipNoReferences.yaml', true);
     assert.isDefined(loadedSchemas);
 

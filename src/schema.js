@@ -30,12 +30,12 @@ class Schema {
       if (verbose) console.log(`\n\n############################### schema name :: ${title} ###############################`);
 
       if (schema.$ref !== undefined) {
-        if (verbose) console.log(`***************** found ref :: ${schema.$ref}`);
+        if (verbose) console.log(`found ref :: ${schema.$ref}`);
 
         const reference = schema.$ref;
         const referencedFile = reference.match('^.*ya?ml');
         if (referencedFile != null && referencedFile.length === 1 && !allReferencedFiles.includes(referencedFile[0])) {
-          if (verbose) console.log(`**************** matched schema $ref [${referencedFile}]`);
+          if (verbose) console.log(`matched schema $ref [${referencedFile}]`);
           allReferencedFiles.push(referencedFile[0]);
         }
       } else if (schema.allOf !== undefined) {
@@ -51,13 +51,13 @@ class Schema {
 
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
-      } else if (verbose) console.log(`!!!!!!!!!!!!!!!! unparseable schema definition :: ${JSON.stringify(schema)}`);
+      } else if (verbose) console.log(`unparseable schema definition :: ${JSON.stringify(schema)}`);
     }
     return [allReferencedFiles, allParsedSchemas];
   }
 
   static processInheritance(schema, schemaIndex, allOf, verbose) {
-    if (verbose) console.log(`***************** schemaIndex :: ${schemaIndex}`);
+    if (verbose) console.log(`schemaIndex :: ${schemaIndex}`);
     const parsedSchemas = {};
     let parent;
     const allReferencedFiles = [];
@@ -72,24 +72,23 @@ class Schema {
     for (const attributeIndex in allOf) {
       const attribute = allOf[attributeIndex];
 
-      if (verbose) console.log('********************************************************************');
-      if (verbose) console.log(`***************** attribute: ${util.inspect(attribute, { showHidden: false, depth: null })}`);
+      if (verbose) console.log(`attribute: ${util.inspect(attribute, { showHidden: false, depth: null })}`);
 
       if (attribute.$ref !== undefined) {
         parent = utils.lastToken(attribute.$ref, '/');
-        if (verbose) console.log(`***************** parent :: ${parent}`);
+        if (verbose) console.log(`parent :: ${parent}`);
       }
 
       if (attribute.type !== undefined && attribute.type === 'object' && attribute.properties !== undefined) {
-        if (verbose) console.log(`***************** type :: ${attribute.type}`);
-        if (verbose) console.log(`***************** type.properties :: ${attribute.properties}`);
+        if (verbose) console.log(`type :: ${attribute.type}`);
+        if (verbose) console.log(`type.properties :: ${attribute.properties}`);
 
         [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required, schemaIndex, verbose);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       }
     }
     if (parsedSchemas[schemaIndex] === undefined) {
-      if (verbose) console.log(`***************** creating schema :: ${schemaIndex}`);
+      if (verbose) console.log(`creating schema :: ${schemaIndex}`);
 
       parsedSchemas[schemaIndex] = new Schema(schema.title, schemaIndex, parsedProperties, description, relationShips, parent);
     }

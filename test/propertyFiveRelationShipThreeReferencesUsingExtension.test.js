@@ -56,24 +56,16 @@ describe('properties - parseProperties - two relationships - one references to o
     assertRelationShip(arrayUnderTest[1][0], 'owner', 'child', 'child', 'use');
   });
   it('Check relationship: partner', () => {
-    // const relationShip = arrayUnderTest[1][1];
-    // assert.equal(relationShip, ' *-- partner : family');
     assertRelationShip(arrayUnderTest[1][1], 'owner', 'partner', 'family', 'aggregation');
   });
 
   it('Check relationship: father', () => {
-    // const relationShip = arrayUnderTest[1][2];
-    // assert.equal(relationShip, ' *-- father : family');
     assertRelationShip(arrayUnderTest[1][2], 'owner', 'father', 'family', 'aggregation');
   });
   it('Check relationship: mother', () => {
-    // const relationShip = arrayUnderTest[1][3];
-    // assert.equal(relationShip, ' *-- mother : family');
     assertRelationShip(arrayUnderTest[1][3], 'owner', 'mother', 'family', 'aggregation');
   });
   it('Check relationship: child', () => {
-    // const relationShip = arrayUnderTest[1][4];
-    // assert.equal(relationShip, ' *-- child : family');
     assertRelationShip(arrayUnderTest[1][4], 'owner', 'child', 'family', 'aggregation');
   });
 

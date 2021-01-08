@@ -67,7 +67,7 @@ class Property {
       let { type } = property;
       const { description } = property;
       const { example } = property;
-      if (verbose) console.log(`***************** processing property :: [${name}] of type ::  [${type}]`);
+      if (verbose) console.log(`processing property :: [${name}] of type ::  [${type}]`);
 
       if (type == null && property.$ref != null) {
         // reference to other object, maybe in other file

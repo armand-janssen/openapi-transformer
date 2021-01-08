@@ -37,30 +37,30 @@ async function loadUrl(url) {
 
 async function loadYamlFile(fileOrUrl, verbose) {
   if (allLoadedFiles.includes(fileOrUrl)) {
-    if (verbose) console.log(`@@@@@@@@@@@@@@@@ already loaded :: ${fileOrUrl}; skipping`);
+    if (verbose) console.log(`already loaded :: ${fileOrUrl}; skipping`);
     return [];
   }
 
-  if (verbose) console.log(`***************** processing fileOrUrl :: ${fileOrUrl}`);
+  if (verbose) console.log(`processing fileOrUrl :: ${fileOrUrl}`);
   const allParsedSchemas = {};
 
   let loadedFile;
   let basePath;
   if (fileOrUrl.startsWith('http')) {
     basePath = fileOrUrl;
-    if (verbose) console.log(`**************** base http path :: ${basePath}`);
+    if (verbose) console.log(`base http path :: ${basePath}`);
     const response = await loadUrl(fileOrUrl);
     loadedFile = response.body;
   } else {
     // determine base to resolve other file references from
     basePath = path.dirname(fileOrUrl);
-    if (verbose) console.log(`**************** base file path :: ${basePath}`);
+    if (verbose) console.log(`base file path :: ${basePath}`);
 
     loadedFile = fs.readFileSync(fileOrUrl, 'UTF-8');
   }
   const myYaml = YAML.parse(loadedFile);
   allLoadedFiles.push(fileOrUrl);
-  if (verbose) console.log(`@@@@@@@@@@@@@@@@ loaded files :: ${allLoadedFiles}`);
+  if (verbose) console.log(`loaded files :: ${allLoadedFiles}`);
 
   if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined) ||
       myYaml.definitions !== undefined) {
