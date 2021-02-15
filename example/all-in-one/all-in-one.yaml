@@ -1,0 +1,58 @@
+# een vehicle heeft auto en fiets als kids. 
+# bmw, volvo en volkswagen hebben auto als parent
+# vehicle heeft een array van owners (ref)
+# een owner heeft een array van relatives, welke kunnen bestaan uit child, parent, cousin (anyOf)
+# child, parent en cousin hebben person als parent
+
+# car heeft een array van details (allOf)
+# detailsType: rims, tyres
+
+components:
+  schemas:
+    allInOne:
+      title: All In One
+      description: This is a container containing an array of vehicles
+      type: object
+      properties:
+        vehicles:
+          type: array
+          minItems: 0
+          maxItems: 1000
+          items: 
+            anyOf:
+              - $ref: '#/components/schemas/vehicle'
+              - $ref: '#/components/schemas/car'
+      required:
+  
+    vehicle:
+      title: Vehicle
+      description: A vehicle
+      type: object
+      properties:
+        hasWheels: 
+          type: boolean
+
+    car:
+      title: Car
+      description: a Car
+      allOf:
+        - $ref: '#/components/schemas/vehicle'
+        - type: object
+          properties:
+            type:
+              description: Type of car
+              type: string
+              enum:
+                - suv
+                - hatchback
+                - sport
+                - sedan
+
+    bmw:
+      title: BMW
+      description: a BMW
+      allOf:
+        - $ref: '#/components/schemas/car'
+        - type: object
+
+    

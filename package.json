@@ -3,6 +3,10 @@
   "version": "0.7.0",
   "description": "Transforms OpenAPI Schemas to other formats like MarkDown and PlantUML",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/armand-janssen/openapi-transformer"
+  },
   "homepage": "https://github.com/armand-janssen/openapi-transformer",
   "scripts": {
     "test": "nyc mocha",
@@ -25,10 +29,10 @@
   "license": "GPL-3.0",
   "dependencies": {
     "commander": "^2.20.3",
-    "nyc": "^15.0.1",
+    "nyc": "^15.1.0",
     "sinon": "^7.5.0",
     "util": "^0.12.3",
-    "yaml": "^1.8.0"
+    "yaml": "^1.10.0"
   },
   "bin": {
     "openapi-transformer": "src/cli.js"

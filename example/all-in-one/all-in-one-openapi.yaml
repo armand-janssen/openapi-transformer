@@ -1,0 +1,23 @@
+openapi: 3.0.2
+info:
+  title: All-in-one schema
+  version: 0.1.0
+  description: This is a Dummy api, containing a schema with as much OpenAPI schema possibilities as defined in the spec.
+
+components:
+  schemas:
+    allInOne:
+      $ref: 'all-in-one.yaml#/components/schemas/allInOne'
+    
+
+
+
+paths:
+  /dummy:
+    get:
+      responses:
+        200:
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/allInOne"
