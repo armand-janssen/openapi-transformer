@@ -1,0 +1,21 @@
+components:
+  schemas:
+    owner:
+      title: Owner
+      description: Owner information
+      type: object
+      properties:
+        created:
+          description: a date-time example
+          type: string
+          format: date-time
+          example: "2021-11-24T23:59:59Z"
+        from:
+          description: the date the owner, bought the vehicle
+          type: string
+          format: date
+          example: "2018-08-24"
+      required:
+        - name
+        - from
+        - age
