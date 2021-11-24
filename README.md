@@ -13,7 +13,7 @@ This tool creates one or more of the following from a **Swagger 2** or **OpenApi
 # Requirements
 - Swagger 2 or OpenAPI 3+ Specification
 - [NodeJS](http://nodejs.org)
-
+testcommit
 # Usage
 Always run the script from the directory in which the yaml file are.
 ```
