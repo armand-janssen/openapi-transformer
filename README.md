@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/armand-janssen/openapi-transformer/badge.svg?branch=master)](https://coveralls.io/github/armand-janssen/openapi-transformer?branch=master)
 
-[![Build Status](https://travis-ci.org/armand-janssen/openapi-transformer.svg?branch=master)](https://travis-ci.org/armand-janssen/openapi-transformer)
+[![Node.js CI](https://github.com/armand-janssen/openapi-transformer/actions/workflows/node.js.yml/badge.svg)](https://github.com/armand-janssen/openapi-transformer/actions/workflows/node.js.yml)
 
 [![Known Vulnerabilities](https://snyk.io/test/github/armand-janssen/openapi-transformer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/armand-janssen/openapi-transformer?targetFile=package.json)
 
