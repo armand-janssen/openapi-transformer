@@ -15,12 +15,23 @@ describe('openApiGenerator - test json transformer', () => {
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
   });
+
   it('Test with references.', async () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyFiveRelationShipThreeReferencesUsingExtension.test.yaml', true);
     assert.isDefined(loadedSchemas);
 
     const result = jsonSchemaTransformer.generate(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyFiveRelationShipThreeReferencesUsingExtension.json');
+
+    expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
+  });
+
+  it('Test with datetime  property.', async () => {
+    const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyDateTime.yaml', true);
+    assert.isDefined(loadedSchemas);
+
+    const result = jsonSchemaTransformer.generate(loadedSchemas);
+    const expectedResult = fs.readFileSync('./test/resources/expectedPropertyDateTime.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
   });

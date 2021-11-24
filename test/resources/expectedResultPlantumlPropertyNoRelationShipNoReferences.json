@@ -69,7 +69,9 @@
     },
     "creation": {
       "description": "the date and time the vehicle was created",
-      "type": "date-time"
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$"
     }
   },
   "required": [

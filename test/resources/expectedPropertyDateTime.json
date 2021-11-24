@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "owner",
+  "description": "Owner information",
+  "type": "object",
+  "properties": {
+    "created": {
+      "description": "a date-time example",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$"
+    },
+    "from": {
+      "description": "the date the owner, bought the vehicle",
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
+    }
+  },
+  "required": [
+    "from"
+  ],
+  "additionalProperties": false,
+  "definitions": {}
+}
