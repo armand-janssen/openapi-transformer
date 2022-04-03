@@ -8,7 +8,7 @@ function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDesc
   assert.equal(relationShip.type, expectedType);
 }
 
-describe('openApiGenerator - loadYamlFile - one relationship - transitive $refs from child through parent to another child', async () => {
+describe('openApiGenerator - loadYamlFile - one relationship - transitive $refs from child through parent to another child', () => {
   it('Load two schema objects from a parent reference file.', async () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/generatorTransitiveRefs/parentSchema.yaml', false);
 
