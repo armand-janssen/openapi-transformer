@@ -2,7 +2,7 @@ const { assert, expect } = require('chai');
 const fs = require('fs');
 const jsonSchemaTransformer = require('../src/jsonSchemaTransformer');
 
-const openApiGenerator = require('../src/index.js');
+const openApiGenerator = require('../src/index');
 
 
 describe('openApiGenerator - test json transformer', () => {

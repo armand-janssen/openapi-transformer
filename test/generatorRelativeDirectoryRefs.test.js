@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const openApiGenerator = require('../src/index.js');
+const openApiGenerator = require('../src/index');
 
 function assertRelationShip(relationShip, expectedFrom, expectedTo, expectedDescription, expectedType) {
   assert.equal(relationShip.from, expectedFrom);

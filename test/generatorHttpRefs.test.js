@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const openApiGenerator = require('../src/index.js');
+const openApiGenerator = require('../src/index');
 
 describe('openApiGenerator - loadYamlFile - HTTPS - Petstore - YAML', () => {
   it('Load six schema objects from HTTPS.', async () => {
