@@ -67,6 +67,28 @@ function mockWheelsProperty() {
   return new Property(name, type, required, details, description, example);
 }
 
+function mockBuyDateProperty() {
+  const name = 'BuyDate';
+  const type = 'date';
+  const required = false;
+  const details = undefined;
+  const description = undefined;
+  const example = undefined; // should render default date
+
+  return new Property(name, type, required, details, description, example);
+}
+
+function mockSellDateProperty() {
+  const name = 'SellDate';
+  const type = 'date';
+  const required = false;
+  const details = undefined;
+  const description = undefined;
+  const example = '2019-01-31';
+
+  return new Property(name, type, required, details, description, example);
+}
+
 function mockPipeProperty() {
   const name = 'Pipe';
   const type = 'string';
@@ -81,7 +103,7 @@ function mockPipeProperty() {
 function mockVehicleSchema() {
   const title = 'Vehicle';
   const name = 'Vehicle';
-  const properties = [mockBrandProperty(), mockPipeProperty(), mockDoorsProperty(), mockWheelsProperty()];
+  const properties = [mockBrandProperty(), mockPipeProperty(), mockDoorsProperty(), mockWheelsProperty(), mockBuyDateProperty(), mockSellDateProperty()];
   const description = 'A Vehicle is a transport thingy. The pipe escaping is tested here |';
   const relationShips = [];
   const parent = '';

@@ -72,8 +72,13 @@ function generateProperty(property) {
     .replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
   markDownDescription = escapePipe(markDownDescription);
 
-  let markDownExample = property.example === undefined ? nbsp : property.example.toString()
-    .replace(/\n/g, '<br/>');
+  let markDownExample = nbsp;
+  if (property.type === 'date') {
+    markDownExample = property.example === undefined ? '2020-12-31' : property.example.toString().replace(/\n/g, '<br/>');
+  } else {
+    markDownExample = property.example === undefined ? nbsp : property.example.toString().replace(/\n/g, '<br/>');
+  }
+
   markDownExample = escapePipe(markDownExample);
 
   return firstRowSeperator + property.name
