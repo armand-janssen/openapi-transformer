@@ -1,6 +1,6 @@
 {
   "name": "openapi-transformer",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Transforms OpenAPI Schemas to other formats like MarkDown and PlantUML",
   "main": "index.js",
   "repository": {
