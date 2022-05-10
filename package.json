@@ -14,7 +14,7 @@
     "coverage": "jest --coverage",
     "lint": "eslint . --ignore-pattern node_modules/",
     "lintfix": "eslint . --fix",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "keywords": [
     "openapi",
@@ -49,6 +49,6 @@
     "mocha": "^9.1.3"
   },
   "jest": {
-    "coverageDirectory": "<rootDir>/tests/coverage"
+    "coverageDirectory": "<rootDir>/coverage"
   }
 }
