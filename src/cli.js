@@ -37,7 +37,7 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
     let parsedSchemas = _allParsedSchemas;
     
     if(program.root != null){
-      let depth = program.depth || 100;
+      let depth = program.depth || Infinity;
       parsedSchemas = filter.filterByMainSchema(_allParsedSchemas,program.root,depth);
     }
 
