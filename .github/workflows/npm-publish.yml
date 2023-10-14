@@ -23,9 +23,9 @@ jobs:
     - name: Bump version and push to GitHub
       run: |
         npm version patch  # Increment the version number (you can use "minor" or "major" instead of "patch" if needed)
-        git commit -am "Bump version for release"
         git config --global user.email "${{ secrets.email }}"
         git config --global user.name "Armand Janssen"
+        git commit -am "Bump version for release"
         git push
 
     - run: npm publish
