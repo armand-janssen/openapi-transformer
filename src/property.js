@@ -72,7 +72,7 @@ class Property {
       if (type == null && property.$ref != null) {
         // reference to other object, maybe in other file
         const reference = property.$ref;
-        const referencedFile = reference.match('^.*yaml');
+        const referencedFile = reference.match('^.*ya?ml');
 
         if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
           referencedFiles.push(referencedFile[0]);
@@ -100,7 +100,7 @@ class Property {
               type += objectName;
 
               // is it a reference to an external file?
-              const referencedFile = item.match('^.*yaml');
+              const referencedFile = item.match('^.*ya?ml');
               if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
                 referencedFiles.push(referencedFile[0]);
               }
@@ -120,7 +120,7 @@ class Property {
 
               type += objectName;
 
-              const referencedFile = reference.match('^.*yaml');
+              const referencedFile = reference.match('^.*ya?ml');
               if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
                 referencedFiles.push(referencedFile[0]);
               }

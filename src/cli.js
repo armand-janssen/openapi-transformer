@@ -53,5 +53,8 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
     }
 
     if (verbose) console.log('Finished rendering documentation!');
-  })();
+  })().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }

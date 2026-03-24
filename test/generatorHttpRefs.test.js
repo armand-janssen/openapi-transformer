@@ -32,7 +32,7 @@ describe('openApiGenerator - loadYamlFile - HTTP - 404', () => {
   it('Load error from HTTP.', async () => {
     try {
       await openApiGenerator.loadYamlFile('http://www.doesnotexist/swagger.json', true);
-      fail();
+      assert.fail('expected loadYamlFile to throw');
     } catch (error) {
       assert.isDefined(error);
       assert.equal(error.message, 'getaddrinfo ENOTFOUND www.doesnotexist');

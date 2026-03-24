@@ -11,6 +11,13 @@ const utils = require('./utils');
 
 const allLoadedFiles = [];
 
+function resolveReferencedPath(basePath, referencedFile) {
+  if (basePath.startsWith('http')) {
+    return new URL(referencedFile, basePath).href;
+  }
+  return path.join(basePath, referencedFile);
+}
+
 async function loadUrl(url) {
   return new Promise((resolve, reject) => {
     const httpLib = url.startsWith('https') ? https : http;
@@ -22,6 +29,11 @@ async function loadUrl(url) {
       });
 
       res.on('end', () => {
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          const snippet = data.length > 200 ? `${data.slice(0, 200)}…` : data;
+          reject(new Error(`HTTP ${res.statusCode} ${res.statusMessage || ''} for ${url}${snippet ? `: ${snippet}` : ''}`));
+          return;
+        }
         res.body = data;
         resolve(res);
       });
@@ -35,7 +47,11 @@ async function loadUrl(url) {
   });
 }
 
-async function loadYamlFile(fileOrUrl, verbose) {
+async function loadYamlFile(fileOrUrl, verbose, nested = false) {
+  if (!nested) {
+    allLoadedFiles.length = 0;
+  }
+
   if (allLoadedFiles.includes(fileOrUrl)) {
     if (verbose) console.log(`already loaded :: ${fileOrUrl}; skipping`);
     return [];
@@ -62,8 +78,8 @@ async function loadYamlFile(fileOrUrl, verbose) {
   allLoadedFiles.push(fileOrUrl);
   if (verbose) console.log(`loaded files :: ${allLoadedFiles}`);
 
-  if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined) ||
-      myYaml.definitions !== undefined) {
+  if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined)
+      || myYaml.definitions !== undefined) {
     let { schemas } = myYaml.components || {};
     if (!schemas) {
       schemas = myYaml.definitions;
@@ -74,15 +90,14 @@ async function loadYamlFile(fileOrUrl, verbose) {
     utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
     if (referencedFiles !== undefined && referencedFiles.length > 0) {
-      referencedFiles.forEach(async (referencedFile) => {
-        const referencedParsedSchemas = await loadYamlFile(`${basePath}/${referencedFile}`, verbose);
+      await Promise.all(referencedFiles.map(async (referencedFile) => {
+        const nextPath = resolveReferencedPath(basePath, referencedFile);
+        const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, true);
 
         utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
-      });
+      }));
     }
   }
-  // clean allLoadedFiles (for testing)
-  allLoadedFiles.length = 0;
   return allParsedSchemas;
 }
 module.exports.loadYamlFile = loadYamlFile;
