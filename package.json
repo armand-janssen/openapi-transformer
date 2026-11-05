@@ -26,7 +26,7 @@
     "plantuml"
   ],
   "author": "Armand Janssen",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "dependencies": {
     "commander": "^2.20.3",
     "nyc": "^15.1.0",
