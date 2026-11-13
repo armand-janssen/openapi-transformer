@@ -13,7 +13,10 @@ function resolveReferencedPath(basePath, referencedFile) {
   return basePath.startsWith('http') ? new URL(referencedFile, basePath).href : path.join(basePath, referencedFile);
 }
 
-async function loadUrl(url) {
+const MAX_REDIRECTS = 10;
+
+// Resolves to { url, body }: url is where the content came from after redirects, so references resolve against it.
+async function loadUrl(url, redirectsLeft = MAX_REDIRECTS) {
   return new Promise((resolve, reject) => {
     const httpLib = url.startsWith('https') ? https : http;
     const request = httpLib.request(url, (res) => {
@@ -24,13 +27,20 @@ async function loadUrl(url) {
       });
 
       res.on('end', () => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          if (redirectsLeft === 0) {
+            reject(new Error(`Too many redirects (more than ${MAX_REDIRECTS}) for ${url}`));
+            return;
+          }
+          resolve(loadUrl(new URL(res.headers.location, url).href, redirectsLeft - 1));
+          return;
+        }
         if (res.statusCode < 200 || res.statusCode >= 300) {
           const snippet = data.length > 200 ? `${data.slice(0, 200)}…` : data;
           reject(new Error(`HTTP ${res.statusCode} ${res.statusMessage || ''} for ${url}${snippet ? `: ${snippet}` : ''}`));
           return;
         }
-        res.body = data;
-        resolve(res);
+        resolve({ url, body: data });
       });
     });
 
@@ -56,9 +66,9 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
   let loadedFile;
   let basePath;
   if (fileOrUrl.startsWith('http')) {
-    basePath = fileOrUrl;
-    if (verbose) console.log(`base http path :: ${basePath}`);
     const response = await loadUrl(fileOrUrl);
+    basePath = response.url;
+    if (verbose) console.log(`base http path :: ${basePath}`);
     loadedFile = response.body;
   } else {
     // determine base to resolve other file references from
@@ -81,13 +91,13 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
 
     utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
-    if (referencedFiles !== undefined && referencedFiles.length > 0) {
-      await Promise.all(referencedFiles.map(async (referencedFile) => {
-        const nextPath = resolveReferencedPath(basePath, referencedFile);
-        const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, allLoadedFiles);
+    // sequential on purpose: schema order is first-seen (depth-first), whatever the response timing
+    for (const referencedFile of referencedFiles) {
+      const nextPath = resolveReferencedPath(basePath, referencedFile);
+      // eslint-disable-next-line no-await-in-loop
+      const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, allLoadedFiles);
 
-        utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
-      }));
+      utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
     }
   }
   return allParsedSchemas;

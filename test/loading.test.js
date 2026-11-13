@@ -16,6 +16,7 @@ const topologies = [
   ['relative directory', 'relative-dir/root.yaml', ['Root', 'Child', 'Common'], 13],
   ['transitive', 'transitive/root.yaml', ['Root', 'A', 'B'], 12],
   ['two-file cycle', 'cycle2/a.yaml', ['A', 'B'], 12],
+  ['shared reference', 'order/root.yaml', ['Root', 'A', 'D', 'B'], 12],
 ];
 
 describe('loading referenced files', function loadingTests() {
@@ -59,14 +60,48 @@ describe('loading referenced files', function loadingTests() {
       });
     });
 
-    it('current behaviour: a redirect is not followed, the run stops with the 301 and writes nothing', async () => {
-      server.respond('/moved.yaml', 301, '/same-dir/sibling.yaml');
-      const url = `${server.url}/moved.yaml`;
+    it('schema order is first-seen even when the first-referenced file responds last', async () => {
+      server.delay('/order/a.yaml', 300);
+      const result = await load(`${server.url}/order/root.yaml`);
+
+      assert.equal(result.code, 0, result.stderr);
+      assert.deepEqual(classes(result), ['Root', 'A', 'D', 'B']);
+    });
+
+    it('(story 16) a redirect is followed', async () => {
+      server.respond('/redirected.yaml', 301, '/same-dir/sibling.yaml');
+      const result = await load(`${server.url}/redirected.yaml`);
+
+      assert.equal(result.code, 0, result.stderr);
+      assert.deepEqual(classes(result), ['Sibling']);
+    });
+
+    it('(story 16) references in a redirected spec resolve relative to the final URL', async () => {
+      server.respond('/moved-root.yaml', 302, '/same-dir/root.yaml');
+      const result = await load(`${server.url}/moved-root.yaml`);
+
+      assert.equal(result.code, 0, result.stderr);
+      assert.deepEqual(classes(result), ['Root', 'Sibling']);
+    });
+
+    it('(story 16) a redirect loop stops the run with an error naming the URL', async () => {
+      server.respond('/loop.yaml', 302, '/loop.yaml');
+      const url = `${server.url}/loop.yaml`;
       const result = await load(url);
 
-      assert.equal(result.code, 1);
-      assert.include(result.stderr, 'HTTP 301');
+      assert.notEqual(result.code, 0);
       assert.include(result.stderr, url);
+      assert.include(result.stderr, 'redirect');
+      assert.deepEqual(result.files, {});
+    });
+
+    it('a connection failure stops the run with the URL', async () => {
+      const closed = await startServer(DIR);
+      await closed.close();
+      const result = await load(`${closed.url}/root.yaml`);
+
+      assert.notEqual(result.code, 0);
+      assert.include(result.stderr, 'ECONNREFUSED');
       assert.deepEqual(result.files, {});
     });
   });
@@ -86,12 +121,11 @@ describe('loading referenced files', function loadingTests() {
       assert.deepEqual(classes(result), ['Root', 'Other']);
     });
 
-    it('current behaviour: a reference to a local schema named "yamlThing" is read as a file and stops the run', async () => {
+    it('(story 21) a local schema whose name contains "yaml" is not read as a file', async () => {
       const result = await load(path.join(DIR, 'yaml-name/root.yaml'));
 
-      assert.equal(result.code, 1);
-      assert.include(result.stderr, 'ENOENT');
-      assert.deepEqual(result.files, {});
+      assert.equal(result.code, 0, result.stderr);
+      assert.deepEqual(classes(result), ['Root', 'yamlThing']);
     });
 
     it('current behaviour: an allOf parent in another file is not loaded', async () => {
@@ -103,21 +137,6 @@ describe('loading referenced files', function loadingTests() {
   });
 
   describe('known failures: correct behaviour', () => {
-    it.skip('(story 16) a redirect is followed', async () => {
-      server.respond('/redirected.yaml', 301, '/same-dir/sibling.yaml');
-      const result = await load(`${server.url}/redirected.yaml`);
-
-      assert.equal(result.code, 0, result.stderr);
-      assert.deepEqual(classes(result), ['Sibling']);
-    });
-
-    it.skip('(story 21) a local schema whose name contains "yaml" is not read as a file', async () => {
-      const result = await load(path.join(DIR, 'yaml-name/root.yaml'));
-
-      assert.equal(result.code, 0, result.stderr);
-      assert.deepEqual(classes(result), ['Root', 'yamlThing']);
-    });
-
     it.skip('(story 23) an allOf parent in another file is loaded', async () => {
       const result = await load(path.join(DIR, 'allof-parent/root.yaml'));
 
