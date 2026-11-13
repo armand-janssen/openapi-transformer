@@ -19,12 +19,13 @@ function generateProperty(property, listOfUsedSchemas) {
       });
       processDetails = false;
     }
-  } else if (property.type === 'string [byte]') {
+  } else if (property.type === 'string [byte]' || property.type === 'string [binary]') {
     js.type = 'string';
+    js.format = property.type.slice('string ['.length, -1);
   } else if (property.type === 'date') {
     js.type = 'string';
     js.format = 'date';
-    js.pattern = '^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$';
+    js.pattern = '^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$';
     processDetails = false;
   } else if (property.type === 'date-time') {
     js.type = 'string';
@@ -33,8 +34,11 @@ function generateProperty(property, listOfUsedSchemas) {
     processDetails = false;
   } else if (property.type.indexOf('array[] of ') > -1) {
     js.type = 'array';
-    js.items = {};
-    js.items.$ref = `#/definitions/${property.type.slice('11')}`;
+    const { items } = property;
+    const ref = (name) => ({ $ref: `#/definitions/${name}` });
+    if (items.type) js.items = { type: items.type };
+    else if (items.refs.length === 1) js.items = ref(items.refs[0]);
+    else js.items = { anyOf: items.refs.map(ref) };
   } else {
     const { type } = property;
     if (type && listOfUsedSchemas.includes(type)) {
@@ -101,7 +105,7 @@ function generate(schemas) {
       } else {
         js.definitions[schemaIndex] = {};
         const definition = js.definitions[schemaIndex];
-        js.description = schema.description;
+        definition.description = schema.description;
         definition.type = 'object';
         definition.properties = result.js;
         definition.required = result.required;

@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "owner",
+  "description": "Owner information",
   "type": "object",
   "properties": {
     "child": {
@@ -10,7 +11,20 @@
       "description": "family of the owner",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/partner/father/mother/child"
+        "anyOf": [
+          {
+            "$ref": "#/definitions/partner"
+          },
+          {
+            "$ref": "#/definitions/father"
+          },
+          {
+            "$ref": "#/definitions/mother"
+          },
+          {
+            "$ref": "#/definitions/child"
+          }
+        ]
       }
     }
   },
@@ -18,6 +32,7 @@
   "additionalProperties": false,
   "definitions": {
     "partner": {
+      "description": "partner of owner",
       "type": "object",
       "properties": {
         "name": {
@@ -29,6 +44,7 @@
       "additionalProperties": false
     },
     "child": {
+      "description": "Child information",
       "type": "object",
       "properties": {
         "name": {
@@ -43,6 +59,7 @@
       "additionalProperties": false
     },
     "parent": {
+      "description": "Parent information",
       "type": "object",
       "properties": {
         "name": {
