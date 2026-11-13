@@ -84,49 +84,35 @@ function generate(schemas) {
   js.$schema = 'http://json-schema.org/draft-07/schema#';
 
   // used for rendering references easy and correctly
-  const listOfUsedSchemas = [];
-  for (const schemaIndex in schemas) {
-    if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      listOfUsedSchemas.push(schemaIndex);
-    }
-  }
+  const listOfUsedSchemas = Object.keys(schemas);
 
-  let firstProperty = true;
-  for (const schemaIndex in schemas) {
-    if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      const schema = schemas[schemaIndex];
+  // fills the root or a definition: an enum, or an object with its properties
+  const fill = (target, schema) => {
+    if (schema.enumValues) {
+      if (schema.enumType) target.type = schema.enumType;
+      target.enum = schema.enumValues;
+    } else {
       const result = generateSchema(schema, listOfUsedSchemas);
-      if (firstProperty) {
-        js.title = schemaIndex;
-        js.description = schema.description;
-        if (schema.enumValues) {
-          // the first schema is the root, so a leading enum makes the whole document an enum
-          if (schema.enumType) js.type = schema.enumType;
-          js.enum = schema.enumValues;
-        } else {
-          js.type = 'object';
-          js.properties = result.js;
-          js.required = result.required;
-          js.additionalProperties = false;
-        }
-        js.definitions = {};
-      } else {
-        js.definitions[schemaIndex] = {};
-        const definition = js.definitions[schemaIndex];
-        definition.description = schema.description;
-        if (schema.enumValues) {
-          if (schema.enumType) definition.type = schema.enumType;
-          definition.enum = schema.enumValues;
-        } else {
-          definition.type = 'object';
-          definition.properties = result.js;
-          definition.required = result.required;
-          definition.additionalProperties = false;
-        }
-      }
-      firstProperty = false;
+      target.type = 'object';
+      target.properties = result.js;
+      target.required = result.required;
+      target.additionalProperties = false;
     }
-  }
+    return target;
+  };
+
+  listOfUsedSchemas.forEach((name, index) => {
+    const schema = schemas[name];
+    if (index === 0) {
+      // the first schema is the root, so a leading enum makes the whole document an enum
+      js.title = name;
+      js.description = schema.description;
+      fill(js, schema);
+      js.definitions = {};
+    } else {
+      js.definitions[name] = fill({ description: schema.description }, schema);
+    }
+  });
 
   return JSON.stringify(js, null, 2);
 }
