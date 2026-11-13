@@ -7,18 +7,20 @@ const Detail = require('./detail');
 const RelationShip = require('./relationship');
 
 class Property {
-  constructor(name, type, required, details, description, example) {
+  constructor(name, type, required, details, description, example, enumValues) {
     this.name = name;
     this.type = type;
     this.required = required;
     this.details = details;
     this.description = description;
     this.example = example;
+    this.enumValues = enumValues; // only set for enums; constraints stay in details
   }
 
   static parseDetails(property) {
     const details = [];
     let typeAfterDetailsParsing;
+    let enumValues;
 
     if (property.type === 'string') {
       if (property.minLength !== undefined) details.push(new Detail('minLength', property.minLength));
@@ -28,9 +30,7 @@ class Property {
       if (property.enum !== undefined) {
         typeAfterDetailsParsing = 'enum';
 
-        property.enum.forEach((value) => {
-          details.push(new Detail('enumvalue', value));
-        });
+        enumValues = property.enum;
       } else if (property.format === 'date') {
         typeAfterDetailsParsing = 'date';
       } else if (property.format === 'date-time') {
@@ -51,7 +51,7 @@ class Property {
       if (property.uniqueItems !== undefined) details.push(new Detail('uniqueItems', property.uniqueItems));
     }
 
-    return [typeAfterDetailsParsing, details];
+    return [typeAfterDetailsParsing, details, enumValues];
   }
 
   static parseProperties(properties, required, schemaName, verbose) {
@@ -129,12 +129,12 @@ class Property {
         }
       }
 
-      const [typeAfterDetailsParsing, details] = this.parseDetails(property);
+      const [typeAfterDetailsParsing, details, enumValues] = this.parseDetails(property);
 
       if (typeAfterDetailsParsing !== undefined) type = typeAfterDetailsParsing;
       const requiredProperty = (required === undefined ? undefined : required.includes(name));
 
-      parsedProperties.push(new Property(name, type, requiredProperty, details, description, example));
+      parsedProperties.push(new Property(name, type, requiredProperty, details, description, example, enumValues));
     }
     return [parsedProperties, relationShips, referencedFiles];
   }

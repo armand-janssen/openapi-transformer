@@ -6,6 +6,8 @@ const { ROOT, runCli, assertMatchesExpected } = require('./helpers');
 const examples = [
   'example/vehicle.yaml',
   'example/example-openapi.yaml',
+  'example/all-in-one/all-in-one.yaml',
+  'example/all-in-one/all-in-one-openapi.yaml',
 ];
 
 describe('CLI on the example specs', () => {
@@ -27,17 +29,6 @@ describe('CLI on the example specs', () => {
 
       assert.equal(result.code, 0, result.stderr);
       assertMatchesExpected(result.files['out.plantuml'], `examples/${name}-details.plantuml`);
-    });
-  });
-
-  // Current behaviour: the empty `required:` in the all-in-one specs crashes the loader with a TypeError on null.
-  ['all-in-one.yaml', 'all-in-one-openapi.yaml'].forEach((file) => {
-    it(`example/all-in-one/${file}: crashes and writes nothing`, async () => {
-      const result = await runCli([path.join(ROOT, 'example/all-in-one', file), '-p', 'out.plantuml', '-m', 'out.md', '-j', 'out.json']);
-
-      assert.equal(result.code, 1);
-      assert.include(result.stderr, "TypeError: Cannot read properties of null (reading 'includes')");
-      assert.deepEqual(result.files, {});
     });
   });
 });

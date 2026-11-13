@@ -49,20 +49,13 @@ describe('Transformer output per behaviour', () => {
     });
   });
 
-  // Current behaviour: an empty `required:` key parses as null and crashes the loader.
-  it('empty-required.yaml: crashes and writes nothing', async () => {
-    const result = await runCli([fixturePath('empty-required.yaml'), '-p', 'out.plantuml']);
-    assert.equal(result.code, 1);
-    assert.include(result.stderr, "TypeError: Cannot read properties of null (reading 'includes')");
-    assert.deepEqual(result.files, {});
-  });
 });
 
 // Known failures: each states the correct behaviour (user stories in the spec) and is pending until phase 2 fixes it.
 describe('Known failures', () => {
   const load = (file) => library.loadYamlFile(fixturePath(file));
 
-  it.skip('story 7: an empty required key does not crash the tool', async () => {
+  it('story 7: an empty required key does not crash the tool', async () => {
     const schemas = await load('empty-required.yaml');
     assert.property(schemas, 'Thing');
   });
@@ -89,22 +82,28 @@ describe('Known failures', () => {
     assert.include(json.definitions.Toy.description, 'A toy with a | pipe');
   });
 
-  it.skip('story 29: PlantUML enum details list only the enum values', async () => {
+  it('story 29: PlantUML enum details list only the enum values', async () => {
     const uml = plantUml.generate(await load('enums.yaml'), true);
-    assert.include(uml, 'withLength : enum[x, y]');
-    assert.include(uml, 'withPattern : enum[m, n]');
+    assert.include(uml, 'withLength  : enum[x, y]');
+    assert.include(uml, 'withPattern  : enum[m, n]');
+    assert.include(uml, 'withLength  : enum[x, y][minLength : 1, maxLength : 3]');
+    assert.include(uml, 'withPattern  : enum[m, n][pattern : ^[a-z]$]');
   });
 
-  it.skip('story 29: Markdown enum details list only the enum values', async () => {
+  it('story 29: Markdown enum details list only the enum values', async () => {
     const md = markdown.generate(await load('enums.yaml'));
     assert.include(md, '<ul><li>x</li><li>y</li></ul>');
     assert.include(md, '<ul><li>m</li><li>n</li></ul>');
+    assert.include(md, '<ul><li>minLength : 1</li><li>maxLength : 3</li></ul>');
+    assert.include(md, '<ul><li>pattern : ^[a-z]$</li></ul>');
   });
 
-  it.skip('story 29: JSON Schema enum lists contain only the enum values', async () => {
+  it('story 29: JSON Schema enum lists contain only the enum values', async () => {
     const json = JSON.parse(jsonSchema.generate(await load('enums.yaml')));
     assert.deepEqual(json.properties.withLength.enum, ['x', 'y']);
     assert.deepEqual(json.properties.withPattern.enum, ['m', 'n']);
+    assert.deepInclude(json.properties.withLength, { minLength: 1, maxLength: 3 });
+    assert.equal(json.properties.withPattern.pattern, '^[a-z]$');
   });
 
   it.skip('story 22: a schema with several inline allOf objects shows all their properties', async () => {

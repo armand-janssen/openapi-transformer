@@ -1,12 +1,4 @@
 
-function generateEnum(details) {
-  const array = [];
-  details.forEach((detail) => {
-    array.push(detail.value);
-  });
-  return array;
-}
-
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
   let processDetails = true;
@@ -16,8 +8,7 @@ function generateProperty(property, listOfUsedSchemas) {
   }
   if (property.type === 'enum') {
     js.type = 'string';
-    js.enum = generateEnum(property.details);
-    processDetails = false;
+    js.enum = property.enumValues;
   } else if (property.type === 'number') {
     js.type = 'number';
     if (property.details) {

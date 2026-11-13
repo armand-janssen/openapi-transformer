@@ -45,7 +45,7 @@ class Schema {
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       } else if (schema.type === 'object' || schema.properties !== undefined) {
         // parse properties of this schema
-        const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(schema.properties, schema.required, schemaIndex, verbose);
+        const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(schema.properties, schema.required || undefined, schemaIndex, verbose);
         if (allParsedSchemas[schemaIndex] === undefined) {
           allParsedSchemas[schemaIndex] = new Schema(title, schemaIndex, parsedProperties, description, relationShips, parent);
 
@@ -83,7 +83,7 @@ class Schema {
         if (verbose) console.log(`type :: ${attribute.type}`);
         if (verbose) console.log(`type.properties :: ${attribute.properties}`);
 
-        [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required, schemaIndex, verbose);
+        [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required || undefined, schemaIndex, verbose);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       }
     }
