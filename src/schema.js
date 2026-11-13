@@ -33,7 +33,7 @@ class Schema {
         if (verbose) console.log(`found ref :: ${schema.$ref}`);
 
         const reference = schema.$ref;
-        const referencedFile = reference.match('^.*ya?ml');
+        const referencedFile = reference.match('^[^#]*\\.ya?ml');
         if (referencedFile != null && referencedFile.length === 1 && !allReferencedFiles.includes(referencedFile[0])) {
           if (verbose) console.log(`matched schema $ref [${referencedFile}]`);
           allReferencedFiles.push(referencedFile[0]);

@@ -1,0 +1,7 @@
+components:
+  schemas:
+    B:
+      type: object
+      properties:
+        d:
+          $ref: 'd.yaml#/components/schemas/D'

@@ -2,7 +2,9 @@
  * Shared test helpers. Usage:
  *   const result = await runCli([path.join(ROOT, 'example/vehicle.yaml'), '-p', 'out.plantuml']);
  *     -> { code, stdout, stderr, files: { 'out.plantuml': '...' } }; runs in a fresh temp dir, so pass inputs as absolute paths or URLs.
- *   const server = await startServer(dir); server.url; server.respond('/a.yaml', 404 | 500 | 301, '/b.yaml'); server.close();
+ *   const server = await startServer(dir); server.url; server.respond('/a.yaml', 404 | 500 | 301, '/b.yaml');
+ *     server.delay('/a.yaml', 200); // serve that path 200 ms late
+ *     server.close();
  *   assertMatchesExpected(actual, 'examples/vehicle.md'); // compares with test/expected/<name>
  *   Regenerate expected files on purpose: UPDATE_EXPECTED=1 npm test
  */
@@ -36,8 +38,10 @@ function runCli(args) {
 
 function startServer(dir) {
   const overrides = {};
-  const server = http.createServer((req, res) => {
+  const delays = {};
+  const server = http.createServer(async (req, res) => {
     const urlPath = decodeURIComponent(req.url.split('?')[0]);
+    if (delays[urlPath]) await new Promise((resolve) => { setTimeout(resolve, delays[urlPath]); });
     const override = overrides[urlPath];
     if (override) {
       res.writeHead(override.status, override.location ? { Location: override.location } : {});
@@ -57,6 +61,7 @@ function startServer(dir) {
     server.listen(0, '127.0.0.1', () => resolve({
       url: `http://127.0.0.1:${server.address().port}`,
       respond(urlPath, status, location, body) { overrides[urlPath] = { status, location, body }; },
+      delay(urlPath, ms) { delays[urlPath] = ms; },
       close: promisify(server.close.bind(server)),
     }));
   });
