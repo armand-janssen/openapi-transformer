@@ -2,7 +2,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 
-const util = require('util');
+const util = require('node:util');
 const Property = require('./property');
 const utils = require('./utils');
 
