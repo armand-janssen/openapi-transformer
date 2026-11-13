@@ -12,7 +12,7 @@ const openApiGenerator = require('./index.js');
 program
   .version(version)
   .usage('[options] <inputFileOrUrl>')
-  .description('At least 1 output type must be selected: plantuml or markdown!')
+  .description('At least 1 output type must be selected: plantuml, markdown or jsonschema (JSON Schema)!')
   .option('-d, --details', 'Show extra attribute details')
   .option('-p, --plantuml <plantuml file>', 'Transform to plantuml')
   .option('-m, --markdown <markdown file>', 'Transform to markdown')
@@ -28,6 +28,9 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
   if (verbose) console.log('Reading openAPI...');
   (async () => {
     const allParsedSchemas = await openApiGenerator.loadYamlFile(program.args[0], verbose);
+    if (Object.keys(allParsedSchemas).length === 0) {
+      throw new Error(`No schemas found in ${program.args[0]} (expected components.schemas or definitions)`);
+    }
 
     if (program.plantuml !== undefined) {
       if (verbose) console.log('Writing plantuml...');
@@ -54,7 +57,8 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
 
     if (verbose) console.log('Finished rendering documentation!');
   })().catch((err) => {
-    console.error(err);
+    // one line; the stack trace only with --verbose
+    console.error(verbose ? err.stack : `Error: ${err.message.replace(/\s+/g, ' ')}`);
     process.exit(1);
   });
 }

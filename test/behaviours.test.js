@@ -53,7 +53,7 @@ describe('Transformer output per behaviour', () => {
   it('empty-required.yaml: crashes and writes nothing', async () => {
     const result = await runCli([fixturePath('empty-required.yaml'), '-p', 'out.plantuml']);
     assert.equal(result.code, 1);
-    assert.include(result.stderr, "TypeError: Cannot read properties of null (reading 'includes')");
+    assert.include(result.stderr, "Cannot read properties of null (reading 'includes')");
     assert.deepEqual(result.files, {});
   });
 });
