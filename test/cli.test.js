@@ -122,10 +122,32 @@ describe('CLI arguments and failures', () => {
       assertOneLineError(result, 'no-schemas.yaml');
     });
 
-    it.skip('(story 25) a schema that cannot be rendered is reported as a warning on stderr', async () => {
+    it('(story 25) a schema that cannot be rendered is reported as one warning on stderr, exit code 0', async () => {
       const result = await runCli([fixture('edge-cases.yaml'), '-p', 'out.plantuml']);
 
-      assert.include(result.stderr, 'Name');
+      assert.equal(result.code, 0);
+      assert.match(result.stderr, /^Warning: schema Name in .*edge-cases\.yaml is not rendered \(only objects and enums are supported\)\n$/);
+    });
+
+    it('an empty input file is the one-line no-schemas error', async () => {
+      assertOneLineError(await runCli([fixture('empty.yaml'), '-p', 'out.plantuml']), 'empty.yaml', 'No schemas found');
+    });
+
+    it('an empty HTTP body is the one-line no-schemas error', async () => {
+      const server = await startServer(path.join(__dirname, 'fixtures', 'cli'));
+      server.respond('/nothing.yaml', 200, undefined, '');
+      const result = await runCli([`${server.url}/nothing.yaml`, '-p', 'out.plantuml']);
+      await server.close();
+
+      assertOneLineError(result, 'nothing.yaml', 'No schemas found');
+    });
+
+    it('invalid YAML served from a URL is a one-line error naming the URL', async () => {
+      const server = await startServer(path.join(__dirname, 'fixtures', 'cli'));
+      const result = await runCli([`${server.url}/invalid.yaml`, '-p', 'out.plantuml']);
+      await server.close();
+
+      assertOneLineError(result, 'invalid.yaml', 'Invalid YAML');
     });
 
     it('--verbose adds the stack trace to the error output', async () => {

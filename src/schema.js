@@ -13,7 +13,8 @@ class Schema {
     this.parent = parent;
   }
 
-  static parseSchemas(schemas, verbose) {
+  // warnings receives the names of schemas that cannot be rendered.
+  static parseSchemas(schemas, verbose, warnings = []) {
     const allReferencedFiles = [];
     const allParsedSchemas = {};
 
@@ -48,7 +49,14 @@ class Schema {
 
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
-      } else if (verbose) console.log(`unparseable schema definition :: ${JSON.stringify(schema)}`);
+      } else if (schema.enum !== undefined) {
+        const enumSchema = new Schema(title, schemaIndex, [], description, [], parent);
+        enumSchema.enumValues = schema.enum;
+        allParsedSchemas[schemaIndex] = enumSchema;
+      } else {
+        warnings.push(schemaIndex);
+        if (verbose) console.log(`unparseable schema definition :: ${JSON.stringify(schema)}`);
+      }
     }
     return [allReferencedFiles, allParsedSchemas];
   }

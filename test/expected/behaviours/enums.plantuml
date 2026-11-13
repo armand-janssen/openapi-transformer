@@ -6,4 +6,10 @@ class Enums {
   withPattern  : enum
 
 }
+
+enum Color {
+  red
+  green
+
+}
 @enduml

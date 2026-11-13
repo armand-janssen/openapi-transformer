@@ -111,7 +111,10 @@ function generateSchema(schema) {
 
   md += lineBreak;
 
-  if (schema.properties === undefined || schema.properties.length === 0) {
+  if (schema.enumValues) {
+    md += `${lineBreak}## Values${lineBreak}`;
+    schema.enumValues.forEach((value) => { md += `- ${value}${lineBreak}`; });
+  } else if (schema.properties === undefined || schema.properties.length === 0) {
     md += lineBreak;
   } else {
     md += lineBreak;

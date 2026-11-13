@@ -30,5 +30,13 @@
   },
   "required": [],
   "additionalProperties": false,
-  "definitions": {}
+  "definitions": {
+    "Color": {
+      "type": "string",
+      "enum": [
+        "red",
+        "green"
+      ]
+    }
+  }
 }
