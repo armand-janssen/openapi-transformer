@@ -48,7 +48,7 @@
           "type": "string"
         },
         "owner": {
-          "$ref": "#/definitions/Parent"
+          "$ref": "#"
         }
       },
       "required": [],

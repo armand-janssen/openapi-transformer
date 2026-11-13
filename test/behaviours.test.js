@@ -169,6 +169,13 @@ describe('Array items', () => {
     assert.deepEqual(properties.allOfItems, { type: 'array', items: { $ref: '#/definitions/Other' } });
   });
 
+  it('a reference to the root schema points at the JSON Schema root', async () => {
+    const result = await runCli([fixturePath('array-items.yaml'), '-j', 'out.json']);
+    const { properties } = JSON.parse(result.files['out.json']);
+    assert.deepEqual(properties.parent, { $ref: '#' });
+    assert.deepEqual(properties.children.items, { $ref: '#' });
+  });
+
   it('oneOf and allOf item references are drawn like anyOf ones', async () => {
     const result = await runCli([fixturePath('array-items.yaml'), '-p', 'out.plantuml']);
     assert.include(result.files['out.plantuml'], 'oneOfItems  : array[] of Other/Third');

@@ -43,10 +43,28 @@ describe('Pinned JSON Schema expected files', () => {
     .flatMap((e) => (e.isDirectory() ? findJson(path.join(dir, e.name)) : [path.join(dir, e.name)]))
     .filter((f) => f.endsWith('.json'));
 
-  findJson(path.join(__dirname, 'expected')).forEach((file) => {
+  [...findJson(path.join(__dirname, 'expected')), ...findJson(path.join(__dirname, '..', 'example'))].forEach((file) => {
     it(`${path.relative(__dirname, file)} is a valid draft-07 schema`, () => {
       const ajv = new Ajv({ strict: false });
       assert.doesNotThrow(() => ajv.compile(JSON.parse(fs.readFileSync(file, 'utf8'))));
+    });
+
+    // ajv compiles lazily and skips definitions the root never reaches, so resolve every $ref by hand
+    it(`${path.relative(__dirname, file)} has no unresolvable $ref`, () => {
+      const root = JSON.parse(fs.readFileSync(file, 'utf8'));
+      const refs = [];
+      const walk = (node) => {
+        if (node && typeof node === 'object') {
+          if (typeof node.$ref === 'string') refs.push(node.$ref);
+          Object.values(node).forEach(walk);
+        }
+      };
+      walk(root);
+      refs.forEach((ref) => {
+        const target = ref.replace(/^#\/?/, '').split('/').filter(Boolean)
+          .reduce((node, key) => node?.[key], root);
+        assert.isObject(target, `${ref} does not resolve`);
+      });
     });
   });
 });

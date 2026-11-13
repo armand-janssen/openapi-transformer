@@ -16,6 +16,12 @@ components:
           items:
             allOf:
               - $ref: '#/components/schemas/Other'
+        parent:
+          $ref: '#/components/schemas/Lists'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lists'
     Other:
       type: object
       properties:

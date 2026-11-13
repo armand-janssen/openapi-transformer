@@ -2,6 +2,8 @@
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
   let processDetails = true;
+  // the first schema is the document root, which draft-07 addresses as '#'
+  const ref = (name) => ({ $ref: name === listOfUsedSchemas[0] ? '#' : `#/definitions/${name}` });
 
   if (property.description) {
     js.description = property.description;
@@ -35,14 +37,13 @@ function generateProperty(property, listOfUsedSchemas) {
   } else if (property.type.indexOf('array[] of ') > -1) {
     js.type = 'array';
     const { items } = property;
-    const ref = (name) => ({ $ref: `#/definitions/${name}` });
     if (items.type) js.items = { type: items.type };
     else if (items.refs?.length === 1) js.items = ref(items.refs[0]);
     else if (items.refs) js.items = { [items.combinator]: items.refs.map(ref) };
   } else {
     const { type } = property;
     if (type && listOfUsedSchemas.includes(type)) {
-      js.$ref = `#/definitions/${type}`;
+      Object.assign(js, ref(type));
     } else {
       js.type = property.type;
     }
