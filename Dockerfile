@@ -18,9 +18,15 @@ ADD --checksum=sha256:e9bc9e6b2eb715e8c0c929f3dcb5fc1923be13f37599b09c293c66d354
 RUN printf '#!/bin/sh\nexec java -Djava.awt.headless=true -jar /opt/plantuml.jar "$@"\n' > /usr/local/bin/plantuml \
  && chmod 755 /usr/local/bin/plantuml /opt/plantuml.jar
 
+# Unprivileged user; only the files the tests need are copied, and install scripts are not run.
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
+RUN chown node:node /app
+USER node
+COPY --chown=node:node package.json package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY --chown=node:node eslint.config.js README.md LICENSE ./
+COPY --chown=node:node src ./src
+COPY --chown=node:node test ./test
+COPY --chown=node:node example ./example
 
 CMD ["sh", "-c", "npm run lint && npm test"]
