@@ -37,8 +37,8 @@ function generateProperty(property, listOfUsedSchemas) {
     const { items } = property;
     const ref = (name) => ({ $ref: `#/definitions/${name}` });
     if (items.type) js.items = { type: items.type };
-    else if (items.refs.length === 1) js.items = ref(items.refs[0]);
-    else js.items = { anyOf: items.refs.map(ref) };
+    else if (items.refs?.length === 1) js.items = ref(items.refs[0]);
+    else if (items.refs) js.items = { [items.combinator]: items.refs.map(ref) };
   } else {
     const { type } = property;
     if (type && listOfUsedSchemas.includes(type)) {

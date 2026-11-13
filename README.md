@@ -97,7 +97,7 @@ npm test
 - Referenced files are awaited, so their schemas are no longer missing from the output.
 - allOf: all inline members are combined into one schema and parents in other files are loaded.
 - Top-level enum schemas are rendered (PlantUML `enum`, Markdown "Values", JSON Schema string enum) instead of being dropped.
-- JSON Schema: arrays of primitives, `anyOf` arrays, `binary` and `byte` strings, the `date` pattern and per-schema descriptions are generated correctly.
+- JSON Schema: arrays of primitives, `anyOf`, `oneOf` and `allOf` arrays, arrays without `items`, `binary` and `byte` strings, the `date` pattern and per-schema descriptions are generated correctly.
 - Empty input and schemas without `properties` no longer crash.
 
 ### Additions

@@ -162,3 +162,21 @@ describe('Known failures', () => {
     assert.deepEqual(json.definitions, {});
   });
 });
+
+describe('Array items', () => {
+  it('an array without items, or with oneOf or allOf items, gives a JSON Schema array without crashing', async () => {
+    const result = await runCli([fixturePath('array-items.yaml'), '-j', 'out.json']);
+    assert.equal(result.code, 0, result.stderr);
+    const { properties } = JSON.parse(result.files['out.json']);
+    assert.deepEqual(properties.noItems, { type: 'array' });
+    assert.deepEqual(properties.oneOfItems, { type: 'array', items: { oneOf: [{ $ref: '#/definitions/Other' }, { $ref: '#/definitions/Third' }] } });
+    assert.deepEqual(properties.allOfItems, { type: 'array', items: { $ref: '#/definitions/Other' } });
+  });
+
+  it('oneOf and allOf item references are drawn like anyOf ones', async () => {
+    const result = await runCli([fixturePath('array-items.yaml'), '-p', 'out.plantuml']);
+    assert.include(result.files['out.plantuml'], 'oneOfItems  : array[] of Other/Third');
+    assert.include(result.files['out.plantuml'], 'Lists *-- Third  :  oneOfItems');
+    assert.include(result.files['out.plantuml'], 'allOfItems  : array[] of Other');
+  });
+});

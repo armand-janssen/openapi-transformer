@@ -12,7 +12,7 @@ class Property {
     this.description = description;
     this.example = example;
     this.enumValues = enumValues; // only set for enums; constraints stay in details
-    this.items = items; // only set for arrays: { type } for primitives, { refs } for references
+    this.items = items; // only set for arrays: { type } for primitives, { refs, combinator? } for references, {} without items
   }
 
   static parseDetails(property) {
@@ -81,6 +81,7 @@ class Property {
         relationShips.push(new RelationShip(schemaName, to, name, constants.RELATIONSHIP_USE));
       } else if (type === 'array') {
         type = 'array[] of ';
+        items = {};
         let first = true;
 
         for (const itemIndex of Object.keys(property.items ?? {})) {
@@ -89,7 +90,7 @@ class Property {
           if (itemIndex === 'type') {
             // process array of primitives
             type += `${item}s`;
-            items = { type: item };
+            items.type = item;
           } else if (itemIndex === '$ref') {
             // process array of specific schema
             if (typeof item === 'string') {
@@ -98,7 +99,7 @@ class Property {
               relationShips.push(new RelationShip(schemaName, objectName, name, constants.RELATIONSHIP_AGGREGATION));
 
               type += objectName;
-              items = { refs: [objectName] };
+              items.refs = [objectName];
 
               // is it a reference to an external file?
               const referencedFile = item.match('^[^#]*\\.ya?ml');
@@ -106,8 +107,7 @@ class Property {
                 referencedFiles.push(referencedFile[0]);
               }
             }
-          } else if (itemIndex === 'anyOf') { // typeof item === 'object') {
-            // process anyOf / allOf / oneOf item
+          } else if (['anyOf', 'oneOf', 'allOf'].includes(itemIndex)) {
             for (const refIndex of Object.keys(item)) {
               const reference = item[refIndex].$ref;
 
@@ -120,7 +120,8 @@ class Property {
               first = false;
 
               type += objectName;
-              items = items || { refs: [] };
+              items.combinator = itemIndex;
+              items.refs = items.refs || [];
               items.refs.push(objectName);
 
               const referencedFile = reference.match('^[^#]*\\.ya?ml');
