@@ -79,7 +79,18 @@ npm ci
 npm run lint
 npm test
 ```
-`npm test` runs all tests and requires 95% line and branch coverage. The end-to-end tests compare generated output with the files in `test/expected` and, for the example specs, with the files in `example`. To regenerate them on purpose after an intended output change, run `UPDATE_EXPECTED=1 npm test` and review the diff. The PNG images in `example` are rendered from the `.plantuml` files by hand and are not checked by the tests.
+`npm test` runs all tests and requires 95% line and branch coverage. The end-to-end tests compare generated output with the files in `test/expected` and, for the example specs, with the files in `example`. To regenerate them on purpose after an intended output change, run `UPDATE_EXPECTED=1 npm test` and review the diff. The PNG images in `example` are not checked by the tests; re-render them from the `.plantuml` files with the Docker image below.
+
+The `Dockerfile` builds a test image with Node, PlantUML, Java and Graphviz:
+
+```
+docker build -t openapi-transformer-test .
+docker run --rm openapi-transformer-test
+docker run --rm -v "$PWD/example:/app/example" openapi-transformer-test \
+  plantuml -tpng example/vehicle.plantuml example/vehicle-details.plantuml
+```
+
+The second command runs lint and the tests; the third re-renders the example images.
 
 # Changelog
 
