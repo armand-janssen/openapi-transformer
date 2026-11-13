@@ -183,3 +183,23 @@ describe('Array items', () => {
     assert.include(result.files['out.plantuml'], 'allOfItems  : array[] of Other');
   });
 });
+
+describe('Enums that are not strings', () => {
+  it('a top-level enum keeps its declared type in JSON Schema, and an untyped one gets no type', async () => {
+    const result = await runCli([fixturePath('enum-types.yaml'), '-j', 'out.json']);
+    const json = JSON.parse(result.files['out.json']);
+    assert.deepInclude(json, { type: 'integer', enum: [1, 2] });
+    assert.deepEqual(json.definitions.Ratio, { type: 'number', enum: [0.5] });
+    assert.deepEqual(json.definitions.Untyped, { enum: ['a', 1] });
+  });
+
+  it('a property enum of numbers or booleans keeps its type and values in every output', async () => {
+    const result = await runCli([fixturePath('enum-types.yaml'), '-j', 'out.json', '-m', 'out.md', '-p', 'out.plantuml', '-d']);
+    const { properties } = JSON.parse(result.files['out.json']).definitions.Thing;
+    assert.deepEqual(properties.nums, { type: 'integer', enum: [1, 2, 3], minimum: 1 });
+    assert.deepEqual(properties.flag, { type: 'boolean', enum: [true] });
+    assert.include(result.files['out.md'], '| nums | &nbsp; | integer | &nbsp; | <ul><li>1</li><li>2</li><li>3</li></ul><ul><li>minimum : 1</li></ul> |');
+    assert.include(result.files['out.plantuml'], 'nums  : integer[1, 2, 3][minimum : 1]');
+    assert.include(result.files['out.plantuml'], 'flag  : boolean[true]');
+  });
+});

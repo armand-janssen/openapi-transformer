@@ -10,7 +10,6 @@ function generateProperty(property, listOfUsedSchemas) {
   }
   if (property.type === 'enum') {
     js.type = 'string';
-    js.enum = property.enumValues;
   } else if (property.type === 'number') {
     js.type = 'number';
     if (property.details) {
@@ -48,6 +47,7 @@ function generateProperty(property, listOfUsedSchemas) {
       js.type = property.type;
     }
   }
+  if (property.enumValues) js.enum = property.enumValues;
   if (processDetails && property.details) {
     property.details.forEach((detail) => {
       js[detail.name] = detail.value;
@@ -97,8 +97,8 @@ function generate(schemas) {
         js.title = schemaIndex;
         js.description = schema.description;
         if (schema.enumValues) {
-          // the first schema is the root, so a leading enum makes the whole document a string enum
-          js.type = 'string';
+          // the first schema is the root, so a leading enum makes the whole document an enum
+          if (schema.enumType) js.type = schema.enumType;
           js.enum = schema.enumValues;
         } else {
           js.type = 'object';
@@ -112,7 +112,7 @@ function generate(schemas) {
         const definition = js.definitions[schemaIndex];
         definition.description = schema.description;
         if (schema.enumValues) {
-          definition.type = 'string';
+          if (schema.enumType) definition.type = schema.enumType;
           definition.enum = schema.enumValues;
         } else {
           definition.type = 'object';

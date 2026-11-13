@@ -18,7 +18,8 @@ class Property {
   static parseDetails(property) {
     const details = [];
     let typeAfterDetailsParsing;
-    let enumValues;
+    // a string enum becomes type 'enum'; other enums keep their type and only carry the values
+    let enumValues = property.enum;
 
     if (property.type === 'string') {
       if (property.minLength !== undefined) details.push(new Detail('minLength', property.minLength));
@@ -27,8 +28,6 @@ class Property {
 
       if (property.enum !== undefined) {
         typeAfterDetailsParsing = 'enum';
-
-        enumValues = property.enum;
       } else if (property.format === 'date') {
         typeAfterDetailsParsing = 'date';
       } else if (property.format === 'date-time') {

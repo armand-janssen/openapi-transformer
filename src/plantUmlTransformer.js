@@ -56,7 +56,7 @@ function generateProperty(property, generateExtraDetails) {
   uml += property.type;
 
   if (generateExtraDetails) {
-    if (property.type === 'enum') {
+    if (property.enumValues) {
       uml += generateDetails(property.enumValues.map((value) => ({ value })), true);
       uml += generateDetails(property.details, false);
     } else if (property.type === 'date') {

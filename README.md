@@ -100,7 +100,8 @@ npm test
 - Referenced files are awaited, so their schemas are no longer missing from the output.
 - In a reference cycle each file is loaded once, also when it is reached by another relative path (`./a.yaml` and `sub/../a.yaml`), so warnings are no longer repeated.
 - allOf: all inline members are combined into one schema and parents in other files are loaded.
-- Top-level enum schemas are rendered (PlantUML `enum`, Markdown "Values", JSON Schema string enum) instead of being dropped.
+- Top-level enum schemas are rendered (PlantUML `enum`, Markdown "Values", JSON Schema enum with the declared type) instead of being dropped.
+- Enums of numbers or booleans keep their type and their values in all three outputs.
 - JSON Schema: references to the first (root) schema point at `#`; arrays of primitives, `anyOf`, `oneOf` and `allOf` arrays, arrays without `items`, `binary` and `byte` strings, the `date` pattern and per-schema descriptions are generated correctly.
 - Empty input and schemas without `properties` no longer crash.
 

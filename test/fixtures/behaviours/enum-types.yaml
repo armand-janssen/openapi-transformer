@@ -1,0 +1,31 @@
+components:
+  schemas:
+    Level:
+      type: integer
+      enum:
+        - 1
+        - 2
+    Thing:
+      type: object
+      properties:
+        level:
+          $ref: '#/components/schemas/Level'
+        nums:
+          type: integer
+          minimum: 1
+          enum:
+            - 1
+            - 2
+            - 3
+        flag:
+          type: boolean
+          enum:
+            - true
+    Ratio:
+      type: number
+      enum:
+        - 0.5
+    Untyped:
+      enum:
+        - a
+        - 1
