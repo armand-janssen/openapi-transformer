@@ -1,0 +1,14 @@
+components:
+  schemas:
+    Root:
+      type: object
+      properties:
+        name:
+          type: string
+        thing:
+          $ref: '#/components/schemas/yamlThing'
+    yamlThing:
+      type: object
+      properties:
+        id:
+          type: string

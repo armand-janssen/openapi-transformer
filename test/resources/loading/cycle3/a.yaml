@@ -1,0 +1,11 @@
+components:
+  schemas:
+    A:
+      type: object
+      properties:
+        name:
+          type: string
+        b:
+          $ref: 'b.yaml#/components/schemas/B'
+        c:
+          $ref: 'c.yaml#/components/schemas/C'

@@ -1,0 +1,7 @@
+components:
+  schemas:
+    Parent:
+      type: object
+      properties:
+        name:
+          type: string
