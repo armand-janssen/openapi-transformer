@@ -2,9 +2,8 @@ const { assert, expect } = require('chai');
 const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
-const jsonSchemaTransformer = require('../src/jsonSchemaTransformer');
 
-const openApiGenerator = require('../src/index');
+const openApiGenerator = require('..');
 
 
 describe('openApiGenerator - test json transformer', () => {
@@ -12,7 +11,7 @@ describe('openApiGenerator - test json transformer', () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyNoRelationShipNoReferences.yaml', true);
     assert.isDefined(loadedSchemas);
 
-    const result = jsonSchemaTransformer.generate(loadedSchemas, true);
+    const result = openApiGenerator.generateJsonSchema(loadedSchemas, true);
     const expectedResult = fs.readFileSync('./test/resources/expectedResultPlantumlPropertyNoRelationShipNoReferences.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
@@ -22,7 +21,7 @@ describe('openApiGenerator - test json transformer', () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyFiveRelationShipThreeReferencesUsingExtension.test.yaml', true);
     assert.isDefined(loadedSchemas);
 
-    const result = jsonSchemaTransformer.generate(loadedSchemas);
+    const result = openApiGenerator.generateJsonSchema(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyFiveRelationShipThreeReferencesUsingExtension.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
@@ -32,7 +31,7 @@ describe('openApiGenerator - test json transformer', () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyDateTime.yaml', true);
     assert.isDefined(loadedSchemas);
 
-    const result = jsonSchemaTransformer.generate(loadedSchemas);
+    const result = openApiGenerator.generateJsonSchema(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyDateTime.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));

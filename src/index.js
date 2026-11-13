@@ -115,4 +115,9 @@ async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = 
   }
   return allParsedSchemas;
 }
-module.exports.loadYamlFile = loadYamlFile;
+module.exports = {
+  loadYamlFile,
+  generatePlantUml: require('./plantUmlTransformer').generate,
+  generateMarkdown: require('./markdownTransformer').generate,
+  generateJsonSchema: require('./jsonSchemaTransformer').generate,
+};

@@ -49,14 +49,17 @@ The generated files for every example spec are committed in `example` and checke
 
 # Library
 ```js
-const { loadYamlFile } = require('openapi-transformer');
-const plantUml = require('openapi-transformer/src/plantUmlTransformer');
+const {
+  loadYamlFile, generatePlantUml, generateMarkdown, generateJsonSchema,
+} = require('openapi-transformer');
 
 const warnings = []; // optional, receives one message per skipped schema
 const schemas = await loadYamlFile('vehicle.yaml', false, warnings);
-const uml = plantUml.generate(schemas, false); // second argument: include details
+const uml = generatePlantUml(schemas, false); // second argument: include details
+const md = generateMarkdown(schemas);
+const json = generateJsonSchema(schemas); // a string
 ```
-`openapi-transformer/src/markdownTransformer` and `openapi-transformer/src/jsonSchemaTransformer` have `generate(schemas)`. The library throws on errors and never prints.
+The library throws on errors and never prints.
 
 # Example output plantuml
 
@@ -90,7 +93,7 @@ npm test
 - PlantUML no longer draws the `*<|-` "extension" relationship; inheritance is drawn as `Parent <|-- Child`, also for extra allOf parents.
 - Referenced `.yml` files are followed; a local reference such as `#/components/schemas/yamlThing` is no longer mistaken for a file.
 - Schemas from referenced files are listed in first-seen (depth-first) order, and referenced files are resolved relative to the spec's location (file or URL, including after HTTP redirects).
-- Library: `package.json` `main` points at `src/index.js`, so `require('openapi-transformer')` works; `loadYamlFile(fileOrUrl, verbose, warnings)` takes an optional warnings array and no longer shares state between calls.
+- Library: `package.json` `main` points at `src/index.js`, so `require('openapi-transformer')` works and exports `loadYamlFile`, `generatePlantUml`, `generateMarkdown` and `generateJsonSchema`; `loadYamlFile(fileOrUrl, verbose, warnings)` takes an optional warnings array and no longer shares state between calls.
 - `nyc`, `sinon` and `util` are no longer runtime dependencies (only `commander` and `yaml` remain) and only `src` is published. commander is upgraded 2 to 15.
 
 ### Fixes

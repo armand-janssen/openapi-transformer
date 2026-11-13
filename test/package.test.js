@@ -34,8 +34,8 @@ describe('packed tarball', function packedTarball() {
   });
 
   it('can be required from outside the repo', () => {
-    const out = execFileSync(process.execPath, ['-e', "console.log(typeof require('openapi-transformer').loadYamlFile)"], { cwd: dir, env: env(), encoding: 'utf8' });
-    assert.equal(out.trim(), 'function');
+    const out = execFileSync(process.execPath, ['-e', "const l = require('openapi-transformer'); console.log([l.loadYamlFile, l.generatePlantUml, l.generateMarkdown, l.generateJsonSchema].map((f) => typeof f).join())"], { cwd: dir, env: env(), encoding: 'utf8' });
+    assert.equal(out.trim(), 'function,function,function,function');
   });
 
   it('runs the CLI from the unpacked package', () => {

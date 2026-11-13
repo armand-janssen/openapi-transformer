@@ -1,10 +1,6 @@
 const path = require('path');
 const { assert } = require('chai');
 const { runCli, assertMatchesExpected } = require('./helpers');
-const plantUml = require('../src/plantUmlTransformer');
-const markdown = require('../src/markdownTransformer');
-const jsonSchema = require('../src/jsonSchemaTransformer');
-
 // Library-API tests go through the package entry point (story 31).
 const library = require('..');
 
@@ -42,10 +38,10 @@ describe('Transformer output per behaviour', () => {
 
     it(`${file}: library output`, async () => {
       const schemas = await library.loadYamlFile(fixturePath(file));
-      assertMatchesExpected(plantUml.generate(schemas, false), `behaviours/${name}.plantuml`);
-      assertMatchesExpected(plantUml.generate(schemas, true), `behaviours/${name}-details.plantuml`);
-      assertMatchesExpected(markdown.generate(schemas), `behaviours/${name}.md`);
-      assertMatchesExpected(jsonSchema.generate(schemas), `behaviours/${name}.json`);
+      assertMatchesExpected(library.generatePlantUml(schemas, false), `behaviours/${name}.plantuml`);
+      assertMatchesExpected(library.generatePlantUml(schemas, true), `behaviours/${name}-details.plantuml`);
+      assertMatchesExpected(library.generateMarkdown(schemas), `behaviours/${name}.md`);
+      assertMatchesExpected(library.generateJsonSchema(schemas), `behaviours/${name}.json`);
     });
   });
 });
@@ -60,34 +56,34 @@ describe('Known failures', () => {
   });
 
   it('story 26: JSON Schema emits an array of primitives with an items type', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('property-types.yaml')));
     assert.deepInclude(json.properties.tags, { type: 'array' });
     assert.deepEqual(json.properties.tags.items, { type: 'string' });
   });
 
   it('story 26: JSON Schema emits an array of anyOf references as items with an anyOf list', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('property-types.yaml')));
     assert.deepEqual(json.properties.mixed.items, { anyOf: [{ $ref: '#/definitions/Other' }, { $ref: '#/definitions/Third' }] });
   });
 
   it('story 27: JSON Schema emits a binary string as type string with format binary', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('property-types.yaml')));
     assert.deepInclude(json.properties.photo, { type: 'string', format: 'binary' });
   });
 
   it('story 27: JSON Schema emits a byte string as type string with format byte', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('property-types.yaml')));
     assert.deepInclude(json.properties.secret, { type: 'string', format: 'byte' });
   });
 
   it('story 28: JSON Schema keeps the root description and gives each definition its own', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('relationships.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('relationships.yaml')));
     assert.equal(json.description, 'The root description.');
     assert.include(json.definitions.Toy.description, 'A toy with a | pipe');
   });
 
   it('story 29: PlantUML enum details list only the enum values', async () => {
-    const uml = plantUml.generate(await load('enums.yaml'), true);
+    const uml = library.generatePlantUml(await load('enums.yaml'), true);
     assert.include(uml, 'withLength  : enum[x, y]');
     assert.include(uml, 'withPattern  : enum[m, n]');
     assert.include(uml, 'withLength  : enum[x, y][minLength : 1, maxLength : 3]');
@@ -95,7 +91,7 @@ describe('Known failures', () => {
   });
 
   it('story 29: Markdown enum details list only the enum values', async () => {
-    const md = markdown.generate(await load('enums.yaml'));
+    const md = library.generateMarkdown(await load('enums.yaml'));
     assert.include(md, '<ul><li>x</li><li>y</li></ul>');
     assert.include(md, '<ul><li>m</li><li>n</li></ul>');
     assert.include(md, '<ul><li>minLength : 1</li><li>maxLength : 3</li></ul>');
@@ -103,7 +99,7 @@ describe('Known failures', () => {
   });
 
   it('story 29: JSON Schema enum lists contain only the enum values', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('enums.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('enums.yaml')));
     assert.deepEqual(json.properties.withLength.enum, ['x', 'y']);
     assert.deepEqual(json.properties.withPattern.enum, ['m', 'n']);
     assert.deepInclude(json.properties.withLength, { minLength: 1, maxLength: 3 });
@@ -118,15 +114,15 @@ describe('Known failures', () => {
 
   it('story 22: the required lists of all inline allOf objects are kept in all three outputs', async () => {
     const schemas = await load('allof-variants.yaml');
-    const uml = plantUml.generate(schemas, false);
+    const uml = library.generatePlantUml(schemas, false);
     assert.include(uml, 'first * : string');
     assert.include(uml, 'second * : integer');
-    assert.include(markdown.generate(schemas), '| first | Y | string |');
-    assert.deepEqual(JSON.parse(jsonSchema.generate(schemas)).definitions.SeveralInline.required, ['first', 'second']);
+    assert.include(library.generateMarkdown(schemas), '| first | Y | string |');
+    assert.deepEqual(JSON.parse(library.generateJsonSchema(schemas)).definitions.SeveralInline.required, ['first', 'second']);
   });
 
   it('story 22: with several referenced allOf members the first is the parent and the others get inheritance arrows too', async () => {
-    const uml = plantUml.generate(await load('allof-variants.yaml'), false);
+    const uml = library.generatePlantUml(await load('allof-variants.yaml'), false);
     assert.include(uml, 'Parent <|-- SeveralParents');
     assert.include(uml, 'OneInline <|-- SeveralParents');
     assert.include(uml, 'SeveralParents -- Parent  :  owner');
@@ -135,29 +131,29 @@ describe('Known failures', () => {
   it('story 23: an allOf parent that lives in another file is loaded', async () => {
     const schemas = await load('allof-variants.yaml');
     assert.property(schemas, 'Base');
-    assert.include(plantUml.generate(schemas, false), 'class Base {');
+    assert.include(library.generatePlantUml(schemas, false), 'class Base {');
   });
 
   it('story 24: a top-level enum schema is rendered in all three outputs', async () => {
     const schemas = await load('enums.yaml');
-    assert.include(plantUml.generate(schemas, false), 'enum Color {\n  red\n  green\n\n}');
-    assert.include(markdown.generate(schemas), '# Color\n&nbsp;\n\n## Values\n- red\n- green\n');
-    assert.deepEqual(JSON.parse(jsonSchema.generate(schemas)).definitions.Color, { type: 'string', enum: ['red', 'green'] });
+    assert.include(library.generatePlantUml(schemas, false), 'enum Color {\n  red\n  green\n\n}');
+    assert.include(library.generateMarkdown(schemas), '# Color\n&nbsp;\n\n## Values\n- red\n- green\n');
+    assert.deepEqual(JSON.parse(library.generateJsonSchema(schemas)).definitions.Color, { type: 'string', enum: ['red', 'green'] });
   });
 
   it('story 24: a property referencing a top-level enum links to it in each output', async () => {
     const schemas = await load('enum-ref.yaml');
-    const uml = plantUml.generate(schemas, false);
+    const uml = library.generatePlantUml(schemas, false);
     assert.include(uml, 'color  : Color');
     assert.include(uml, 'Car -- Color  :  color');
-    assert.include(markdown.generate(schemas), '| color | &nbsp; | Color |');
-    const json = JSON.parse(jsonSchema.generate(schemas));
+    assert.include(library.generateMarkdown(schemas), '| color | &nbsp; | Color |');
+    const json = JSON.parse(library.generateJsonSchema(schemas));
     assert.deepEqual(json.properties.color, { $ref: '#/definitions/Color' });
     assert.deepEqual(json.definitions.Color, { description: 'Paint colour', type: 'string', enum: ['red', 'green'] });
   });
 
   it('story 24: a top-level enum that is the first schema becomes the JSON Schema root', async () => {
-    const json = JSON.parse(jsonSchema.generate(await load('enum-first.yaml')));
+    const json = JSON.parse(library.generateJsonSchema(await load('enum-first.yaml')));
     assert.deepInclude(json, { title: 'Color', type: 'string', enum: ['red'] });
     assert.deepEqual(json.definitions, {});
   });
