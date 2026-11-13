@@ -59,23 +59,28 @@ describe('Known failures', () => {
     assert.property(schemas, 'Thing');
   });
 
-  it.skip('story 26: JSON Schema emits an array of primitives with an items type', async () => {
+  it('story 26: JSON Schema emits an array of primitives with an items type', async () => {
     const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
     assert.deepInclude(json.properties.tags, { type: 'array' });
     assert.deepEqual(json.properties.tags.items, { type: 'string' });
   });
 
-  it.skip('story 27: JSON Schema emits a binary string as type string with format binary', async () => {
+  it('story 26: JSON Schema emits an array of anyOf references as items with an anyOf list', async () => {
+    const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
+    assert.deepEqual(json.properties.mixed.items, { anyOf: [{ $ref: '#/definitions/Other' }, { $ref: '#/definitions/Third' }] });
+  });
+
+  it('story 27: JSON Schema emits a binary string as type string with format binary', async () => {
     const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
     assert.deepInclude(json.properties.photo, { type: 'string', format: 'binary' });
   });
 
-  it.skip('story 27: JSON Schema emits a byte string as type string with format byte', async () => {
+  it('story 27: JSON Schema emits a byte string as type string with format byte', async () => {
     const json = JSON.parse(jsonSchema.generate(await load('property-types.yaml')));
     assert.deepInclude(json.properties.secret, { type: 'string', format: 'byte' });
   });
 
-  it.skip('story 28: JSON Schema keeps the root description and gives each definition its own', async () => {
+  it('story 28: JSON Schema keeps the root description and gives each definition its own', async () => {
     const json = JSON.parse(jsonSchema.generate(await load('relationships.yaml')));
     assert.equal(json.description, 'The root description.');
     assert.include(json.definitions.Toy.description, 'A toy with a | pipe');

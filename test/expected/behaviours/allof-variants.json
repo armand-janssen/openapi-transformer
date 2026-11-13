@@ -11,6 +11,7 @@
   "additionalProperties": false,
   "definitions": {
     "OneInline": {
+      "description": "Parent plus one inline object.",
       "type": "object",
       "properties": {
         "a": {
@@ -23,6 +24,7 @@
       "additionalProperties": false
     },
     "SeveralInline": {
+      "description": "Parent plus two inline objects.",
       "type": "object",
       "properties": {
         "first": {
@@ -52,6 +54,7 @@
       "additionalProperties": false
     },
     "ParentInFile": {
+      "description": "Parent lives in another file.",
       "type": "object",
       "properties": {
         "extra": {
