@@ -58,7 +58,8 @@ function generateDetails(details, isEnum) {
 function generateProperty(property) {
   let markDownDetails = '';
   if (property.type === 'enum') {
-    markDownDetails += generateDetails(property.details, true);
+    markDownDetails += generateDetails(property.enumValues.map((value) => ({ value })), true);
+    if (property.details.length > 0) markDownDetails += generateDetails(property.details, false);
   } else if (property.type === 'date') {
     markDownDetails += generateDetails(property.details, false);
     markDownDetails += generateDetails([{ name: 'pattern', value: 'yyyy-MM-dd' }], false);

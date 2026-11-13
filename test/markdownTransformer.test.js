@@ -36,25 +36,15 @@ function mockBrandProperty() {
   return property;
 }
 
-function mockDoorsDetails() {
-  const zeroDoors = new Detail('enumvalue', '0 door');
-  const oneDoor = new Detail('enumvalue', '1 door');
-  const twoDoors = new Detail('enumvalue', '2 door');
-  const threeDoors = new Detail('enumvalue', '3 door');
-  const fourDoors = new Detail('enumvalue', '3 door');
-
-  return [zeroDoors, oneDoor, twoDoors, threeDoors, fourDoors];
-}
-
 function mockDoorsProperty() {
   const name = 'Doors';
   const type = 'enum';
   const required = true;
-  const details = mockDoorsDetails();
+  const details = [];
   const description = 'Number of doors';
   const example = '1 door';
 
-  return new Property(name, type, required, details, description, example);
+  return new Property(name, type, required, details, description, example, ['0 door', '1 door', '2 door', '3 door', '3 door']);
 }
 function mockWheelsProperty() {
   const name = 'Wheels';
