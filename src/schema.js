@@ -32,13 +32,7 @@ class Schema {
 
       if (schema.$ref !== undefined) {
         if (verbose) console.log(`found ref :: ${schema.$ref}`);
-
-        const reference = schema.$ref;
-        const referencedFile = reference.match('^[^#]*\\.ya?ml');
-        if (referencedFile != null && referencedFile.length === 1 && !allReferencedFiles.includes(referencedFile[0])) {
-          if (verbose) console.log(`matched schema $ref [${referencedFile}]`);
-          allReferencedFiles.push(referencedFile[0]);
-        }
+        utils.addReferencedFile(schema.$ref, allReferencedFiles);
       } else if (schema.allOf !== undefined) {
         const [referencedFiles, parsedSchemas] = this.processInheritance(schema, schemaIndex, schema.allOf, verbose);
 
@@ -77,8 +71,7 @@ class Schema {
 
       if (attribute.$ref !== undefined) {
         parents.push(utils.lastToken(attribute.$ref, '/'));
-        const referencedFile = attribute.$ref.match('^[^#]*\\.ya?ml');
-        if (referencedFile != null) utils.addValueToArrayIfNotExists(allReferencedFiles, referencedFile[0]);
+        utils.addReferencedFile(attribute.$ref, allReferencedFiles);
       } else if (attribute.properties !== undefined) {
         const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required || undefined, schemaIndex, verbose);
         // a later member overrides a property of an earlier one, keeping its first position

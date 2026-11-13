@@ -70,11 +70,7 @@ class Property {
       if (type == null && property.$ref != null) {
         // reference to other object, maybe in other file
         const reference = property.$ref;
-        const referencedFile = reference.match('^[^#]*\\.ya?ml');
-
-        if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
-          referencedFiles.push(referencedFile[0]);
-        }
+        utils.addReferencedFile(reference, referencedFiles);
         const to = utils.lastToken(reference, '/');
         type = to;
         relationShips.push(new RelationShip(schemaName, to, name, constants.RELATIONSHIP_USE));
@@ -99,12 +95,7 @@ class Property {
 
               type += objectName;
               items.refs = [objectName];
-
-              // is it a reference to an external file?
-              const referencedFile = item.match('^[^#]*\\.ya?ml');
-              if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
-                referencedFiles.push(referencedFile[0]);
-              }
+              utils.addReferencedFile(item, referencedFiles);
             }
           } else if (['anyOf', 'oneOf', 'allOf'].includes(itemIndex)) {
             for (const refIndex of Object.keys(item)) {
@@ -122,11 +113,7 @@ class Property {
               items.combinator = itemIndex;
               items.refs = items.refs || [];
               items.refs.push(objectName);
-
-              const referencedFile = reference.match('^[^#]*\\.ya?ml');
-              if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
-                referencedFiles.push(referencedFile[0]);
-              }
+              utils.addReferencedFile(reference, referencedFiles);
             }
           }
         }

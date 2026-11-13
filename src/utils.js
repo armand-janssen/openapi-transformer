@@ -19,6 +19,12 @@ function addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray) {
   }
 }
 
+// Adds the file part of a $ref ('other.yaml' in 'other.yaml#/components/schemas/X') to referencedFiles, once.
+function addReferencedFile(reference, referencedFiles) {
+  const referencedFile = reference.match('^[^#]*\\.ya?ml');
+  if (referencedFile != null) addValueToArrayIfNotExists(referencedFiles, referencedFile[0]);
+}
+
 /**
  * Merge 2 objects, but only if not already defined in target.
  * @param {*} sourceObject
@@ -39,5 +45,6 @@ module.exports = {
   lastToken,
   addValueToArrayIfNotExists,
   addValuesOfArrayToOtherArrayIfNotExist,
+  addReferencedFile,
   mergeObjects,
 };
