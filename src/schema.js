@@ -4,13 +4,15 @@ const Property = require('./property');
 const utils = require('./utils');
 
 class Schema {
-  constructor(title, name, properties, description, relationShips, parent) {
+  constructor(title, name, properties, description, relationShips, parent, additionalParents, enumValues) {
     this.title = title;
     this.name = name;
     this.properties = properties;
     this.description = description;
     this.relationShips = relationShips;
     this.parent = parent;
+    this.additionalParents = additionalParents; // only set for allOf: referenced members after the first
+    this.enumValues = enumValues; // only set for top-level enums
   }
 
   // warnings receives the names of schemas that cannot be rendered.
@@ -50,9 +52,7 @@ class Schema {
           utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
         }
       } else if (schema.enum !== undefined) {
-        const enumSchema = new Schema(title, schemaIndex, [], description, [], parent);
-        enumSchema.enumValues = schema.enum;
-        allParsedSchemas[schemaIndex] = enumSchema;
+        allParsedSchemas[schemaIndex] = new Schema(title, schemaIndex, [], description, [], parent, undefined, schema.enum);
       } else {
         warnings.push(schemaIndex);
         if (verbose) console.log(`unparseable schema definition :: ${JSON.stringify(schema)}`);
@@ -88,8 +88,7 @@ class Schema {
     if (verbose) console.log(`parents :: ${parents}`);
 
     const [parent, ...additionalParents] = parents;
-    const parsedSchema = new Schema(schema.title, schemaIndex, allProperties, schema.description, allRelationShips, parent);
-    parsedSchema.additionalParents = additionalParents;
+    const parsedSchema = new Schema(schema.title, schemaIndex, allProperties, schema.description, allRelationShips, parent, additionalParents);
     return [allReferencedFiles, { [schemaIndex]: parsedSchema }];
   }
 }
