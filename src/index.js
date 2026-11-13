@@ -52,12 +52,14 @@ async function loadUrl(url, redirectsLeft = MAX_REDIRECTS) {
 // allLoadedFiles is per run: callers pass only (fileOrUrl, verbose); nested loads share the list.
 // warnings (optional array) collects one message per schema that is not rendered; the CLI prints them, the library stays silent.
 async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = []) {
-  if (allLoadedFiles.includes(fileOrUrl)) {
+  // the same file can be reached as ./a.yaml and sub/../a.yaml, so compare resolved locations
+  const key = fileOrUrl.startsWith('http') ? new URL(fileOrUrl).href : path.resolve(fileOrUrl);
+  if (allLoadedFiles.includes(key)) {
     if (verbose) console.log(`already loaded :: ${fileOrUrl}; skipping`);
     return [];
   }
 
-  allLoadedFiles.push(fileOrUrl);
+  allLoadedFiles.push(key);
   if (verbose) console.log(`processing fileOrUrl :: ${fileOrUrl}`);
   const allParsedSchemas = {};
 

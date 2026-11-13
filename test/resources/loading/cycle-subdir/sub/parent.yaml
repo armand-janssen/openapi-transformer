@@ -1,0 +1,7 @@
+components:
+  schemas:
+    Parent:
+      type: object
+      properties:
+        back:
+          $ref: '../a.yaml#/components/schemas/A'

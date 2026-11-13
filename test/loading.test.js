@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { assert } = require('chai');
 const { runCli, startServer } = require('./helpers');
+const { loadYamlFile } = require('..');
 
 // Pins how referenced files are loaded, through the CLI as a child process so a loader crash cannot reach the mocha process.
 const DIR = path.join(__dirname, 'resources', 'loading');
@@ -112,6 +113,20 @@ describe('loading referenced files', function loadingTests() {
 
       assert.equal(result.code, 0, result.stderr);
       assert.deepEqual(classes(result), ['A', 'B', 'C']);
+    });
+
+    it('a cycle through a subdirectory loads the relative root once (one warning, not two)', async () => {
+      const warnings = [];
+      await loadYamlFile('./test/resources/loading/cycle-subdir/a.yaml', false, warnings);
+
+      assert.lengthOf(warnings, 1);
+    });
+
+    it('a cycle back to a URL root written with ./ loads the root once', async () => {
+      const result = await load(`${server.url}/cycle-subdir/./a.yaml`);
+
+      assert.equal(result.code, 0, result.stderr);
+      assert.lengthOf(result.stderr.match(/Warning/g), 1, result.stderr);
     });
 
     it('(story 20) a property reference to a .yml file is followed', async () => {
