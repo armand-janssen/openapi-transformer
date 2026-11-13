@@ -5,8 +5,8 @@ const plantUml = require('../src/plantUmlTransformer');
 const markdown = require('../src/markdownTransformer');
 const jsonSchema = require('../src/jsonSchemaTransformer');
 
-// The package's intended entry module for library-API tests; ticket 05 switches this in one place.
-const library = require('../src/index');
+// Library-API tests go through the package entry point (story 31).
+const library = require('..');
 
 const FIXTURES = path.join(__dirname, 'fixtures', 'behaviours');
 const fixturePath = (file) => path.join(FIXTURES, file);

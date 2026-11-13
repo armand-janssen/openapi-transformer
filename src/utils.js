@@ -17,7 +17,7 @@ function addValueToArrayIfNotExists(array, value) {
 function addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray) {
   for (const sourceArrayIndex in sourceArray) {
     const value = sourceArray[sourceArrayIndex];
-    this.addValueToArrayIfNotExists(targetArray, value);
+    addValueToArrayIfNotExists(targetArray, value);
   }
 }
 

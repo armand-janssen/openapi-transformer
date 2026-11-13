@@ -30,23 +30,14 @@ describe('CLI on the example specs', () => {
     });
   });
 
-  // Current behaviour: the empty `required:` in all-in-one.yaml crashes the loader with a TypeError on null.
-  it('example/all-in-one/all-in-one.yaml: crashes and writes nothing', async () => {
-    const result = await runCli([path.join(ROOT, 'example/all-in-one/all-in-one.yaml'), '-p', 'out.plantuml', '-m', 'out.md', '-j', 'out.json']);
+  // Current behaviour: the empty `required:` in the all-in-one specs crashes the loader with a TypeError on null.
+  ['all-in-one.yaml', 'all-in-one-openapi.yaml'].forEach((file) => {
+    it(`example/all-in-one/${file}: crashes and writes nothing`, async () => {
+      const result = await runCli([path.join(ROOT, 'example/all-in-one', file), '-p', 'out.plantuml', '-m', 'out.md', '-j', 'out.json']);
 
-    assert.equal(result.code, 1);
-    assert.include(result.stderr, "TypeError: Cannot read properties of null (reading 'includes')");
-    assert.deepEqual(result.files, {});
-  });
-
-  // Current behaviour: the referenced file is loaded without being awaited, so empty outputs are written before the same crash.
-  it('example/all-in-one/all-in-one-openapi.yaml: writes empty outputs, then crashes', async () => {
-    const result = await runCli([path.join(ROOT, 'example/all-in-one/all-in-one-openapi.yaml'), '-p', 'out.plantuml', '-m', 'out.md', '-j', 'out.json']);
-
-    assert.equal(result.code, 1);
-    assert.include(result.stderr, "TypeError: Cannot read properties of null (reading 'includes')");
-    assertMatchesExpected(result.files['out.plantuml'], 'examples/all-in-one-openapi.plantuml');
-    assertMatchesExpected(result.files['out.md'], 'examples/all-in-one-openapi.md');
-    assertMatchesExpected(result.files['out.json'], 'examples/all-in-one-openapi.json');
+      assert.equal(result.code, 1);
+      assert.include(result.stderr, "TypeError: Cannot read properties of null (reading 'includes')");
+      assert.deepEqual(result.files, {});
+    });
   });
 });

@@ -23,4 +23,11 @@ describe('openApiGenerator - loadYamlFile - two relationships -  circular $refs 
     assertRelationShip(loadedSchemas.componentA.relationShips[0], 'componentA', 'componentB', 'componentB', 'use');
     assertRelationShip(loadedSchemas.componentB.relationShips[0], 'componentB', 'componentA', 'componentA', 'use');
   });
+
+  it('Concurrent loads of the same spec each load every file (visited files are tracked per run).', async () => {
+    const file = './test/resources/generatorCircularRefs/componentA.yaml';
+    const results = await Promise.all([openApiGenerator.loadYamlFile(file), openApiGenerator.loadYamlFile(file)]);
+
+    results.forEach((loadedSchemas) => assert.sameMembers(Object.keys(loadedSchemas), ['componentA', 'componentB']));
+  });
 });
