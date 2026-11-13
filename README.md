@@ -1,7 +1,5 @@
 # OpenAPI transformer
 
-[![Coverage Status](https://coveralls.io/repos/github/armand-janssen/openapi-transformer/badge.svg?branch=master)](https://coveralls.io/github/armand-janssen/openapi-transformer?branch=master)
-
 [![Node.js CI](https://github.com/armand-janssen/openapi-transformer/actions/workflows/node.js.yml/badge.svg)](https://github.com/armand-janssen/openapi-transformer/actions/workflows/node.js.yml)
 
 [![Known Vulnerabilities](https://snyk.io/test/github/armand-janssen/openapi-transformer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/armand-janssen/openapi-transformer?targetFile=package.json)
@@ -53,3 +51,10 @@ openapi-transformer vehicle.yaml --plantuml ./example.plantuml --markdown ./exam
 # Online utils
 - [Online Markdown Editor http://demo.showdownjs.com](http://demo.showdownjs.com)
 - [Online PlantUML Editor https://www.planttext.com](https://www.planttext.com)
+
+# Development
+Run all tests with coverage (the CLI is included):
+```
+npm test
+```
+The end-to-end tests compare generated output with the files in `test/expected`. To regenerate them on purpose after an intended output change, run `UPDATE_EXPECTED=1 npm test` and review the diff.

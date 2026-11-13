@@ -11,10 +11,14 @@
   "scripts": {
     "test": "nyc mocha",
     "test-debug": "mocha --inspect-brk",
-    "coverage": "jest --coverage",
     "lint": "eslint . --ignore-pattern node_modules/",
-    "lintfix": "eslint . --fix",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "lintfix": "eslint . --fix"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.js"
+    ]
   },
   "keywords": [
     "openapi",
@@ -39,16 +43,11 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "coveralls": "^3.1.1",
     "eslint": "^8.3.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-classes": "^0.1.1",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-promise": "^4.0.1",
-    "jest": "^27.3.1",
     "mocha": "^9.1.3"
-  },
-  "jest": {
-    "coverageDirectory": "<rootDir>/coverage"
   }
 }
