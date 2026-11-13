@@ -70,7 +70,7 @@ class Schema {
     const parents = [];
     const allReferencedFiles = [];
     const allProperties = [];
-    const allRelationShips = [];
+    let allRelationShips = [];
 
     allOf.forEach((attribute) => {
       if (verbose) console.log(`attribute: ${util.inspect(attribute, { showHidden: false, depth: null })}`);
@@ -81,7 +81,16 @@ class Schema {
         if (referencedFile != null) utils.addValueToArrayIfNotExists(allReferencedFiles, referencedFile[0]);
       } else if (attribute.properties !== undefined) {
         const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required || undefined, schemaIndex, verbose);
-        allProperties.push(...parsedProperties);
+        // a later member overrides a property of an earlier one, keeping its first position
+        parsedProperties.forEach((property) => {
+          const index = allProperties.findIndex((p) => p.name === property.name);
+          if (index === -1) {
+            allProperties.push(property);
+          } else {
+            allProperties[index] = property;
+            allRelationShips = allRelationShips.filter((r) => r.description !== property.name);
+          }
+        });
         allRelationShips.push(...relationShips);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       }

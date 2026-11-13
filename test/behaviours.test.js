@@ -184,6 +184,22 @@ describe('Array items', () => {
   });
 });
 
+describe('allOf members that define the same property', () => {
+  it('the later member overrides the earlier one in its first position, in all three outputs', async () => {
+    const result = await runCli([fixturePath('allof-override.yaml'), '-j', 'out.json', '-m', 'out.md', '-p', 'out.plantuml']);
+    assert.equal(result.code, 0, result.stderr);
+    const uml = result.files['out.plantuml'];
+    assert.include(uml, 'class Child {\n  dup * : integer\n  a  : string\n  b  : string\n\n}\n');
+    assert.notInclude(uml, 'Child -- Other');
+    assert.include(result.files['out.md'], '| dup | Y | integer |');
+    assert.notInclude(result.files['out.md'], '| dup | &nbsp;');
+    const json = JSON.parse(result.files['out.json']);
+    assert.deepEqual(Object.keys(json.properties), ['dup', 'a', 'b']);
+    assert.deepEqual(json.properties.dup, { type: 'integer' });
+    assert.deepEqual(json.required, ['dup']);
+  });
+});
+
 describe('Enums that are not strings', () => {
   it('a top-level enum keeps its declared type in JSON Schema, and an untyped one gets no type', async () => {
     const result = await runCli([fixturePath('enum-types.yaml'), '-j', 'out.json']);
