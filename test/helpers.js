@@ -41,7 +41,7 @@ function startServer(dir) {
     const override = overrides[urlPath];
     if (override) {
       res.writeHead(override.status, override.location ? { Location: override.location } : {});
-      res.end();
+      res.end(override.body);
       return;
     }
     const file = path.join(dir, urlPath);
@@ -56,7 +56,7 @@ function startServer(dir) {
   return new Promise((resolve) => {
     server.listen(0, '127.0.0.1', () => resolve({
       url: `http://127.0.0.1:${server.address().port}`,
-      respond(urlPath, status, location) { overrides[urlPath] = { status, location }; },
+      respond(urlPath, status, location, body) { overrides[urlPath] = { status, location, body }; },
       close: promisify(server.close.bind(server)),
     }));
   });

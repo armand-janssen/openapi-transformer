@@ -103,20 +103,20 @@ describe('CLI arguments and failures', () => {
       mentions.forEach((text) => assert.include(result.stderr, text));
     };
 
-    it.skip('(story 17) a missing input file is a one-line error with a non-zero exit', async () => {
+    it('(story 17) a missing input file is a one-line error with a non-zero exit', async () => {
       const missing = path.join(__dirname, 'does-not-exist.yaml');
       const result = await runCli([missing, '-p', 'out.plantuml']);
 
       assertOneLineError(result, missing);
     });
 
-    it.skip('(story 18) invalid YAML is a one-line error naming the file', async () => {
+    it('(story 18) invalid YAML is a one-line error naming the file', async () => {
       const result = await runCli([fixture('invalid.yaml'), '-p', 'out.plantuml']);
 
       assertOneLineError(result, 'invalid.yaml');
     });
 
-    it.skip('(story 19) a spec with no schemas warns on stderr and exits non-zero', async () => {
+    it('(story 19) a spec with no schemas warns on stderr and exits non-zero', async () => {
       const result = await runCli([fixture('no-schemas.yaml'), '-p', 'out.plantuml']);
 
       assertOneLineError(result, 'no-schemas.yaml');
@@ -128,7 +128,23 @@ describe('CLI arguments and failures', () => {
       assert.include(result.stderr, 'Name');
     });
 
-    it.skip('(story 30) the help text mentions all three output types', async () => {
+    it('--verbose adds the stack trace to the error output', async () => {
+      const result = await runCli([path.join(__dirname, 'does-not-exist.yaml'), '-p', 'out.plantuml', '-v']);
+
+      assert.equal(result.code, 1);
+      assert.include(result.stderr, '    at ');
+    });
+
+    it('an HTTP error with a multi-line body is still one line', async () => {
+      const server = await startServer(path.join(__dirname, 'fixtures', 'cli'));
+      server.respond('/boom.yaml', 500, undefined, 'first\nsecond');
+      const result = await runCli([`${server.url}/boom.yaml`, '-p', 'out.plantuml']);
+      await server.close();
+
+      assertOneLineError(result, 'boom.yaml', 'HTTP 500', 'first second');
+    });
+
+    it('(story 30) the help text mentions all three output types', async () => {
       const { stdout } = await runCli([]);
 
       assert.match(stdout, /At least 1 output type[^\n]*plantuml[^\n]*markdown[^\n]*json/i);

@@ -58,16 +58,28 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
   if (fileOrUrl.startsWith('http')) {
     basePath = fileOrUrl;
     if (verbose) console.log(`base http path :: ${basePath}`);
-    const response = await loadUrl(fileOrUrl);
-    loadedFile = response.body;
+    try {
+      loadedFile = (await loadUrl(fileOrUrl)).body;
+    } catch (err) {
+      throw new Error(`Cannot load ${fileOrUrl}: ${err.message}`);
+    }
   } else {
     // determine base to resolve other file references from
     basePath = path.dirname(fileOrUrl);
     if (verbose) console.log(`base file path :: ${basePath}`);
 
-    loadedFile = fs.readFileSync(fileOrUrl, 'UTF-8');
+    try {
+      loadedFile = fs.readFileSync(fileOrUrl, 'UTF-8');
+    } catch (err) {
+      throw new Error(`Cannot read ${fileOrUrl}: ${err.message}`);
+    }
   }
-  const myYaml = YAML.parse(loadedFile);
+  let myYaml;
+  try {
+    myYaml = YAML.parse(loadedFile);
+  } catch (err) {
+    throw new Error(`Invalid YAML or JSON in ${fileOrUrl}: ${err.message}`);
+  }
   if (verbose) console.log(`loaded files :: ${allLoadedFiles}`);
 
   if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined)
