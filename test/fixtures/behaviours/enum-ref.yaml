@@ -1,0 +1,13 @@
+components:
+  schemas:
+    Car:
+      type: object
+      properties:
+        color:
+          $ref: '#/components/schemas/Color'
+    Color:
+      type: string
+      description: Paint colour
+      enum:
+        - red
+        - green

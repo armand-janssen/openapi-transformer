@@ -27,7 +27,9 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
 
   if (verbose) console.log('Reading openAPI...');
   (async () => {
-    const allParsedSchemas = await openApiGenerator.loadYamlFile(program.args[0], verbose);
+    const warnings = [];
+    const allParsedSchemas = await openApiGenerator.loadYamlFile(program.args[0], verbose, warnings);
+    warnings.forEach((warning) => console.error(`Warning: ${warning}`));
     if (Object.keys(allParsedSchemas).length === 0) {
       throw new Error(`No schemas found in ${program.args[0]} (expected components.schemas or definitions)`);
     }

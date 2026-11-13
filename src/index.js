@@ -53,7 +53,8 @@ async function loadUrl(url, redirectsLeft = MAX_REDIRECTS) {
 }
 
 // allLoadedFiles is per run: callers pass only (fileOrUrl, verbose); nested loads share the list.
-async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
+// warnings (optional array) collects one message per schema that is not rendered; the CLI prints them, the library stays silent.
+async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = []) {
   if (allLoadedFiles.includes(fileOrUrl)) {
     if (verbose) console.log(`already loaded :: ${fileOrUrl}; skipping`);
     return [];
@@ -94,14 +95,16 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
   }
   if (verbose) console.log(`loaded files :: ${allLoadedFiles}`);
 
-  if ((myYaml.components !== undefined && myYaml.components.schemas !== undefined)
-      || myYaml.definitions !== undefined) {
+  if (myYaml && ((myYaml.components !== undefined && myYaml.components.schemas !== undefined)
+      || myYaml.definitions !== undefined)) {
     let { schemas } = myYaml.components || {};
     if (!schemas) {
       schemas = myYaml.definitions;
     }
 
-    const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose);
+    const skipped = [];
+    const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose, skipped);
+    skipped.forEach((name) => warnings.push(`schema ${name} in ${fileOrUrl} is not rendered (only objects and enums are supported)`));
 
     utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
@@ -109,7 +112,7 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
     for (const referencedFile of referencedFiles) {
       const nextPath = resolveReferencedPath(basePath, referencedFile);
       // eslint-disable-next-line no-await-in-loop
-      const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, allLoadedFiles);
+      const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, warnings, allLoadedFiles);
 
       utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
     }

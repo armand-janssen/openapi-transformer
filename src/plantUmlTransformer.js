@@ -79,11 +79,14 @@ function generateProperty(property, generateExtraDetails) {
 }
 function generateSchema(schema, generateExtraDetails) {
   let uml = constants.lineBreak;
-  uml += 'class ';
+  uml += schema.enumValues ? 'enum ' : 'class ';
   uml += schema.name;
   uml += ' {';
   uml += constants.lineBreak;
 
+  if (schema.enumValues) {
+    schema.enumValues.forEach((value) => { uml += constants.tab + value + constants.lineBreak; });
+  }
   if (schema.properties !== undefined) {
     schema.properties.forEach((property) => {
       uml += generateProperty(property, generateExtraDetails);

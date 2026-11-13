@@ -6,4 +6,10 @@ class Enums {
   withPattern  : enum[m, n][pattern : ^[a-z]$]
 
 }
+
+enum Color {
+  red
+  green
+
+}
 @enduml

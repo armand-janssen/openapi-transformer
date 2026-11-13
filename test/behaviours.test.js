@@ -138,10 +138,27 @@ describe('Known failures', () => {
     assert.include(plantUml.generate(schemas, false), 'class Base {');
   });
 
-  it.skip('story 24: a top-level enum schema is rendered', async () => {
+  it('story 24: a top-level enum schema is rendered in all three outputs', async () => {
     const schemas = await load('enums.yaml');
-    assert.property(schemas, 'Color');
-    assert.include(markdown.generate(schemas), '# Color');
-    assert.deepEqual(JSON.parse(jsonSchema.generate(schemas)).definitions.Color.enum, ['red', 'green']);
+    assert.include(plantUml.generate(schemas, false), 'enum Color {\n  red\n  green\n\n}');
+    assert.include(markdown.generate(schemas), '# Color\n&nbsp;\n\n## Values\n- red\n- green\n');
+    assert.deepEqual(JSON.parse(jsonSchema.generate(schemas)).definitions.Color, { type: 'string', enum: ['red', 'green'] });
+  });
+
+  it('story 24: a property referencing a top-level enum links to it in each output', async () => {
+    const schemas = await load('enum-ref.yaml');
+    const uml = plantUml.generate(schemas, false);
+    assert.include(uml, 'color  : Color');
+    assert.include(uml, 'Car -- Color  :  color');
+    assert.include(markdown.generate(schemas), '| color | &nbsp; | Color |');
+    const json = JSON.parse(jsonSchema.generate(schemas));
+    assert.deepEqual(json.properties.color, { $ref: '#/definitions/Color' });
+    assert.deepEqual(json.definitions.Color, { description: 'Paint colour', type: 'string', enum: ['red', 'green'] });
+  });
+
+  it('story 24: a top-level enum that is the first schema becomes the JSON Schema root', async () => {
+    const json = JSON.parse(jsonSchema.generate(await load('enum-first.yaml')));
+    assert.deepInclude(json, { title: 'Color', type: 'string', enum: ['red'] });
+    assert.deepEqual(json.definitions, {});
   });
 });

@@ -97,19 +97,30 @@ function generate(schemas) {
       if (firstProperty) {
         js.title = schemaIndex;
         js.description = schema.description;
-        js.type = 'object';
-        js.properties = result.js;
-        js.required = result.required;
-        js.additionalProperties = false;
+        if (schema.enumValues) {
+          // the first schema is the root, so a leading enum makes the whole document a string enum
+          js.type = 'string';
+          js.enum = schema.enumValues;
+        } else {
+          js.type = 'object';
+          js.properties = result.js;
+          js.required = result.required;
+          js.additionalProperties = false;
+        }
         js.definitions = {};
       } else {
         js.definitions[schemaIndex] = {};
         const definition = js.definitions[schemaIndex];
         definition.description = schema.description;
-        definition.type = 'object';
-        definition.properties = result.js;
-        definition.required = result.required;
-        definition.additionalProperties = false;
+        if (schema.enumValues) {
+          definition.type = 'string';
+          definition.enum = schema.enumValues;
+        } else {
+          definition.type = 'object';
+          definition.properties = result.js;
+          definition.required = result.required;
+          definition.additionalProperties = false;
+        }
       }
       firstProperty = false;
     }
