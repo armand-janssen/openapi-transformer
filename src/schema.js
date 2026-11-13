@@ -16,8 +16,8 @@ class Schema {
     this.enumType = enumType; // the enum's declared type, if any
   }
 
-  // warnings receives the names of schemas that cannot be rendered.
-  static parseSchemas(schemas, verbose, warnings = []) {
+  // skippedSchemaNames receives the names of schemas that cannot be rendered.
+  static parseSchemas(schemas, verbose, skippedSchemaNames = []) {
     const allReferencedFiles = [];
     const allParsedSchemas = {};
 
@@ -49,7 +49,7 @@ class Schema {
       } else if (schema.enum !== undefined) {
         allParsedSchemas[schemaIndex] = new Schema(title, schemaIndex, [], description, [], parent, undefined, schema.enum, schema.type);
       } else {
-        warnings.push(schemaIndex);
+        skippedSchemaNames.push(schemaIndex);
         if (verbose) console.log(`unparseable schema definition :: ${JSON.stringify(schema)}`);
       }
     }
