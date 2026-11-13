@@ -29,7 +29,7 @@ Options:
   -h, --help                          display help for command
 ```
 
-Only the schemas under `components.schemas` (OpenAPI 3) or `definitions` (Swagger 2) are rendered, so a spec that only has `paths` produces no output. Referenced files (relative or URL) are followed. Schemas that are neither an object nor an enum are skipped with a `Warning:` line on stderr. Any failure (unreadable file, HTTP error, invalid YAML, no schemas) prints a one-line `Error:` message and exits with code 1; add `--verbose` for the stack trace.
+Only the schemas under `components.schemas` (OpenAPI 3) or `definitions` (Swagger 2) are rendered, so a spec that only has `paths` produces no output. Referenced files (relative or URL) are followed. Schemas that are neither an object nor an enum are skipped with a `Warning:` line on stderr, as is a reference to a schema that is not rendered. Any failure (unreadable file, HTTP error, invalid YAML, no schemas) prints a one-line `Error:` message and exits with code 1; add `--verbose` for the stack trace.
 
 ## Example
 **Generates to plantuml**
@@ -88,7 +88,7 @@ npm test
 ### Breaking changes
 - Requires Node 22.13 or newer (Node 18 and 20 are end-of-life).
 - Failures print a one-line `Error: ...` message naming the file and exit with code 1 (`--verbose` prints the stack trace). This covers unreadable files, invalid YAML/JSON, HTTP errors (non-2xx) and a spec without schemas, which now writes nothing.
-- Schemas that are neither an object nor an enum are no longer dropped silently: a `Warning:` line is printed on stderr.
+- Schemas that are neither an object nor an enum are no longer dropped silently: a `Warning:` line is printed on stderr, and another for each schema that refers to a schema that is not rendered (JSON Schema then allows any value there instead of emitting an invalid type or a dangling reference).
 - Enum values are no longer mixed with constraints. PlantUML shows `enum[a, b]` and Markdown lists the values separately from other constraints such as `minItems`; an empty `required` list means no required properties.
 - PlantUML no longer draws the `*<|-` "extension" relationship; inheritance is drawn as `Parent <|-- Child`, also for extra allOf parents.
 - Referenced `.yml` files are followed; a local reference such as `#/components/schemas/yamlThing` is no longer mistaken for a file.

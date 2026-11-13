@@ -1,9 +1,15 @@
 
+const JSON_TYPES = ['string', 'integer', 'boolean', 'object', 'null'];
+
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
   let processDetails = true;
   // the first schema is the document root, which draft-07 addresses as '#'
-  const ref = (name) => ({ $ref: name === listOfUsedSchemas[0] ? '#' : `#/definitions/${name}` });
+  // a schema that is not rendered has no definition, so allow anything there (the loader warns about it)
+  const ref = (name) => {
+    if (!listOfUsedSchemas.includes(name)) return {};
+    return { $ref: name === listOfUsedSchemas[0] ? '#' : `#/definitions/${name}` };
+  };
 
   if (property.description) {
     js.description = property.description;
@@ -41,11 +47,8 @@ function generateProperty(property, listOfUsedSchemas) {
     else if (items.refs) js.items = { [items.combinator]: items.refs.map(ref) };
   } else {
     const { type } = property;
-    if (type && listOfUsedSchemas.includes(type)) {
-      Object.assign(js, ref(type));
-    } else {
-      js.type = property.type;
-    }
+    if (JSON_TYPES.includes(type)) js.type = type;
+    else Object.assign(js, ref(type));
   }
   if (property.enumValues) js.enum = property.enumValues;
   if (processDetails && property.details) {

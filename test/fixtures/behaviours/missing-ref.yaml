@@ -1,0 +1,28 @@
+components:
+  schemas:
+    A:
+      allOf:
+        - $ref: '#/components/schemas/NoParent'
+        - type: object
+          properties:
+            s:
+              $ref: '#/components/schemas/Str'
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/Str'
+            gone:
+              $ref: '#/components/schemas/Missing'
+            many:
+              type: array
+              items:
+                anyOf:
+                  - $ref: '#/components/schemas/Missing'
+                  - $ref: '#/components/schemas/B'
+    B:
+      type: object
+      properties:
+        id:
+          type: string
+    Str:
+      type: string

@@ -200,6 +200,23 @@ describe('allOf members that define the same property', () => {
   });
 });
 
+describe('References to schemas that are not rendered', () => {
+  it('warn once per referring schema and target, and give valid JSON Schema', async () => {
+    const result = await runCli([fixturePath('missing-ref.yaml'), '-j', 'out.json']);
+    assert.equal(result.code, 0, result.stderr);
+    assert.deepEqual(result.stderr.trim().split('\n').filter((line) => line.includes('refers to')), [
+      'Warning: schema A refers to NoParent, which is not rendered',
+      'Warning: schema A refers to Str, which is not rendered',
+      'Warning: schema A refers to Missing, which is not rendered',
+    ]);
+    const json = JSON.parse(result.files['out.json']);
+    assert.deepEqual(json.properties.s, {});
+    assert.deepEqual(json.properties.gone, {});
+    assert.deepEqual(json.properties.list, { type: 'array', items: {} });
+    assert.deepEqual(json.properties.many.items, { anyOf: [{}, { $ref: '#/definitions/B' }] });
+  });
+});
+
 describe('Enums that are not strings', () => {
   it('a top-level enum keeps its declared type in JSON Schema, and an untyped one gets no type', async () => {
     const result = await runCli([fixturePath('enum-types.yaml'), '-j', 'out.json']);

@@ -49,6 +49,15 @@ async function loadUrl(url, redirectsLeft = MAX_REDIRECTS) {
   });
 }
 
+// Only the root call sees every loaded schema, so it checks that what each schema points at is rendered.
+function warnAboutMissingTargets(schemas, warnings) {
+  Object.values(schemas).forEach((schema) => {
+    const targets = [schema.parent, ...(schema.additionalParents || []), ...schema.relationShips.map((r) => r.to)];
+    new Set(targets.filter((target) => target !== undefined && !schemas[target]))
+      .forEach((target) => warnings.push(`schema ${schema.name} refers to ${target}, which is not rendered`));
+  });
+}
+
 // allLoadedFiles is per run: callers pass only (fileOrUrl, verbose); nested loads share the list.
 // warnings (optional array) collects one message per schema that is not rendered; the CLI prints them, the library stays silent.
 async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = []) {
@@ -115,6 +124,7 @@ async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = 
       utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
     }
   }
+  if (allLoadedFiles[0] === key) warnAboutMissingTargets(allParsedSchemas, warnings);
   return allParsedSchemas;
 }
 module.exports = {
