@@ -24,7 +24,7 @@
       "additionalProperties": false
     },
     "SeveralInline": {
-      "description": "Parent plus two inline objects.",
+      "description": "Parent plus two inline objects, each with its own required list.",
       "type": "object",
       "properties": {
         "first": {
@@ -41,6 +41,7 @@
       "additionalProperties": false
     },
     "SeveralParents": {
+      "description": "Two referenced members; the first is the parent.",
       "type": "object",
       "properties": {
         "own": {
