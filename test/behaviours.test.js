@@ -110,14 +110,32 @@ describe('Known failures', () => {
     assert.equal(json.properties.withPattern.pattern, '^[a-z]$');
   });
 
-  it.skip('story 22: a schema with several inline allOf objects shows all their properties', async () => {
+  it('story 22: a schema with several inline allOf objects shows all their properties', async () => {
     const schemas = await load('allof-variants.yaml');
     const names = schemas.SeveralInline.properties.map((p) => p.name);
     assert.deepEqual(names, ['first', 'second']);
   });
 
-  it.skip('story 23: an allOf parent that lives in another file is loaded', async () => {
-    assert.property(await load('allof-variants.yaml'), 'Base');
+  it('story 22: the required lists of all inline allOf objects are kept in all three outputs', async () => {
+    const schemas = await load('allof-variants.yaml');
+    const uml = plantUml.generate(schemas, false);
+    assert.include(uml, 'first * : string');
+    assert.include(uml, 'second * : integer');
+    assert.include(markdown.generate(schemas), '| first | Y | string |');
+    assert.deepEqual(JSON.parse(jsonSchema.generate(schemas)).definitions.SeveralInline.required, ['first', 'second']);
+  });
+
+  it('story 22: with several referenced allOf members the first is the parent and the others get inheritance arrows too', async () => {
+    const uml = plantUml.generate(await load('allof-variants.yaml'), false);
+    assert.include(uml, 'Parent <|-- SeveralParents');
+    assert.include(uml, 'OneInline <|-- SeveralParents');
+    assert.include(uml, 'SeveralParents -- Parent  :  owner');
+  });
+
+  it('story 23: an allOf parent that lives in another file is loaded', async () => {
+    const schemas = await load('allof-variants.yaml');
+    assert.property(schemas, 'Base');
+    assert.include(plantUml.generate(schemas, false), 'class Base {');
   });
 
   it.skip('story 24: a top-level enum schema is rendered', async () => {

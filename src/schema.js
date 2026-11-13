@@ -53,44 +53,36 @@ class Schema {
     return [allReferencedFiles, allParsedSchemas];
   }
 
+  // Inline members are concatenated in order; the first referenced member is the parent, later ones are additionalParents.
   static processInheritance(schema, schemaIndex, allOf, verbose) {
     if (verbose) console.log(`schemaIndex :: ${schemaIndex}`);
-    const parsedSchemas = {};
-    let parent;
-    const allReferencedFiles = [];
-    const { description } = schema;
-
     if (verbose) console.log(`fullschema: ${util.inspect(schema, { showHidden: false, depth: null })}`);
 
-    let parsedProperties;
-    let relationShips;
-    let referencedFiles;
+    const parents = [];
+    const allReferencedFiles = [];
+    const allProperties = [];
+    const allRelationShips = [];
 
-    for (const attributeIndex of Object.keys(allOf)) {
-      const attribute = allOf[attributeIndex];
-
+    allOf.forEach((attribute) => {
       if (verbose) console.log(`attribute: ${util.inspect(attribute, { showHidden: false, depth: null })}`);
 
       if (attribute.$ref !== undefined) {
-        parent = utils.lastToken(attribute.$ref, '/');
-        if (verbose) console.log(`parent :: ${parent}`);
-      }
-
-      if (attribute.type !== undefined && attribute.type === 'object' && attribute.properties !== undefined) {
-        if (verbose) console.log(`type :: ${attribute.type}`);
-        if (verbose) console.log(`type.properties :: ${attribute.properties}`);
-
-        [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required || undefined, schemaIndex, verbose);
+        parents.push(utils.lastToken(attribute.$ref, '/'));
+        const referencedFile = attribute.$ref.match('^[^#]*\\.ya?ml');
+        if (referencedFile != null) utils.addValueToArrayIfNotExists(allReferencedFiles, referencedFile[0]);
+      } else if (attribute.properties !== undefined) {
+        const [parsedProperties, relationShips, referencedFiles] = Property.parseProperties(attribute.properties, attribute.required || undefined, schemaIndex, verbose);
+        allProperties.push(...parsedProperties);
+        allRelationShips.push(...relationShips);
         utils.addValuesOfArrayToOtherArrayIfNotExist(referencedFiles, allReferencedFiles);
       }
-    }
-    if (parsedSchemas[schemaIndex] === undefined) {
-      if (verbose) console.log(`creating schema :: ${schemaIndex}`);
+    });
+    if (verbose) console.log(`parents :: ${parents}`);
 
-      parsedSchemas[schemaIndex] = new Schema(schema.title, schemaIndex, parsedProperties, description, relationShips, parent);
-    }
-
-    return [allReferencedFiles, parsedSchemas];
+    const [parent, ...additionalParents] = parents;
+    const parsedSchema = new Schema(schema.title, schemaIndex, allProperties, schema.description, allRelationShips, parent);
+    parsedSchema.additionalParents = additionalParents;
+    return [allReferencedFiles, { [schemaIndex]: parsedSchema }];
   }
 }
 

@@ -24,11 +24,31 @@
       "additionalProperties": false
     },
     "SeveralInline": {
-      "description": "Parent plus two inline objects.",
+      "description": "Parent plus two inline objects, each with its own required list.",
       "type": "object",
       "properties": {
+        "first": {
+          "type": "string"
+        },
         "second": {
           "type": "integer"
+        }
+      },
+      "required": [
+        "first",
+        "second"
+      ],
+      "additionalProperties": false
+    },
+    "SeveralParents": {
+      "description": "Two referenced members; the first is the parent.",
+      "type": "object",
+      "properties": {
+        "own": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Parent"
         }
       },
       "required": [],
@@ -39,6 +59,16 @@
       "type": "object",
       "properties": {
         "extra": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Base": {
+      "type": "object",
+      "properties": {
+        "baseId": {
           "type": "string"
         }
       },

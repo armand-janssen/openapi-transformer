@@ -1,14 +1,10 @@
 const { constants } = require('./constants');
 
-function generateParent(schemaName, parent) {
-  let uml = '';
-  if (parent !== undefined) {
-    uml += parent;
-    uml += ' <|-- ';
-    uml += schemaName;
-    uml += constants.lineBreak;
-  }
-  return uml;
+function generateParents(schema) {
+  return [schema.parent, ...(schema.additionalParents || [])]
+    .filter((parent) => parent !== undefined)
+    .map((parent) => `${parent} <|-- ${schema.name}${constants.lineBreak}`)
+    .join('');
 }
 function generateRelationShips(relationShips) {
   let uml = '';
@@ -18,8 +14,6 @@ function generateRelationShips(relationShips) {
 
       if (relationShip.type === constants.RELATIONSHIP_AGGREGATION) {
         uml += ' *-- ';
-      } else if (relationShip.type === constants.RELATIONSHIP_EXTENSION) {
-        uml += ' *<|- ';
       } else if (relationShip.type === constants.RELATIONSHIP_USE) {
         uml += ' -- ';
       }
@@ -101,7 +95,7 @@ function generateSchema(schema, generateExtraDetails) {
   uml += constants.lineBreak;
 
   uml += generateRelationShips(schema.relationShips);
-  uml += generateParent(schema.name, schema.parent);
+  uml += generateParents(schema);
 
   return uml;
 }
