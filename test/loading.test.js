@@ -127,17 +127,10 @@ describe('loading referenced files', function loadingTests() {
       assert.equal(result.code, 0, result.stderr);
       assert.deepEqual(classes(result), ['Root', 'yamlThing']);
     });
-
-    it('current behaviour: an allOf parent in another file is not loaded', async () => {
-      const result = await load(path.join(DIR, 'allof-parent/root.yaml'));
-
-      assert.equal(result.code, 0, result.stderr);
-      assert.deepEqual(classes(result), ['Child']);
-    });
   });
 
   describe('known failures: correct behaviour', () => {
-    it.skip('(story 23) an allOf parent in another file is loaded', async () => {
+    it('(story 23) an allOf parent in another file is loaded', async () => {
       const result = await load(path.join(DIR, 'allof-parent/root.yaml'));
 
       assert.equal(result.code, 0, result.stderr);

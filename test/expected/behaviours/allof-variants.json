@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Parent",
-  "description": "Parent lives in another file.",
   "type": "object",
   "properties": {
     "id": {
@@ -26,8 +25,27 @@
     "SeveralInline": {
       "type": "object",
       "properties": {
+        "first": {
+          "type": "string"
+        },
         "second": {
           "type": "integer"
+        }
+      },
+      "required": [
+        "first",
+        "second"
+      ],
+      "additionalProperties": false
+    },
+    "SeveralParents": {
+      "type": "object",
+      "properties": {
+        "own": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Parent"
         }
       },
       "required": [],
@@ -37,6 +55,16 @@
       "type": "object",
       "properties": {
         "extra": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Base": {
+      "type": "object",
+      "properties": {
+        "baseId": {
           "type": "string"
         }
       },
