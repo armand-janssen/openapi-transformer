@@ -4,8 +4,7 @@ const JSON_TYPES = ['string', 'integer', 'boolean', 'object', 'null'];
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
   let processDetails = true;
-  // the first schema is the document root, which draft-07 addresses as '#'
-  // a schema that is not rendered has no definition, so allow anything there (the loader warns about it)
+  // the root schema is addressed as '#'; a schema that is not rendered has no definition, so allow anything (the loader warns)
   const ref = (name) => {
     if (!listOfUsedSchemas.includes(name)) return {};
     return { $ref: name === listOfUsedSchemas[0] ? '#' : `#/definitions/${name}` };
@@ -39,7 +38,7 @@ function generateProperty(property, listOfUsedSchemas) {
     js.format = 'date-time';
     js.pattern = '^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$';
     processDetails = false;
-  } else if (property.type.indexOf('array[] of ') > -1) {
+  } else if (property.items) {
     js.type = 'array';
     const { items } = property;
     if (items.type) js.items = { type: items.type };
