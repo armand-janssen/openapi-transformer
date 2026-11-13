@@ -1,5 +1,3 @@
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 
 /*
   Split the value based on the token and get the value behing the last token
@@ -15,7 +13,7 @@ function addValueToArrayIfNotExists(array, value) {
   }
 }
 function addValuesOfArrayToOtherArrayIfNotExist(sourceArray, targetArray) {
-  for (const sourceArrayIndex in sourceArray) {
+  for (const sourceArrayIndex of Object.keys(sourceArray)) {
     const value = sourceArray[sourceArrayIndex];
     addValueToArrayIfNotExists(targetArray, value);
   }
@@ -32,7 +30,6 @@ function mergeObjects(sourceObject, targetObject) {
 
   Object.keys(sourceObject).forEach((attributeName) => {
     if (!Object.keys(targetObject).includes(attributeName)) {
-      // eslint-disable-next-line no-param-reassign
       targetObject[attributeName] = sourceObject[attributeName];
     }
   });

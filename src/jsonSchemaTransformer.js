@@ -81,7 +81,6 @@ function generate(schemas) {
 
   // used for rendering references easy and correctly
   const listOfUsedSchemas = [];
-  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       listOfUsedSchemas.push(schemaIndex);
@@ -89,7 +88,6 @@ function generate(schemas) {
   }
 
   let firstProperty = true;
-  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       const schema = schemas[schemaIndex];

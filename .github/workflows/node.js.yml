@@ -1,11 +1,11 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# Lints and tests on every supported Node LTS line.
+# See the Node release schedule at https://nodejs.org/en/about/previous-releases
 
 name: Node.js CI
 
 on:
   push:
-    branches: 
+    branches:
       - master
       - main
   pull_request:
@@ -17,17 +17,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # strategy:
-      # matrix:
-      #   node-version: [12.x, 14.x, 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    strategy:
+      matrix:
+        # 22.13 is the engines floor; 22.x, 24.x and 26.x are the supported LTS lines
+        node-version: ['22.13', 22.x, 24.x, 26.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Node
-      uses: actions/setup-node@v3
+    - uses: actions/checkout@v7
+    - name: Set up Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v7
       with:
-        node-version-file: '.nvmrc'
+        node-version: ${{ matrix.node-version }}
+        cache: npm
     - run: npm ci
-    - run: npm run build --if-present
+    - run: npm run lint
     - run: npm test

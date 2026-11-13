@@ -105,7 +105,6 @@ function generateSchema(schema, generateExtraDetails) {
 
 function generate(schemas, generateExtraDetails) {
   let uml = `@startuml${constants.lineBreak}`;
-  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       uml += generateSchema(schemas[schemaIndex], generateExtraDetails);

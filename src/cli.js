@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 const fs = require('fs');
-const program = require('commander');
+const { program } = require('commander');
 const { version } = require('../package.json');
 const plantUmlTransformer = require('./plantUmlTransformer');
 const markdownTransformer = require('./markdownTransformer');
@@ -12,6 +11,7 @@ const openApiGenerator = require('./index.js');
 program
   .version(version)
   .usage('[options] <inputFileOrUrl>')
+  .argument('[inputFileOrUrl]')
   .description('At least 1 output type must be selected: plantuml, markdown or jsonschema (JSON Schema)!')
   .option('-d, --details', 'Show extra attribute details')
   .option('-p, --plantuml <plantuml file>', 'Transform to plantuml')
@@ -20,10 +20,11 @@ program
   .option('-v, --verbose', 'Show verbose debug output')
   .parse(process.argv);
 
-if (!program.args.length || (program.plantuml == null && program.markdown == null && program.jsonschema == null)) {
+const options = program.opts();
+if (!program.args.length || (options.plantuml == null && options.markdown == null && options.jsonschema == null)) {
   program.help();
 } else {
-  const { verbose } = program;
+  const { verbose } = options;
 
   if (verbose) console.log('Reading openAPI...');
   (async () => {
@@ -34,27 +35,27 @@ if (!program.args.length || (program.plantuml == null && program.markdown == nul
       throw new Error(`No schemas found in ${program.args[0]} (expected components.schemas or definitions)`);
     }
 
-    if (program.plantuml !== undefined) {
+    if (options.plantuml !== undefined) {
       if (verbose) console.log('Writing plantuml...');
-      let uml = '';
-      if (program.details === undefined) {
+      let uml;
+      if (options.details === undefined) {
         uml = plantUmlTransformer.generate(allParsedSchemas, false);
       } else {
         uml = plantUmlTransformer.generate(allParsedSchemas, true);
       }
-      fs.writeFileSync(program.plantuml, uml, 'utf8');
+      fs.writeFileSync(options.plantuml, uml, 'utf8');
     }
 
-    if (program.markdown !== undefined) {
+    if (options.markdown !== undefined) {
       if (verbose) console.log('Writing markdown...');
       const md = markdownTransformer.generate(allParsedSchemas);
-      fs.writeFileSync(program.markdown, md, 'utf8');
+      fs.writeFileSync(options.markdown, md, 'utf8');
     }
 
-    if (program.jsonschema !== undefined) {
+    if (options.jsonschema !== undefined) {
       if (verbose) console.log('Writing JSON Schema...');
       const js = jsonSchemaTransformer.generate(allParsedSchemas);
-      fs.writeFileSync(program.jsonschema, js, 'utf8');
+      fs.writeFileSync(options.jsonschema, js, 'utf8');
     }
 
     if (verbose) console.log('Finished rendering documentation!');

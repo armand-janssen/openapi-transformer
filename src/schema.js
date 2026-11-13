@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 
 const util = require('node:util');
 const Property = require('./property');
@@ -21,7 +18,7 @@ class Schema {
     const allReferencedFiles = [];
     const allParsedSchemas = {};
 
-    for (const schemaIndex in schemas) {
+    for (const schemaIndex of Object.keys(schemas)) {
       const schema = schemas[schemaIndex];
 
       const { title } = schema;
