@@ -7,7 +7,7 @@ const library = require('..');
 const FIXTURES = path.join(__dirname, 'fixtures', 'behaviours');
 const fixturePath = (file) => path.join(FIXTURES, file);
 
-// Expected files pin what the tool outputs today, bugs included; the skipped tests further down state the correct behaviour.
+// Expected files pin the whole output per fixture; the tests further down each check one behaviour from the spec's user stories.
 const fixtures = [
   'property-types.yaml',
   'relationships.yaml',
@@ -46,8 +46,7 @@ describe('Transformer output per behaviour', () => {
   });
 });
 
-// Known failures: each states the correct behaviour (user stories in the spec) and is pending until phase 2 fixes it.
-describe('Known failures', () => {
+describe('Behaviours by user story', () => {
   const load = (file) => library.loadYamlFile(fixturePath(file));
 
   it('story 7: an empty required key does not crash the tool', async () => {

@@ -58,7 +58,7 @@ function warnAboutMissingTargets(schemas, warnings) {
   });
 }
 
-// allLoadedFiles is per run: callers pass only (fileOrUrl, verbose); nested loads share the list.
+// allLoadedFiles is per run: callers leave it out and nested loads share it.
 // warnings (optional array) collects one message per schema that is not rendered; the CLI prints them, the library stays silent.
 async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = []) {
   // the same file can be reached as ./a.yaml and sub/../a.yaml, so compare resolved locations

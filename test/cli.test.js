@@ -95,7 +95,7 @@ describe('CLI arguments and failures', () => {
     });
   });
 
-  describe('known failures: correct behaviour', () => {
+  describe('errors and warnings', () => {
     const assertOneLineError = (result, ...mentions) => {
       assert.notEqual(result.code, 0);
       assert.notInclude(result.stderr, '    at ', 'no stack trace');

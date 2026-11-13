@@ -144,7 +144,7 @@ describe('loading referenced files', function loadingTests() {
     });
   });
 
-  describe('known failures: correct behaviour', () => {
+  describe('allOf parents', () => {
     it('(story 23) an allOf parent in another file is loaded', async () => {
       const result = await load(path.join(DIR, 'allof-parent/root.yaml'));
 
