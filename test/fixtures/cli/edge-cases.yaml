@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: Edge cases
+  version: "1"
+paths: {}
+components:
+  schemas:
+    Name:
+      title: Name
+      type: string
+    Measure:
+      title: Measure
+      type: object
+      properties:
+        amount:
+          type: number
+        tags:
+          type: array
+          items:
+            type: string
+            minLength: 2
