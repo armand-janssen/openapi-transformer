@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 
 const util = require('node:util');
 const Property = require('./property');
@@ -20,7 +17,7 @@ class Schema {
     const allReferencedFiles = [];
     const allParsedSchemas = {};
 
-    for (const schemaIndex in schemas) {
+    for (const schemaIndex of Object.keys(schemas)) {
       const schema = schemas[schemaIndex];
 
       const { title } = schema;
@@ -69,7 +66,7 @@ class Schema {
     let relationShips;
     let referencedFiles;
 
-    for (const attributeIndex in allOf) {
+    for (const attributeIndex of Object.keys(allOf)) {
       const attribute = allOf[attributeIndex];
 
       if (verbose) console.log(`attribute: ${util.inspect(attribute, { showHidden: false, depth: null })}`);

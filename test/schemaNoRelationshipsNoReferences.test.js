@@ -7,14 +7,7 @@ const Schema = require('../src/schema');
 
 
 function sizeOfArray(array) {
-  let count = 0;
-  // eslint-disable-next-line no-restricted-syntax
-  // eslint-disable-next-line guard-for-in
-  // eslint-disable-next-line no-empty-pattern
-  for (const { } in array) {
-    count += 1;
-  }
-  return count;
+  return Object.keys(array).length;
 }
 
 let sandbox = null;

@@ -73,7 +73,7 @@ function generateProperty(property) {
     .replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
   markDownDescription = escapePipe(markDownDescription);
 
-  let markDownExample = nbsp;
+  let markDownExample;
   if (property.type === 'date') {
     markDownExample = property.example === undefined ? '2020-12-31' : property.example.toString().replace(/\n/g, '<br/>');
   } else {
@@ -127,7 +127,6 @@ function generateSchema(schema) {
 function generate(schemas) {
   let md = '';
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       md += generateSchema(schemas[schemaIndex]);

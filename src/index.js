@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
@@ -70,7 +67,7 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
     try {
       response = await loadUrl(fileOrUrl);
     } catch (err) {
-      throw new Error(`Cannot load ${fileOrUrl}: ${err.message}`);
+      throw new Error(`Cannot load ${fileOrUrl}: ${err.message}`, { cause: err });
     }
     basePath = response.url;
     if (verbose) console.log(`base http path :: ${basePath}`);
@@ -83,14 +80,14 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
     try {
       loadedFile = fs.readFileSync(fileOrUrl, 'UTF-8');
     } catch (err) {
-      throw new Error(`Cannot read ${fileOrUrl}: ${err.message}`);
+      throw new Error(`Cannot read ${fileOrUrl}: ${err.message}`, { cause: err });
     }
   }
   let myYaml;
   try {
     myYaml = YAML.parse(loadedFile);
   } catch (err) {
-    throw new Error(`Invalid YAML or JSON in ${fileOrUrl}: ${err.message}`);
+    throw new Error(`Invalid YAML or JSON in ${fileOrUrl}: ${err.message}`, { cause: err });
   }
   if (verbose) console.log(`loaded files :: ${allLoadedFiles}`);
 
@@ -108,7 +105,6 @@ async function loadYamlFile(fileOrUrl, verbose, allLoadedFiles = []) {
     // sequential on purpose: schema order is first-seen (depth-first), whatever the response timing
     for (const referencedFile of referencedFiles) {
       const nextPath = resolveReferencedPath(basePath, referencedFile);
-      // eslint-disable-next-line no-await-in-loop
       const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, allLoadedFiles);
 
       utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);

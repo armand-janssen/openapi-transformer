@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 const fs = require('fs');
 const { program } = require('commander');
@@ -36,7 +35,7 @@ if (!program.args.length || (options.plantuml == null && options.markdown == nul
 
     if (options.plantuml !== undefined) {
       if (verbose) console.log('Writing plantuml...');
-      let uml = '';
+      let uml;
       if (options.details === undefined) {
         uml = plantUmlTransformer.generate(allParsedSchemas, false);
       } else {

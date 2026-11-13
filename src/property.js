@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 const { constants } = require('./constants');
 const utils = require('./utils');
 const Detail = require('./detail');
@@ -61,7 +58,7 @@ class Property {
     const relationShips = [];
     const referencedFiles = [];
 
-    for (const propertyIndex in properties) {
+    for (const propertyIndex of Object.keys(properties ?? {})) {
       const property = properties[propertyIndex];
 
       const name = propertyIndex;
@@ -86,7 +83,7 @@ class Property {
         type = 'array[] of ';
         let first = true;
 
-        for (const itemIndex in property.items) {
+        for (const itemIndex of Object.keys(property.items ?? {})) {
           const item = property.items[itemIndex];
 
           if (itemIndex === 'type') {
@@ -111,7 +108,7 @@ class Property {
             }
           } else if (itemIndex === 'anyOf') { // typeof item === 'object') {
             // process anyOf / allOf / oneOf item
-            for (const refIndex in item) {
+            for (const refIndex of Object.keys(item)) {
               const reference = item[refIndex].$ref;
 
               const objectName = utils.lastToken(reference, '/');
