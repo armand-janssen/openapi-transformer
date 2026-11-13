@@ -1,0 +1,31 @@
+@startuml
+
+class Owner {
+  id * : string
+  pet  : Pet
+  toys  : array[] of Toy
+  things  : array[] of Pet/Toy
+  notes  : string
+
+}
+Owner -- Pet  :  pet
+Owner *-- Toy  :  toys
+Owner *-- Pet  :  things
+Owner *-- Toy  :  things
+
+class Pet {
+  name  : string
+
+}
+
+class Toy {
+  color * : string
+
+}
+
+class Dog {
+  bark  : boolean
+
+}
+Pet <|-- Dog
+@enduml

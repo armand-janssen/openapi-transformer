@@ -1,0 +1,9 @@
+@startuml
+
+class Enums {
+  plain  : enum[a, b]
+  withLength  : enum[1, 3, x, y]
+  withPattern  : enum[^[a-z]$, m, n]
+
+}
+@enduml

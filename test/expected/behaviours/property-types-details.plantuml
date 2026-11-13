@@ -1,0 +1,32 @@
+@startuml
+
+class Types {
+  name * : string[minLength : 2, maxLength : 10, pattern : ^[a-z]+$]
+  born  : date[pattern : yyyy-MM-dd]
+  seen  : date-time[pattern : yyyy-MM-ddTHH:mm:ssZ]
+  photo  : string [binary]
+  secret  : string [byte]
+  price  : number[format : double, minimum : 0, maximum : 100.5, multipleOf : 0.5]
+  count * : integer[format : int32, minimum : 1, maximum : 9]
+  active  : boolean
+  tags  : array[] of strings[minItems : 1, maxItems : 5, uniqueItems : true]
+  others  : array[] of Other
+  mixed  : array[] of Other/Third
+  single  : Other
+
+}
+Types *-- Other  :  others
+Types *-- Other  :  mixed
+Types *-- Third  :  mixed
+Types -- Other  :  single
+
+class Other {
+  id  : string
+
+}
+
+class Third {
+  id  : string
+
+}
+@enduml

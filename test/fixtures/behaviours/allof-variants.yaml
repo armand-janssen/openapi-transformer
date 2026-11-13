@@ -1,0 +1,37 @@
+components:
+  schemas:
+    Parent:
+      type: object
+      properties:
+        id:
+          type: string
+    OneInline:
+      description: Parent plus one inline object.
+      allOf:
+        - $ref: '#/components/schemas/Parent'
+        - type: object
+          required:
+            - a
+          properties:
+            a:
+              type: string
+    SeveralInline:
+      description: Parent plus two inline objects.
+      allOf:
+        - $ref: '#/components/schemas/Parent'
+        - type: object
+          properties:
+            first:
+              type: string
+        - type: object
+          properties:
+            second:
+              type: integer
+    ParentInFile:
+      description: Parent lives in another file.
+      allOf:
+        - $ref: 'allof-parent-file/base.yaml#/components/schemas/Base'
+        - type: object
+          properties:
+            extra:
+              type: string

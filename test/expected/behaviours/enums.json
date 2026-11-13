@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Enums",
+  "type": "object",
+  "properties": {
+    "plain": {
+      "type": "string",
+      "enum": [
+        "a",
+        "b"
+      ]
+    },
+    "withLength": {
+      "type": "string",
+      "enum": [
+        1,
+        3,
+        "x",
+        "y"
+      ]
+    },
+    "withPattern": {
+      "type": "string",
+      "enum": [
+        "^[a-z]$",
+        "m",
+        "n"
+      ]
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "definitions": {}
+}
