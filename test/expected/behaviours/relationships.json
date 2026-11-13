@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Owner",
-  "description": "A dog.",
+  "description": "The root description.",
   "type": "object",
   "properties": {
     "id": {
@@ -20,7 +20,14 @@
     "things": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Pet/Toy"
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Pet"
+          },
+          {
+            "$ref": "#/definitions/Toy"
+          }
+        ]
       }
     },
     "notes": {
@@ -34,6 +41,7 @@
   "additionalProperties": false,
   "definitions": {
     "Pet": {
+      "description": "A pet, with a multi-line description.\n| a | b |\ntodo: add more.\n",
       "type": "object",
       "properties": {
         "name": {
@@ -44,6 +52,7 @@
       "additionalProperties": false
     },
     "Toy": {
+      "description": "A toy with a | pipe in its description.",
       "type": "object",
       "properties": {
         "color": {
@@ -56,6 +65,7 @@
       "additionalProperties": false
     },
     "Dog": {
+      "description": "A dog.",
       "type": "object",
       "properties": {
         "bark": {

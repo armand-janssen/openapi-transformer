@@ -12,7 +12,7 @@
     "born": {
       "type": "string",
       "format": "date",
-      "pattern": "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
+      "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
     },
     "seen": {
       "type": "string",
@@ -20,10 +20,12 @@
       "pattern": "^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$"
     },
     "photo": {
-      "type": "string [binary]"
+      "type": "string",
+      "format": "binary"
     },
     "secret": {
-      "type": "string"
+      "type": "string",
+      "format": "byte"
     },
     "price": {
       "type": "number",
@@ -43,7 +45,7 @@
     "tags": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/strings"
+        "type": "string"
       },
       "minItems": 1,
       "maxItems": 5,
@@ -58,7 +60,14 @@
     "mixed": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Other/Third"
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Other"
+          },
+          {
+            "$ref": "#/definitions/Third"
+          }
+        ]
       }
     },
     "single": {

@@ -7,7 +7,7 @@ const Detail = require('./detail');
 const RelationShip = require('./relationship');
 
 class Property {
-  constructor(name, type, required, details, description, example, enumValues) {
+  constructor(name, type, required, details, description, example, enumValues, items) {
     this.name = name;
     this.type = type;
     this.required = required;
@@ -15,6 +15,7 @@ class Property {
     this.description = description;
     this.example = example;
     this.enumValues = enumValues; // only set for enums; constraints stay in details
+    this.items = items; // only set for arrays: { type } for primitives, { refs } for references
   }
 
   static parseDetails(property) {
@@ -65,6 +66,7 @@ class Property {
 
       const name = propertyIndex;
       let { type } = property;
+      let items;
       const { description } = property;
       const { example } = property;
       if (verbose) console.log(`processing property :: [${name}] of type ::  [${type}]`);
@@ -90,6 +92,7 @@ class Property {
           if (itemIndex === 'type') {
             // process array of primitives
             type += `${item}s`;
+            items = { type: item };
           } else if (itemIndex === '$ref') {
             // process array of specific schema
             if (typeof item === 'string') {
@@ -98,6 +101,7 @@ class Property {
               relationShips.push(new RelationShip(schemaName, objectName, name, constants.RELATIONSHIP_AGGREGATION));
 
               type += objectName;
+              items = { refs: [objectName] };
 
               // is it a reference to an external file?
               const referencedFile = item.match('^[^#]*\\.ya?ml');
@@ -119,6 +123,8 @@ class Property {
               first = false;
 
               type += objectName;
+              items = items || { refs: [] };
+              items.refs.push(objectName);
 
               const referencedFile = reference.match('^[^#]*\\.ya?ml');
               if (referencedFile != null && referencedFile.length === 1 && !referencedFiles.includes(referencedFile[0])) {
@@ -134,7 +140,7 @@ class Property {
       if (typeAfterDetailsParsing !== undefined) type = typeAfterDetailsParsing;
       const requiredProperty = (required === undefined ? undefined : required.includes(name));
 
-      parsedProperties.push(new Property(name, type, requiredProperty, details, description, example, enumValues));
+      parsedProperties.push(new Property(name, type, requiredProperty, details, description, example, enumValues, items));
     }
     return [parsedProperties, relationShips, referencedFiles];
   }
