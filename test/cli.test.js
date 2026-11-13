@@ -14,7 +14,7 @@ describe('CLI arguments and failures', () => {
       const result = await runCli([]);
 
       assert.equal(result.code, 0);
-      assert.include(result.stdout, 'Usage: cli [options] <inputFileOrUrl>');
+      assert.include(result.stdout, 'Usage: openapi-transformer [options] <inputFileOrUrl>');
       assert.deepEqual(result.files, {});
     });
 
@@ -22,7 +22,7 @@ describe('CLI arguments and failures', () => {
       const result = await runCli([VEHICLE]);
 
       assert.equal(result.code, 0);
-      assert.include(result.stdout, 'Usage: cli [options] <inputFileOrUrl>');
+      assert.include(result.stdout, 'Usage: openapi-transformer [options] <inputFileOrUrl>');
       assert.deepEqual(result.files, {});
     });
 

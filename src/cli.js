@@ -9,6 +9,7 @@ const jsonSchemaTransformer = require('./jsonSchemaTransformer');
 const openApiGenerator = require('./index.js');
 
 program
+  .name('openapi-transformer')
   .version(version)
   .usage('[options] <inputFileOrUrl>')
   .argument('[inputFileOrUrl]')

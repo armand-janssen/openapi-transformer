@@ -14,7 +14,7 @@ This tool creates one or more of the following from a **Swagger 2** or **OpenApi
 # Usage
 Run the commands below from the `example` directory of this repository.
 ```
-Usage: cli [options] <inputFileOrUrl>
+Usage: openapi-transformer [options] <inputFileOrUrl>
 
 At least 1 output type must be selected: plantuml, markdown or jsonschema (JSON
 Schema)!
@@ -106,6 +106,6 @@ npm test
 - Empty input and schemas without `properties` no longer crash.
 
 ### Additions
-- `-j, --jsonschema` and `-d, --details` are now documented in this README; the help text names all three output types.
+- `-j, --jsonschema` and `-d, --details` are now documented in this README; the help text names all three output types and calls the program `openapi-transformer`, also when run as `node src/cli.js`.
 - The generated example outputs in `example` are checked by the tests so they cannot drift.
 - CI runs lint and tests on Node 22.13, 22.x, 24.x and 26.x.
