@@ -50,11 +50,16 @@ async function loadUrl(url, redirectsLeft = MAX_REDIRECTS) {
   });
 }
 
+// The schemas a schema needs: its parents and what its properties refer to.
+function referencedSchemaNames(schema) {
+  return [schema.parent, ...(schema.additionalParents || []), ...schema.relationShips.map((r) => r.to)]
+    .filter((name) => name !== undefined);
+}
+
 // Only the root call sees every loaded schema, so it checks that what each schema points at is rendered.
 function warnAboutMissingTargets(schemas, warnings) {
   Object.values(schemas).forEach((schema) => {
-    const targets = [schema.parent, ...(schema.additionalParents || []), ...schema.relationShips.map((r) => r.to)];
-    new Set(targets.filter((target) => target !== undefined && !schemas[target]))
+    new Set(referencedSchemaNames(schema).filter((target) => !schemas[target]))
       .forEach((target) => warnings.push(`schema ${schema.name} refers to ${target}, which is not rendered`));
   });
 }
@@ -124,9 +129,25 @@ async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = 
   if (allLoadedFiles[0] === key) warnAboutMissingTargets(allParsedSchemas, warnings);
   return allParsedSchemas;
 }
+// The root schema first, then every schema it needs (transitively) in their original order.
+function selectSchemas(schemas, rootName) {
+  if (!Object.hasOwn(schemas, rootName)) {
+    throw new Error(`Root schema ${rootName} not found; available: ${Object.keys(schemas).join(', ')}`);
+  }
+  const selected = new Set([rootName]);
+  // a Set also iterates over the names added during the loop, so this walks the whole graph once
+  for (const name of selected) {
+    referencedSchemaNames(schemas[name]).filter((target) => Object.hasOwn(schemas, target)).forEach((target) => selected.add(target));
+  }
+  const names = [rootName, ...Object.keys(schemas).filter((name) => name !== rootName && selected.has(name))];
+  return Object.fromEntries(names.map((name) => [name, schemas[name]]));
+}
+
 module.exports = {
   loadYamlFile,
+  selectSchemas,
   generatePlantUml: require('./plantUmlTransformer').generate,
   generateMarkdown: require('./markdownTransformer').generate,
   generateJsonSchema: require('./jsonSchemaTransformer').generate,
+  generateCsv: require('./csvTransformer').generate,
 };

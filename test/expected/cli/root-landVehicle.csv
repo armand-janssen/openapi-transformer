@@ -1,0 +1,22 @@
+schema,property,required,type,description,details,enum,example
+landVehicle,wheels,true,integer,the number of wheels,minimum: 2; maximum: 4; multipleOf: 2,,2
+vehicle,type,true,enum,Type of vehicle based on the movement technology. Hybrid vehicle is not possible.,,land; air; water,
+vehicle,owner,true,array[] of owner,the history of owners,minItems: 1,,
+vehicle,registration,true,registration,,,,
+owner,name,true,string,the name of the owner,minLength: 1; maxLength: 30,,John Doe
+owner,from,true,date,"the date the owner, bought the vehicle",,,2018-08-24
+owner,to,false,date,"the date the owner, sold the vehicle",,,2019-07-28
+owner,age,true,integer,"the age of the owner
+
+TODO
+Howto determine age?",minimum: 15; maximum: 120; multipleOf: 1,,23
+owner,nicknames,false,array[] of strings,the nicknames of the owner,minItems: 1; maxItems: 5; uniqueItems: true,,
+owner,gender,false,enum,the gender of the owner,,male; female,
+owner,file1,false,string [binary],,,,
+owner,file2,false,string [byte],the second file,,,
+owner,shoeSize,false,integer,,,,
+owner,someDouble,false,integer,,format: double,,
+registration,code,true,string,the code of the vehicle,maxLength: 12,,DUH-45-DJUU
+registration,firstRegistration,true,date,first date of registration,,,2008-01-23
+registration,registrationEnd,false,date,End date of registration,,,2018-01-31
+registration,country,true,enum,country of registration,,NL; BE; DE; FR; SP,

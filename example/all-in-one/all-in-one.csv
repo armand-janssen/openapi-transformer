@@ -1,0 +1,4 @@
+schema,property,required,type,description,details,enum,example
+allInOne,vehicles,false,array[] of vehicle/car,,minItems: 0; maxItems: 1000,,
+vehicle,hasWheels,false,boolean,,,,
+car,type,false,enum,Type of car,,suv; hatchback; sport; sedan,

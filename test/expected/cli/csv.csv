@@ -1,0 +1,10 @@
+schema,property,required,type,description,details,enum,example
+Colour,,,enum,"A colour, as ""named"" by the painter",,"red; blue, light; green",
+Priority,,,integer,,,1; 2; 3,
+Paint,name,true,string,"First line
+second line",minLength: 1; maxLength: 30,,"Sky ""blue"", matt"
+Paint,colour,false,Colour,,,,
+Paint,finish,false,enum,no special characters,,matt; gloss; null,
+Paint,size,false,object,,,,"{""litres"":2.5,""tins"":[1,2]}"
+Paint,price,false,number,,,,-5
+Paint,base,false,Paint,,,,
