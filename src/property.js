@@ -17,7 +17,7 @@ const STRING_FORMAT_TYPES = new Map([
   ['binary', 'string [binary]'],
   ['byte', 'string [byte]'],
 ]);
-const COMBINATORS = ['anyOf', 'oneOf', 'allOf'];
+const COMBINATORS = new Set(['anyOf', 'oneOf', 'allOf']);
 
 class Property {
   constructor(name, type, required, details, description, example, { enumValues, items } = {}) {
@@ -60,7 +60,7 @@ class Property {
         const objectName = addReference(item);
         type += objectName;
         items.refs = [objectName];
-      } else if (COMBINATORS.includes(key)) {
+      } else if (COMBINATORS.has(key)) {
         for (const member of Object.values(item)) {
           const objectName = addReference(member.$ref);
           type += separator + objectName;
