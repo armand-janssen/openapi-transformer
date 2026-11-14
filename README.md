@@ -94,6 +94,8 @@ The second command runs lint and the tests; the third re-renders the example ima
 
 # Changelog
 
+A high-level summary of all recent releases is in [CHANGELOG.md](CHANGELOG.md). The details for 0.12.0 follow.
+
 ## 0.12.0
 
 ### Breaking changes
