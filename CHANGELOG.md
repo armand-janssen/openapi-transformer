@@ -2,7 +2,7 @@
 
 High-level summary per release. The full list of changes in 0.12.0, including every breaking change, is in the [README](README.md#changelog).
 
-## 0.12.0 (unreleased)
+## 0.12.0 (2026-11-14)
 
 A stabilisation release: the tool now fails loudly instead of producing incomplete output, and the toolchain is current.
 
