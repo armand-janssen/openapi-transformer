@@ -1,0 +1,20 @@
+properties:
+  - name: name
+    type: string
+    required: false
+    details:
+      - name: maxLength
+        value: 30
+    description: the name of the owner
+    example: John Doe
+  - name: partner
+    type: partner
+    required: true
+    details: []
+    description: partner of the owner
+relationShips:
+  - from: owner
+    to: partner
+    description: partner
+    type: use
+referencedFiles: []

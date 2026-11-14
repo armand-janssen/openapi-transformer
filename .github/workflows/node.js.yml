@@ -40,3 +40,25 @@ jobs:
     - run: npm ci --ignore-scripts
     - run: npm run lint
     - run: npm test
+
+  # Sends the analysis and test coverage to SonarCloud. Skipped where the token is not available (forks, Dependabot).
+  sonar:
+    runs-on: ubuntu-26.04
+    env:
+      HAS_SONAR_TOKEN: ${{ secrets.SONAR_TOKEN != '' }}
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+        fetch-depth: 0 # SonarCloud needs the history to tell new code from old
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: 24.x
+        cache: npm
+    - run: npm ci --ignore-scripts
+    - run: npm test # writes coverage/lcov.info
+    - uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4 # v8.5.0
+      if: env.HAS_SONAR_TOKEN == 'true'
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -7,34 +7,18 @@ const openApiGenerator = require('..');
 
 
 describe('openApiGenerator - test json transformer', () => {
-  it('Test with no reference.', async () => {
-    const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyNoRelationShipNoReferences.yaml', true);
-    assert.isDefined(loadedSchemas);
+  [
+    ['no reference', 'propertyNoRelationShipNoReferences.yaml', 'expectedResultPlantumlPropertyNoRelationShipNoReferences.json'],
+    ['references', 'propertyFiveRelationShipThreeReferencesUsingExtension.test.yaml', 'expectedPropertyFiveRelationShipThreeReferencesUsingExtension.json'],
+    ['datetime property', 'propertyDateTime.yaml', 'expectedPropertyDateTime.json'],
+  ].forEach(([title, input, expected]) => {
+    it(`Test with ${title}.`, async () => {
+      const loadedSchemas = await openApiGenerator.loadYamlFile(`./test/resources/${input}`, true);
 
-    const result = openApiGenerator.generateJsonSchema(loadedSchemas, true);
-    const expectedResult = fs.readFileSync('./test/resources/expectedResultPlantumlPropertyNoRelationShipNoReferences.json');
+      const result = openApiGenerator.generateJsonSchema(loadedSchemas);
 
-    expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
-  });
-
-  it('Test with references.', async () => {
-    const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyFiveRelationShipThreeReferencesUsingExtension.test.yaml', true);
-    assert.isDefined(loadedSchemas);
-
-    const result = openApiGenerator.generateJsonSchema(loadedSchemas);
-    const expectedResult = fs.readFileSync('./test/resources/expectedPropertyFiveRelationShipThreeReferencesUsingExtension.json');
-
-    expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
-  });
-
-  it('Test with datetime  property.', async () => {
-    const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyDateTime.yaml', true);
-    assert.isDefined(loadedSchemas);
-
-    const result = openApiGenerator.generateJsonSchema(loadedSchemas);
-    const expectedResult = fs.readFileSync('./test/resources/expectedPropertyDateTime.json');
-
-    expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
+      expect(JSON.parse(result)).to.deep.equal(JSON.parse(fs.readFileSync(`./test/resources/${expected}`, 'utf8')));
+    });
   });
 });
 

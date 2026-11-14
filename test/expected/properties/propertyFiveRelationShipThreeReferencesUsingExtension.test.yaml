@@ -1,0 +1,39 @@
+properties:
+  - name: child
+    type: child
+    details: []
+  - name: family
+    type: array[] of partner/father/mother/child
+    details: []
+    description: family of the owner
+    items:
+      combinator: anyOf
+      refs:
+        - partner
+        - father
+        - mother
+        - child
+relationShips:
+  - from: owner
+    to: child
+    description: child
+    type: use
+  - from: owner
+    to: partner
+    description: family
+    type: aggregation
+  - from: owner
+    to: father
+    description: family
+    type: aggregation
+  - from: owner
+    to: mother
+    description: family
+    type: aggregation
+  - from: owner
+    to: child
+    description: family
+    type: aggregation
+referencedFiles:
+  - child.yaml
+  - parent.yaml

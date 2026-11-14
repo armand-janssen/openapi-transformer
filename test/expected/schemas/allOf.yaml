@@ -1,0 +1,13 @@
+referencedFiles: []
+schemas:
+  child:
+    title: Child
+    name: child
+    properties:
+      - name: name
+        details: []
+        description: the name of the owner
+    description: Child information
+    relationShips: []
+    parent: child
+    additionalParents: []
