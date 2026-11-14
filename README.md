@@ -6,6 +6,7 @@ This tool creates one or more of the following from a **Swagger 2** or **OpenApi
 * Markdown (Optimized for [Showdown](http://showdownjs.com))
 * [PlantUML Class Diagram](http://plantuml.com/class-diagram)
 * JSON Schema
+* CSV (one row per property, for spreadsheets)
 
 # Requirements
 - Swagger 2 or OpenAPI 3+ Specification
@@ -16,8 +17,8 @@ Run the commands below from the `example` directory of this repository.
 ```
 Usage: openapi-transformer [options] <inputFileOrUrl>
 
-At least 1 output type must be selected: plantuml, markdown or jsonschema (JSON
-Schema)!
+At least 1 output type must be selected: plantuml, markdown, jsonschema (JSON
+Schema) or csv!
 
 Options:
   -V, --version                       output the version number
@@ -25,6 +26,9 @@ Options:
   -p, --plantuml <plantuml file>      Transform to plantuml
   -m, --markdown <markdown file>      Transform to markdown
   -j, --jsonschema <jsonschema file>  Transform to json schema
+  -c, --csv <csv file>                Transform to csv
+  -r, --root <schema>                 Only output this schema and the schemas it
+                                      needs
   -v, --verbose                       Show verbose debug output
   -h, --help                          display help for command
 ```
@@ -45,12 +49,24 @@ openapi-transformer vehicle.yaml --verbose --plantuml vehicle.plantuml
 ```
 openapi-transformer vehicle.yaml --plantuml ./example.plantuml --markdown ./example.md
 ```
+**Generates a CSV file with one row per property**
+```
+openapi-transformer vehicle.yaml --csv vehicle.csv
+```
+The columns are `schema`, `property`, `required`, `type`, `description`, `details`, `enum` and `example`. Values are written as they are in the spec, so open a CSV made from a spec you do not trust as text, not as formulas.
+
+**Limits the output to one schema and the schemas it needs**
+```
+openapi-transformer vehicle.yaml --root landVehicle --jsonschema land-vehicle.json
+```
+`--root` works with every output type. The chosen schema comes first, so it is the root of the JSON Schema. Its parents and the schemas its properties refer to are included; schemas that refer to it are not. An unknown name is an error that lists the available schemas.
+
 The generated files for every example spec are committed in `example` and checked by the tests.
 
 # Library
 ```js
 const {
-  loadYamlFile, generatePlantUml, generateMarkdown, generateJsonSchema,
+  loadYamlFile, selectSchemas, generatePlantUml, generateMarkdown, generateJsonSchema, generateCsv,
 } = require('openapi-transformer');
 
 const warnings = []; // optional, receives one message per skipped schema
@@ -58,6 +74,7 @@ const schemas = await loadYamlFile('vehicle.yaml', false, warnings);
 const uml = generatePlantUml(schemas, false); // second argument: include details
 const md = generateMarkdown(schemas);
 const json = generateJsonSchema(schemas); // a string
+const csv = generateCsv(selectSchemas(schemas, 'landVehicle')); // optional: only this schema and what it needs
 ```
 The library throws on errors and never prints.
 

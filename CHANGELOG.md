@@ -2,6 +2,12 @@
 
 High-level summary per release. The full list of changes in 0.12.0, including every breaking change, is in the [README](README.md#changelog).
 
+## Unreleased
+
+- **CSV output:** `--csv <file>` writes one row per property, for use in a spreadsheet.
+- **Root selection:** `--root <schema>` limits every output to one schema and the schemas it needs; that schema becomes the root of the JSON Schema.
+- **Library:** exports `generateCsv` and `selectSchemas`.
+
 ## 0.12.0 (2026-11-14)
 
 A stabilisation release: the tool now fails loudly instead of producing incomplete output, and the toolchain is current.

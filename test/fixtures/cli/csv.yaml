@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: CSV quoting and column rules
+  version: "1"
+paths: {}
+components:
+  schemas:
+    Colour:
+      description: A colour, as "named" by the painter
+      type: string
+      enum: [red, "blue, light", green]
+    Priority:
+      type: integer
+      enum: [1, 2, 3]
+    Empty:
+      type: object
+    Paint:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 30
+          description: |
+            First line
+            second line
+          example: Sky "blue", matt
+        colour:
+          $ref: '#/components/schemas/Colour'
+        finish:
+          type: string
+          enum: [matt, gloss]
+          description: no special characters
+        size:
+          type: object
+          example:
+            litres: 2.5
+            tins: [1, 2]
+        price:
+          type: number
+          example: -5
+        base:
+          $ref: '#/components/schemas/Paint'
