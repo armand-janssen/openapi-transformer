@@ -1,0 +1,37 @@
+referencedFiles:
+  - parent.yaml
+  - child.yml
+schemas:
+  owner:
+    title: Owner
+    name: owner
+    properties:
+      - name: partner
+        type: parent
+        details: []
+      - name: children
+        type: array[] of child
+        details: []
+        items:
+          refs:
+            - child
+      - name: parents
+        type: array[] of parent
+        details: []
+        items:
+          refs:
+            - parent
+    description: Owner information
+    relationShips:
+      - from: owner
+        to: parent
+        description: partner
+        type: use
+      - from: owner
+        to: child
+        description: children
+        type: aggregation
+      - from: owner
+        to: parent
+        description: parents
+        type: aggregation

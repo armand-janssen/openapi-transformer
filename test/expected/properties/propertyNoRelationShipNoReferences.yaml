@@ -1,0 +1,100 @@
+properties:
+  - name: name
+    type: string
+    required: true
+    details:
+      - name: minLength
+        value: 1
+      - name: maxLength
+        value: 30
+    description: the name of the owner
+    example: John Doe
+  - name: from
+    type: date
+    required: true
+    details: []
+    description: the date the owner, bought the vehicle
+    example: 2018-08-24
+  - name: to
+    type: date
+    required: false
+    details: []
+    description: |
+      the date the owner, sold the vehicle
+    example: 2019-07-28
+  - name: age
+    type: integer
+    required: true
+    details:
+      - name: minimum
+        value: 15
+      - name: maximum
+        value: 120
+      - name: multipleOf
+        value: 1
+    description: |
+      the age of the owner
+
+      TODO
+      Howto determine age?
+    example: 23
+  - name: nicknames
+    type: array[] of strings
+    required: false
+    details:
+      - name: minItems
+        value: 1
+      - name: maxItems
+        value: 5
+      - name: uniqueItems
+        value: true
+    description: the nicknames of the owner
+    items:
+      type: string
+  - name: gender
+    type: enum
+    required: false
+    details: []
+    description: the gender of the owner
+    enumValues:
+      - male
+      - female
+  - name: file1
+    type: string [binary]
+    required: false
+    details: []
+  - name: file2
+    type: string [byte]
+    required: false
+    details: []
+    description: the second file
+  - name: shoeSize
+    type: integer
+    required: false
+    details: []
+  - name: someDouble
+    type: number
+    required: false
+    details:
+      - name: format
+        value: double
+      - name: minimum
+        value: 15
+      - name: maximum
+        value: 120
+  - name: pipe
+    type: string
+    required: false
+    details:
+      - name: pattern
+        value: ^(nl|NL|Nederland)$
+    description: Also a | here
+    example: A pipe in the example |
+  - name: creation
+    type: date-time
+    required: false
+    details: []
+    description: the date and time the vehicle was created
+    example: 1985-04-12T23:20:50.52Z
+relationShips: []
+referencedFiles: []

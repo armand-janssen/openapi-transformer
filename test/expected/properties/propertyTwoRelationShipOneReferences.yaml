@@ -1,0 +1,33 @@
+properties:
+  - name: name
+    type: string
+    required: false
+    details:
+      - name: maxLength
+        value: 30
+    description: the name of the owner
+    example: John Doe
+  - name: partner
+    type: partner
+    required: true
+    details: []
+    description: partner of the owner
+  - name: children
+    type: array[] of child
+    required: false
+    details: []
+    description: children of the owner
+    items:
+      refs:
+        - child
+relationShips:
+  - from: owner
+    to: partner
+    description: partner
+    type: use
+  - from: owner
+    to: child
+    description: children
+    type: aggregation
+referencedFiles:
+  - child.yaml

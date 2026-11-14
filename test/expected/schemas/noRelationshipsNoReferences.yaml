@@ -1,0 +1,11 @@
+referencedFiles: []
+schemas:
+  owner:
+    title: Owner
+    name: owner
+    properties:
+      - name: name
+        details: []
+        description: the name of the owner
+    description: Owner information
+    relationShips: []
