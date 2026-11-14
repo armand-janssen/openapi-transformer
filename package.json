@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/armand-janssen/openapi-transformer"
+    "url": "git+https://github.com/armand-janssen/openapi-transformer.git"
   },
   "homepage": "https://github.com/armand-janssen/openapi-transformer",
   "scripts": {
