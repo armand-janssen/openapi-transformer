@@ -1,62 +1,48 @@
 
-const JSON_TYPES = ['string', 'integer', 'boolean', 'object', 'null'];
+const JSON_TYPES = new Set(['string', 'integer', 'boolean', 'object', 'null']);
+const DATE_PATTERN = String.raw`^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$`;
+const DATE_TIME_PATTERN = '^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$';
+
+function arrayItemFields(items, ref) {
+  if (items.type) return { items: { type: items.type } };
+  if (items.refs?.length === 1) return { items: ref(items.refs[0]) };
+  if (items.refs) return { items: { [items.combinator]: items.refs.map(ref) } };
+  return {};
+}
+
+function typeFields(property, ref) {
+  const { type, items } = property;
+  if (type === 'enum') return { type: 'string' };
+  if (type === 'number') return { type: 'number' };
+  if (type === 'string [byte]' || type === 'string [binary]') return { type: 'string', format: type.slice('string ['.length, -1) };
+  if (type === 'date') return { type: 'string', format: 'date', pattern: DATE_PATTERN };
+  if (type === 'date-time') return { type: 'string', format: 'date-time', pattern: DATE_TIME_PATTERN };
+  if (items) return { type: 'array', ...arrayItemFields(items, ref) };
+  if (JSON_TYPES.has(type)) return { type };
+  return ref(type);
+}
+
+// dates carry their own pattern instead of details; a number drops its format
+function detailFields(property) {
+  if (property.type === 'date' || property.type === 'date-time') return {};
+  const details = (property.details ?? []).filter((detail) => property.type !== 'number' || detail.name !== 'format');
+  return Object.fromEntries(details.map((detail) => [detail.name, detail.value]));
+}
 
 function generateProperty(property, listOfUsedSchemas) {
-  const js = {};
-  let processDetails = true;
   // the root schema is addressed as '#'; a schema that is not rendered has no definition, so allow anything (the loader warns)
   const ref = (name) => {
     if (!listOfUsedSchemas.includes(name)) return {};
     return { $ref: name === listOfUsedSchemas[0] ? '#' : `#/definitions/${name}` };
   };
 
-  if (property.description) {
-    js.description = property.description;
-  }
-  if (property.type === 'enum') {
-    js.type = 'string';
-  } else if (property.type === 'number') {
-    js.type = 'number';
-    if (property.details) {
-      property.details.forEach((detail) => {
-        if (detail.name !== 'format') {
-          js[detail.name] = detail.value;
-        }
-      });
-      processDetails = false;
-    }
-  } else if (property.type === 'string [byte]' || property.type === 'string [binary]') {
-    js.type = 'string';
-    js.format = property.type.slice('string ['.length, -1);
-  } else if (property.type === 'date') {
-    js.type = 'string';
-    js.format = 'date';
-    js.pattern = '^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$';
-    processDetails = false;
-  } else if (property.type === 'date-time') {
-    js.type = 'string';
-    js.format = 'date-time';
-    js.pattern = '^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$';
-    processDetails = false;
-  } else if (property.items) {
-    js.type = 'array';
-    const { items } = property;
-    if (items.type) js.items = { type: items.type };
-    else if (items.refs?.length === 1) js.items = ref(items.refs[0]);
-    else if (items.refs) js.items = { [items.combinator]: items.refs.map(ref) };
-  } else {
-    const { type } = property;
-    if (JSON_TYPES.includes(type)) js.type = type;
-    else Object.assign(js, ref(type));
-  }
-  if (property.enumValues) js.enum = property.enumValues;
-  if (processDetails && property.details) {
-    property.details.forEach((detail) => {
-      js[detail.name] = detail.value;
-    });
-  }
+  const description = property.description ? { description: property.description } : {};
+  const enumFields = property.enumValues ? { enum: property.enumValues } : {};
+  const details = detailFields(property);
+  // key order is part of the output: a number lists its constraints before its enum, every other type after
+  const tail = property.type === 'number' ? { ...details, ...enumFields } : { ...enumFields, ...details };
 
-  return js;
+  return { ...description, ...typeFields(property, ref), ...tail };
 }
 
 function generateSchema(schema, listOfUsedSchemas) {

@@ -8,7 +8,7 @@ ARG NODE_VERSION=26
 FROM node:${NODE_VERSION}-trixie-slim
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends default-jre-headless graphviz fontconfig fonts-dejavu-core \
+ && apt-get install -y --no-install-recommends default-jre-headless fontconfig fonts-dejavu-core graphviz \
  && rm -rf /var/lib/apt/lists/*
 
 # Pinned PlantUML release; bump the version and checksum together.

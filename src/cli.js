@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
+const fs = require('node:fs');
 const { program } = require('commander');
 const { version } = require('../package.json');
 const plantUmlTransformer = require('./plantUmlTransformer');

@@ -10,7 +10,7 @@ const colon = ' : ';
 const nbsp = '&nbsp;';
 
 function escapePipe(text) {
-  return text.replace(/\|/g, '\\|');
+  return text.replaceAll('|', String.raw`\|`);
 }
 function createMainHeader(text) {
   return lineBreak + header + text + lineBreak;
@@ -69,15 +69,15 @@ function generateProperty(property) {
   markDownDetails = escapePipe(markDownDetails);
 
   let markDownDescription = property.description === undefined ? nbsp : property.description
-    .replace(/\n/g, '<br/>')
+    .replaceAll('\n', '<br/>')
     .replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
   markDownDescription = escapePipe(markDownDescription);
 
   let markDownExample;
   if (property.type === 'date') {
-    markDownExample = property.example === undefined ? '2020-12-31' : property.example.toString().replace(/\n/g, '<br/>');
+    markDownExample = property.example === undefined ? '2020-12-31' : property.example.toString().replaceAll('\n', '<br/>');
   } else {
-    markDownExample = property.example === undefined ? nbsp : property.example.toString().replace(/\n/g, '<br/>');
+    markDownExample = property.example === undefined ? nbsp : property.example.toString().replaceAll('\n', '<br/>');
   }
 
   markDownExample = escapePipe(markDownExample);
@@ -101,7 +101,7 @@ function generateSchema(schema) {
         md += line;
         md += lineBreak;
       } else {
-        md += line.replace(/\n/g, '<br/>').replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
+        md += line.replaceAll('\n', '<br/>').replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
         md += lineBreak;
       }
     });
@@ -130,10 +130,8 @@ function generateSchema(schema) {
 function generate(schemas) {
   let md = '';
 
-  for (const schemaIndex in schemas) {
-    if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      md += generateSchema(schemas[schemaIndex]);
-    }
+  for (const schema of Object.values(schemas ?? {})) {
+    md += generateSchema(schema);
   }
   return md;
 }
