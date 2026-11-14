@@ -50,7 +50,8 @@ openapi-transformer vehicle.yaml --root landVehicle --jsonschema land-vehicle.js
 - A top-level enum schema is one row: the property column is empty, the type is `enum` (or the declared type when it is not a string, such as `integer`), the description is the schema's description, and the values are in the enum column.
 - An object schema without properties produces no row. Schema descriptions of object schemas are not in the CSV.
 - `required` is `true` or `false`; it is empty on an enum schema row.
-- `details` holds the constraints as `name: value`, separated by `; `. `enum` holds the values, separated by `; `.
+- `details` holds the constraints as `name: value`, separated by `; `. `enum` holds the values, separated by `; `; a `null` value is written as `null`.
+- `description` loses trailing whitespace, because a YAML block scalar ends with a line break that would show as an empty line in the cell.
 - `example` is the value from the specification, unchanged. An object or array example is written as JSON. Unlike Markdown, no example date or date pattern is invented.
 - Quoting follows RFC 4180: a field is quoted only when it contains a comma, a double quote or a line break, and double quotes inside it are doubled. Lines end with `\n`; the file is UTF-8 without a byte order mark.
 
@@ -62,6 +63,7 @@ openapi-transformer vehicle.yaml --root landVehicle --jsonschema land-vehicle.js
 - Order: the root first, then the other selected schemas in their original order.
 - The name must match a rendered schema exactly (case-sensitive). Otherwise the function throws `Root schema <name> not found; available: <names>`, which the CLI prints as its usual one-line error with exit code 1 and without writing files.
 - A reference to a schema that is not rendered is skipped; the loader already warns about it.
+- Known limit: a schema whose name is a whole number (such as `404`) is always listed before the others, also before the root. That comes from how the loader stores schemas and applies to every output today.
 - The CLI applies the selection after loading, so warnings still describe the whole specification, including schemas outside the selection.
 
 ### CLI

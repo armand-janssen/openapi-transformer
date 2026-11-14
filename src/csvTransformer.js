@@ -7,7 +7,8 @@ function field(value) {
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
-const list = (values) => (values ?? []).join('; ');
+// String() keeps a null value visible; join() alone would drop it
+const list = (values) => (values ?? []).map(String).join('; ');
 
 function propertyRow(schema, property) {
   return [
@@ -15,7 +16,7 @@ function propertyRow(schema, property) {
     property.name,
     Boolean(property.required),
     property.type,
-    property.description,
+    property.description?.trimEnd(), // a YAML block scalar ends with a line break
     list(property.details?.map((detail) => `${detail.name}: ${detail.value}`)),
     list(property.enumValues),
     property.example,
@@ -26,7 +27,7 @@ function propertyRow(schema, property) {
 function schemaRows(schema) {
   if (schema.enumValues) {
     const type = schema.enumType && schema.enumType !== 'string' ? schema.enumType : 'enum';
-    return [[schema.name, '', '', type, schema.description, '', list(schema.enumValues), '']];
+    return [[schema.name, '', '', type, schema.description?.trimEnd(), '', list(schema.enumValues), '']];
   }
   return (schema.properties ?? []).map((property) => propertyRow(schema, property));
 }

@@ -5,13 +5,11 @@ vehicle,owner,true,array[] of owner,the history of owners,minItems: 1,,
 vehicle,registration,true,registration,,,,
 owner,name,true,string,the name of the owner,minLength: 1; maxLength: 30,,John Doe
 owner,from,true,date,"the date the owner, bought the vehicle",,,2018-08-24
-owner,to,false,date,"the date the owner, sold the vehicle
-",,,2019-07-28
+owner,to,false,date,"the date the owner, sold the vehicle",,,2019-07-28
 owner,age,true,integer,"the age of the owner
 
 TODO
-Howto determine age?
-",minimum: 15; maximum: 120; multipleOf: 1,,23
+Howto determine age?",minimum: 15; maximum: 120; multipleOf: 1,,23
 owner,nicknames,false,array[] of strings,the nicknames of the owner,minItems: 1; maxItems: 5; uniqueItems: true,,
 owner,gender,false,enum,the gender of the owner,,male; female,
 owner,file1,false,string [binary],,,,

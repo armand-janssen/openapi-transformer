@@ -30,7 +30,7 @@ components:
           $ref: '#/components/schemas/Colour'
         finish:
           type: string
-          enum: [matt, gloss]
+          enum: [matt, gloss, null]
           description: no special characters
         size:
           type: object
