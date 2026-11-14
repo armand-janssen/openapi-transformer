@@ -8,12 +8,12 @@
  *   assertMatchesExpected(actual, 'examples/vehicle.md'); // compares with test/expected/<name>
  *   Regenerate expected files on purpose: UPDATE_EXPECTED=1 npm test
  */
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const http = require('http');
-const { execFile } = require('child_process');
-const { promisify } = require('util');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const http = require('node:http');
+const { execFile } = require('node:child_process');
+const { promisify } = require('node:util');
 const { assert } = require('chai');
 
 const ROOT = path.join(__dirname, '..');

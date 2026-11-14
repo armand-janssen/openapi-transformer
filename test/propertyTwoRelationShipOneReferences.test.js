@@ -28,7 +28,6 @@ describe('properties - parseProperties - two relationships - one references to o
   const verbose = false;
 
   const arrayUnderTest = Property.parseProperties(properties, required, 'owner', verbose);
-  assert.isDefined(arrayUnderTest);
   it('Reponse is array of sub-arrays of which the first one contains properties and the second one the ', () => {
     assert.equal(arrayUnderTest.length, 3);
     assert.equal(arrayUnderTest[0].length, 3); // properties

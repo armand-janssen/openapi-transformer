@@ -23,7 +23,6 @@ describe('properties - parseProperties - two relationships - one references to o
   const verbose = false;
 
   const arrayUnderTest = Property.parseProperties(properties, required, 'owner', verbose);
-  assert.isDefined(arrayUnderTest);
 
   it('Check response from parseProperties', () => {
     assert.equal(arrayUnderTest.length, 3);

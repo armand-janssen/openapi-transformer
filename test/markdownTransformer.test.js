@@ -44,7 +44,7 @@ function mockDoorsProperty() {
   const description = 'Number of doors';
   const example = '1 door';
 
-  return new Property(name, type, required, details, description, example, ['0 door', '1 door', '2 door', '3 door', '3 door']);
+  return new Property(name, type, required, details, description, example, { enumValues: ['0 door', '1 door', '2 door', '3 door', '3 door'] });
 }
 function mockWheelsProperty() {
   const name = 'Wheels';

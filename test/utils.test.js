@@ -68,7 +68,6 @@ describe('test merged objects', () => {
     targetObject.two = 2;
 
     utils.mergeObjects(sourceObject, targetObject);
-    assert.isUndefined(sourceObject);
     assert.equal(sizeOfArray(targetObject), 2);
   });
 

@@ -3,8 +3,24 @@ const utils = require('./utils');
 const Detail = require('./detail');
 const RelationShip = require('./relationship');
 
+const NUMBER_DETAILS = ['format', 'minimum', 'maximum', 'multipleOf'];
+// Maps (not objects) so a type or format named like an Object.prototype member finds nothing.
+const DETAIL_NAMES = new Map([
+  ['string', ['minLength', 'maxLength', 'pattern']],
+  ['number', NUMBER_DETAILS],
+  ['integer', NUMBER_DETAILS],
+  ['array', ['minItems', 'maxItems', 'uniqueItems']],
+]);
+const STRING_FORMAT_TYPES = new Map([
+  ['date', 'date'],
+  ['date-time', 'date-time'],
+  ['binary', 'string [binary]'],
+  ['byte', 'string [byte]'],
+]);
+const COMBINATORS = ['anyOf', 'oneOf', 'allOf'];
+
 class Property {
-  constructor(name, type, required, details, description, example, enumValues, items) {
+  constructor(name, type, required, details, description, example, { enumValues, items } = {}) {
     this.name = name;
     this.type = type;
     this.required = required;
@@ -16,115 +32,76 @@ class Property {
   }
 
   static parseDetails(property) {
-    const details = [];
-    let typeAfterDetailsParsing;
+    const details = (DETAIL_NAMES.get(property.type) ?? [])
+      .filter((name) => property[name] !== undefined)
+      .map((name) => new Detail(name, property[name]));
+
     // a string enum becomes type 'enum'; other enums keep their type and only carry the values
-    let enumValues = property.enum;
-
+    let typeAfterDetailsParsing;
     if (property.type === 'string') {
-      if (property.minLength !== undefined) details.push(new Detail('minLength', property.minLength));
-      if (property.maxLength !== undefined) details.push(new Detail('maxLength', property.maxLength));
-      if (property.pattern !== undefined) details.push(new Detail('pattern', property.pattern));
-
-      if (property.enum !== undefined) {
-        typeAfterDetailsParsing = 'enum';
-      } else if (property.format === 'date') {
-        typeAfterDetailsParsing = 'date';
-      } else if (property.format === 'date-time') {
-        typeAfterDetailsParsing = 'date-time';
-      } else if (property.format === 'binary') {
-        typeAfterDetailsParsing = 'string [binary]';
-      } else if (property.format === 'byte') {
-        typeAfterDetailsParsing = 'string [byte]';
-      }
-    } else if (property.type === 'number' || property.type === 'integer') {
-      if (property.format !== undefined) details.push(new Detail('format', property.format));
-      if (property.minimum !== undefined) details.push(new Detail('minimum', property.minimum));
-      if (property.maximum !== undefined) details.push(new Detail('maximum', property.maximum));
-      if (property.multipleOf !== undefined) details.push(new Detail('multipleOf', property.multipleOf));
-    } else if (property.type === 'array') {
-      if (property.minItems !== undefined) details.push(new Detail('minItems', property.minItems));
-      if (property.maxItems !== undefined) details.push(new Detail('maxItems', property.maxItems));
-      if (property.uniqueItems !== undefined) details.push(new Detail('uniqueItems', property.uniqueItems));
+      typeAfterDetailsParsing = property.enum === undefined ? STRING_FORMAT_TYPES.get(property.format) : 'enum';
     }
+    return [typeAfterDetailsParsing, details, property.enum];
+  }
 
-    return [typeAfterDetailsParsing, details, enumValues];
+  // Returns [display type, items] of an array property; addReference records a referenced schema and returns its name.
+  static parseArrayItems(definition, addReference) {
+    const items = {};
+    let type = 'array[] of ';
+    let separator = '';
+
+    for (const [key, item] of Object.entries(definition ?? {})) {
+      if (key === 'type') {
+        // array of primitives
+        type += `${item}s`;
+        items.type = item;
+      } else if (key === '$ref' && typeof item === 'string') {
+        // array of one specific schema
+        const objectName = addReference(item);
+        type += objectName;
+        items.refs = [objectName];
+      } else if (COMBINATORS.includes(key)) {
+        for (const member of Object.values(item)) {
+          const objectName = addReference(member.$ref);
+          type += separator + objectName;
+          separator = '/';
+          items.combinator = key;
+          items.refs = [...(items.refs ?? []), objectName];
+        }
+      }
+    }
+    return [type, items];
   }
 
   static parseProperties(properties, required, schemaName, verbose) {
     const parsedProperties = [];
-
     const relationShips = [];
     const referencedFiles = [];
 
-    for (const propertyIndex of Object.keys(properties ?? {})) {
-      const property = properties[propertyIndex];
-
-      const name = propertyIndex;
+    for (const [name, property] of Object.entries(properties ?? {})) {
       let { type } = property;
       let items;
-      const { description } = property;
-      const { example } = property;
       if (verbose) console.log(`processing property :: [${name}] of type ::  [${type}]`);
 
-      if (type == null && property.$ref != null) {
-        // reference to other object, maybe in other file
-        const reference = property.$ref;
-        utils.addReferencedFile(reference, referencedFiles);
+      // reference to another schema, maybe in another file
+      const addReference = (reference, relationShipType) => {
         const to = utils.lastToken(reference, '/');
-        type = to;
-        relationShips.push(new RelationShip(schemaName, to, name, constants.RELATIONSHIP_USE));
+        relationShips.push(new RelationShip(schemaName, to, name, relationShipType));
+        utils.addReferencedFile(reference, referencedFiles);
+        return to;
+      };
+
+      if (type == null && property.$ref != null) {
+        type = addReference(property.$ref, constants.RELATIONSHIP_USE);
       } else if (type === 'array') {
-        type = 'array[] of ';
-        items = {};
-        let first = true;
-
-        for (const itemIndex of Object.keys(property.items ?? {})) {
-          const item = property.items[itemIndex];
-
-          if (itemIndex === 'type') {
-            // process array of primitives
-            type += `${item}s`;
-            items.type = item;
-          } else if (itemIndex === '$ref') {
-            // process array of specific schema
-            if (typeof item === 'string') {
-              // add relationShip
-              const objectName = utils.lastToken(item, '/');
-              relationShips.push(new RelationShip(schemaName, objectName, name, constants.RELATIONSHIP_AGGREGATION));
-
-              type += objectName;
-              items.refs = [objectName];
-              utils.addReferencedFile(item, referencedFiles);
-            }
-          } else if (['anyOf', 'oneOf', 'allOf'].includes(itemIndex)) {
-            for (const refIndex of Object.keys(item)) {
-              const reference = item[refIndex].$ref;
-
-              const objectName = utils.lastToken(reference, '/');
-              relationShips.push(new RelationShip(schemaName, objectName, name, constants.RELATIONSHIP_AGGREGATION));
-
-              if (!first) {
-                type += '/';
-              }
-              first = false;
-
-              type += objectName;
-              items.combinator = itemIndex;
-              items.refs = items.refs || [];
-              items.refs.push(objectName);
-              utils.addReferencedFile(reference, referencedFiles);
-            }
-          }
-        }
+        [type, items] = Property.parseArrayItems(property.items, (reference) => addReference(reference, constants.RELATIONSHIP_AGGREGATION));
       }
 
-      const [typeAfterDetailsParsing, details, enumValues] = this.parseDetails(property);
-
+      const [typeAfterDetailsParsing, details, enumValues] = Property.parseDetails(property);
       if (typeAfterDetailsParsing !== undefined) type = typeAfterDetailsParsing;
       const requiredProperty = (required === undefined ? undefined : required.includes(name));
 
-      parsedProperties.push(new Property(name, type, requiredProperty, details, description, example, enumValues, items));
+      parsedProperties.push(new Property(name, type, requiredProperty, details, property.description, property.example, { enumValues, items }));
     }
     return [parsedProperties, relationShips, referencedFiles];
   }

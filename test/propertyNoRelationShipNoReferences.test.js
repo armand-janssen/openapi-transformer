@@ -145,7 +145,6 @@ describe('properties - parseProperties - no relationships - no references to oth
   const verbose = false;
 
   const arrayUnderTest = Property.parseProperties(properties, required, 'owner', verbose);
-  assert.isDefined(arrayUnderTest);
   it('Reponse is array containing sub-arrays of which only first one contains data', () => {
     assert.equal(arrayUnderTest.length, 3);
     assert.equal(arrayUnderTest[0].length, 12);

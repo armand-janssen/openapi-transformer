@@ -1,8 +1,8 @@
 const YAML = require('yaml');
-const fs = require('fs');
-const path = require('path');
-const http = require('http');
-const https = require('https');
+const fs = require('node:fs');
+const path = require('node:path');
+const http = require('node:http');
+const https = require('node:https');
 const Schema = require('./schema');
 const utils = require('./utils');
 
@@ -34,7 +34,8 @@ async function loadUrl(url, redirectsLeft = MAX_REDIRECTS) {
         }
         if (res.statusCode < 200 || res.statusCode >= 300) {
           const snippet = data.length > 200 ? `${data.slice(0, 200)}…` : data;
-          reject(new Error(`HTTP ${res.statusCode} ${res.statusMessage || ''} for ${url}${snippet ? `: ${snippet}` : ''}`));
+          const detail = snippet ? `: ${snippet}` : '';
+          reject(new Error(`HTTP ${res.statusCode} ${res.statusMessage || ''} for ${url}${detail}`));
           return;
         }
         resolve({ url, body: data });
@@ -58,6 +59,35 @@ function warnAboutMissingTargets(schemas, warnings) {
   });
 }
 
+// Resolves to { basePath, content }: basePath is what the file's references resolve against.
+async function readSource(fileOrUrl, verbose) {
+  if (fileOrUrl.startsWith('http')) {
+    let response;
+    try {
+      response = await loadUrl(fileOrUrl);
+    } catch (err) {
+      throw new Error(`Cannot load ${fileOrUrl}: ${err.message}`, { cause: err });
+    }
+    if (verbose) console.log(`base http path :: ${response.url}`);
+    return { basePath: response.url, content: response.body };
+  }
+  const basePath = path.dirname(fileOrUrl);
+  if (verbose) console.log(`base file path :: ${basePath}`);
+  try {
+    return { basePath, content: fs.readFileSync(fileOrUrl, 'UTF-8') };
+  } catch (err) {
+    throw new Error(`Cannot read ${fileOrUrl}: ${err.message}`, { cause: err });
+  }
+}
+
+function parseYaml(content, fileOrUrl) {
+  try {
+    return YAML.parse(content);
+  } catch (err) {
+    throw new Error(`Invalid YAML or JSON in ${fileOrUrl}: ${err.message}`, { cause: err });
+  }
+}
+
 // allLoadedFiles is per run: callers leave it out and nested loads share it.
 // warnings (optional array) collects one message per schema that is not rendered; the CLI prints them, the library stays silent.
 async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = []) {
@@ -72,57 +102,24 @@ async function loadYamlFile(fileOrUrl, verbose, warnings = [], allLoadedFiles = 
   if (verbose) console.log(`processing fileOrUrl :: ${fileOrUrl}`);
   const allParsedSchemas = {};
 
-  let loadedFile;
-  let basePath;
-  if (fileOrUrl.startsWith('http')) {
-    let response;
-    try {
-      response = await loadUrl(fileOrUrl);
-    } catch (err) {
-      throw new Error(`Cannot load ${fileOrUrl}: ${err.message}`, { cause: err });
-    }
-    basePath = response.url;
-    if (verbose) console.log(`base http path :: ${basePath}`);
-    loadedFile = response.body;
-  } else {
-    // determine base to resolve other file references from
-    basePath = path.dirname(fileOrUrl);
-    if (verbose) console.log(`base file path :: ${basePath}`);
-
-    try {
-      loadedFile = fs.readFileSync(fileOrUrl, 'UTF-8');
-    } catch (err) {
-      throw new Error(`Cannot read ${fileOrUrl}: ${err.message}`, { cause: err });
-    }
-  }
-  let myYaml;
-  try {
-    myYaml = YAML.parse(loadedFile);
-  } catch (err) {
-    throw new Error(`Invalid YAML or JSON in ${fileOrUrl}: ${err.message}`, { cause: err });
-  }
+  const { basePath, content } = await readSource(fileOrUrl, verbose);
+  const myYaml = parseYaml(content, fileOrUrl);
   if (verbose) console.log(`loaded files :: ${allLoadedFiles}`);
 
-  if (myYaml && ((myYaml.components !== undefined && myYaml.components.schemas !== undefined)
-      || myYaml.definitions !== undefined)) {
-    let { schemas } = myYaml.components || {};
-    if (!schemas) {
-      schemas = myYaml.definitions;
-    }
-
+  const schemas = myYaml?.components?.schemas || myYaml?.definitions;
+  if (schemas) {
     const skipped = [];
     const [referencedFiles, parsedSchemas] = Schema.parseSchemas(schemas, verbose, skipped);
     skipped.forEach((name) => warnings.push(`schema ${name} in ${fileOrUrl} is not rendered (only objects and enums are supported)`));
 
     utils.mergeObjects(parsedSchemas, allParsedSchemas);
 
-    // sequential on purpose: schema order is first-seen (depth-first), whatever the response timing
-    for (const referencedFile of referencedFiles) {
+    // chained on purpose: schema order is first-seen (depth-first), whatever the response timing
+    await referencedFiles.reduce(async (previous, referencedFile) => {
+      await previous;
       const nextPath = resolveReferencedPath(basePath, referencedFile);
-      const referencedParsedSchemas = await loadYamlFile(nextPath, verbose, warnings, allLoadedFiles);
-
-      utils.mergeObjects(referencedParsedSchemas, allParsedSchemas);
-    }
+      utils.mergeObjects(await loadYamlFile(nextPath, verbose, warnings, allLoadedFiles), allParsedSchemas);
+    }, Promise.resolve());
   }
   if (allLoadedFiles[0] === key) warnAboutMissingTargets(allParsedSchemas, warnings);
   return allParsedSchemas;

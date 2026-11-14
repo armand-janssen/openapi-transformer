@@ -105,10 +105,8 @@ function generateSchema(schema, generateExtraDetails) {
 
 function generate(schemas, generateExtraDetails) {
   let uml = `@startuml${constants.lineBreak}`;
-  for (const schemaIndex in schemas) {
-    if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      uml += generateSchema(schemas[schemaIndex], generateExtraDetails);
-    }
+  for (const schema of Object.values(schemas ?? {})) {
+    uml += generateSchema(schema, generateExtraDetails);
   }
   uml += `@enduml${constants.lineBreak}`;
   return uml;
