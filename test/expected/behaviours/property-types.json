@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Types",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 10,
+      "pattern": "^[a-z]+$"
+    },
+    "born": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "seen": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$"
+    },
+    "photo": {
+      "type": "string",
+      "format": "binary"
+    },
+    "secret": {
+      "type": "string",
+      "format": "byte"
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100.5,
+      "multipleOf": 0.5
+    },
+    "count": {
+      "type": "integer",
+      "format": "int32",
+      "minimum": 1,
+      "maximum": 9
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "others": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Other"
+      }
+    },
+    "mixed": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Other"
+          },
+          {
+            "$ref": "#/definitions/Third"
+          }
+        ]
+      }
+    },
+    "single": {
+      "$ref": "#/definitions/Other"
+    }
+  },
+  "required": [
+    "name",
+    "count"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "Other": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Third": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,32 @@
+@startuml
+
+class Types {
+  name * : string
+  born  : date
+  seen  : date-time
+  photo  : string [binary]
+  secret  : string [byte]
+  price  : number
+  count * : integer
+  active  : boolean
+  tags  : array[] of strings
+  others  : array[] of Other
+  mixed  : array[] of Other/Third
+  single  : Other
+
+}
+Types *-- Other  :  others
+Types *-- Other  :  mixed
+Types *-- Third  :  mixed
+Types -- Other  :  single
+
+class Other {
+  id  : string
+
+}
+
+class Third {
+  id  : string
+
+}
+@enduml

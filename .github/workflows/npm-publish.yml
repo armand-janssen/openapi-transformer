@@ -4,32 +4,37 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
-        token: ${{ secrets.MY_GIT_TOKEN }}
-
-    - uses: actions/setup-node@v3
+        persist-credentials: false
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version-file: '.nvmrc'
         registry-url: 'https://registry.npmjs.org'
+    - run: npm ci --ignore-scripts
+    - run: npm run lint
+    - run: npm test
 
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Bump version and push to GitHub
+    # Version comes from the release tag; nothing is committed, tagged or pushed.
+    - name: Set version from release tag
+      env:
+        TAG: ${{ github.event.release.tag_name }}
       run: |
-        npm version patch  # Increment the version number (you can use "minor" or "major" instead of "patch" if needed)
-        git config --global user.email "${{ secrets.email }}"
-        git config --global user.name "Armand Janssen"
-        git commit -am "Bump version for release"
-        git push
+        VERSION="${TAG#v}"
+        if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error::Release tag '$TAG' is not a valid version (expected X.Y.Z or vX.Y.Z)"
+          exit 1
+        fi
+        npm version "$VERSION" --no-git-tag-version --allow-same-version
 
     - run: npm publish
       env:
-        NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

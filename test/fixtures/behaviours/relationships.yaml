@@ -1,0 +1,62 @@
+components:
+  schemas:
+    Owner:
+      title: Owner
+      description: The root description.
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: Identifier.
+          example: abc-1
+        pet:
+          $ref: '#/components/schemas/Pet'
+        toys:
+          type: array
+          items:
+            $ref: '#/components/schemas/Toy'
+        things:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/Pet'
+              - $ref: '#/components/schemas/Toy'
+        notes:
+          type: string
+          description: |-
+            First line.
+            Second line with a | pipe.
+            TODO fix this later.
+          example: |-
+            line one
+            line two
+    Pet:
+      title: Pet
+      description: |
+        A pet, with a multi-line description.
+        | a | b |
+        todo: add more.
+      type: object
+      properties:
+        name:
+          type: string
+          example: Rex
+    Toy:
+      title: Toy
+      description: A toy with a | pipe in its description.
+      type: object
+      required:
+        - color
+      properties:
+        color:
+          type: string
+    Dog:
+      description: A dog.
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            bark:
+              type: boolean

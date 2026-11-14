@@ -1,0 +1,34 @@
+components:
+  schemas:
+    Lists:
+      type: object
+      properties:
+        noItems:
+          type: array
+        oneOfItems:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Other'
+              - $ref: '#/components/schemas/Third'
+        allOfItems:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Other'
+        parent:
+          $ref: '#/components/schemas/Lists'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lists'
+    Other:
+      type: object
+      properties:
+        id:
+          type: string
+    Third:
+      type: object
+      properties:
+        id:
+          type: string

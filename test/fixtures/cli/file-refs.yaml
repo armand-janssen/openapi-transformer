@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  title: Schemas that are references to a file
+  version: "1"
+paths: {}
+components:
+  schemas:
+    First:
+      $ref: 'edge-cases.yaml#/components/schemas/Measure'
+    Second:
+      $ref: 'edge-cases.yaml#/components/schemas/Measure'

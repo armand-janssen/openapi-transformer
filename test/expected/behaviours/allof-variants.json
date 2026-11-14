@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Parent",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "definitions": {
+    "OneInline": {
+      "description": "Parent plus one inline object.",
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "a"
+      ],
+      "additionalProperties": false
+    },
+    "SeveralInline": {
+      "description": "Parent plus two inline objects, each with its own required list.",
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": "string"
+        },
+        "second": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "first",
+        "second"
+      ],
+      "additionalProperties": false
+    },
+    "SeveralParents": {
+      "description": "Two referenced members; the first is the parent.",
+      "type": "object",
+      "properties": {
+        "own": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "ParentInFile": {
+      "description": "Parent lives in another file.",
+      "type": "object",
+      "properties": {
+        "extra": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Base": {
+      "type": "object",
+      "properties": {
+        "baseId": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,28 @@
+components:
+  schemas:
+    Enums:
+      type: object
+      properties:
+        plain:
+          type: string
+          enum:
+            - a
+            - b
+        withLength:
+          type: string
+          minLength: 1
+          maxLength: 3
+          enum:
+            - x
+            - y
+        withPattern:
+          type: string
+          pattern: '^[a-z]$'
+          enum:
+            - m
+            - n
+    Color:
+      type: string
+      enum:
+        - red
+        - green

@@ -1,0 +1,15 @@
+@startuml
+
+class Enums {
+  plain  : enum
+  withLength  : enum
+  withPattern  : enum
+
+}
+
+enum Color {
+  red
+  green
+
+}
+@enduml

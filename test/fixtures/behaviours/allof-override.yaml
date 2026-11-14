@@ -1,0 +1,23 @@
+components:
+  schemas:
+    Child:
+      allOf:
+        - type: object
+          properties:
+            dup:
+              $ref: '#/components/schemas/Other'
+            a:
+              type: string
+        - type: object
+          required:
+            - dup
+          properties:
+            b:
+              type: string
+            dup:
+              type: integer
+    Other:
+      type: object
+      properties:
+        id:
+          type: string

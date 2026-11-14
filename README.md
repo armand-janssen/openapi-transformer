@@ -1,32 +1,35 @@
 # OpenAPI transformer
 
-[![Coverage Status](https://coveralls.io/repos/github/armand-janssen/openapi-transformer/badge.svg?branch=master)](https://coveralls.io/github/armand-janssen/openapi-transformer?branch=master)
-
 [![Node.js CI](https://github.com/armand-janssen/openapi-transformer/actions/workflows/node.js.yml/badge.svg)](https://github.com/armand-janssen/openapi-transformer/actions/workflows/node.js.yml)
 
-[![Known Vulnerabilities](https://snyk.io/test/github/armand-janssen/openapi-transformer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/armand-janssen/openapi-transformer?targetFile=package.json)
-
-This tool creates one or more of the following from a **Swagger 2** or **OpenApi 3** specification -
+This tool creates one or more of the following from a **Swagger 2** or **OpenApi 3** specification (a YAML or JSON file, or a URL) -
 * Markdown (Optimized for [Showdown](http://showdownjs.com))
 * [PlantUML Class Diagram](http://plantuml.com/class-diagram)
+* JSON Schema
 
 # Requirements
 - Swagger 2 or OpenAPI 3+ Specification
-- [NodeJS](http://nodejs.org)
+- [NodeJS](http://nodejs.org) 22.13 or newer
 
 # Usage
-Always run the script from the directory in which the yaml file are.
+Run the commands below from the `example` directory of this repository.
 ```
-Usage: index [options] <inputfile>
+Usage: openapi-transformer [options] <inputFileOrUrl>
+
+At least 1 output type must be selected: plantuml, markdown or jsonschema (JSON
+Schema)!
 
 Options:
-  -V, --version                       Output the version number
-  -p, --plantuml <plantuml file>      The plantuml file
-  -m, --markdown <markdown file>      The output file for markdown
+  -V, --version                       output the version number
+  -d, --details                       Show extra attribute details
+  -p, --plantuml <plantuml file>      Transform to plantuml
+  -m, --markdown <markdown file>      Transform to markdown
   -j, --jsonschema <jsonschema file>  Transform to json schema
   -v, --verbose                       Show verbose debug output
-  -h, --help                          Output usage information
+  -h, --help                          display help for command
 ```
+
+Only the schemas under `components.schemas` (OpenAPI 3) or `definitions` (Swagger 2) are rendered, so a spec that only has `paths` produces no output. Referenced files (relative or URL) are followed. Schemas that are neither an object nor an enum are skipped with a `Warning:` line on stderr, as is a reference to a schema that is not rendered. Any failure (unreadable file, HTTP error, invalid YAML, no schemas) prints a one-line `Error:` message and exits with code 1; add `--verbose` for the stack trace.
 
 ## Example
 **Generates to plantuml**
@@ -42,14 +45,78 @@ openapi-transformer vehicle.yaml --verbose --plantuml vehicle.plantuml
 ```
 openapi-transformer vehicle.yaml --plantuml ./example.plantuml --markdown ./example.md
 ```
+The generated files for every example spec are committed in `example` and checked by the tests.
+
+# Library
+```js
+const {
+  loadYamlFile, generatePlantUml, generateMarkdown, generateJsonSchema,
+} = require('openapi-transformer');
+
+const warnings = []; // optional, receives one message per skipped schema
+const schemas = await loadYamlFile('vehicle.yaml', false, warnings);
+const uml = generatePlantUml(schemas, false); // second argument: include details
+const md = generateMarkdown(schemas);
+const json = generateJsonSchema(schemas); // a string
+```
+The library throws on errors and never prints.
+
 # Example output plantuml
 
 ## No details
-![Example no details](https://raw.githubusercontent.com/armand-janssen/openapi-transformer/master/example/example-no-details.png)
+![Example no details](https://raw.githubusercontent.com/armand-janssen/openapi-transformer/main/example/vehicle.png)
 
 ## Details
-![Example with details](https://raw.githubusercontent.com/armand-janssen/openapi-transformer/master/example/example-details.png)
+![Example with details](https://raw.githubusercontent.com/armand-janssen/openapi-transformer/main/example/vehicle-details.png)
 
 # Online utils
 - [Online Markdown Editor http://demo.showdownjs.com](http://demo.showdownjs.com)
 - [Online PlantUML Editor https://www.planttext.com](https://www.planttext.com)
+
+# Development
+```
+npm ci
+npm run lint
+npm test
+```
+`npm test` runs all tests and requires 95% line and branch coverage. The end-to-end tests compare generated output with the files in `test/expected` and, for the example specs, with the files in `example`. To regenerate them on purpose after an intended output change, run `UPDATE_EXPECTED=1 npm test` and review the diff. The PNG images in `example` are not checked by the tests; re-render them from the `.plantuml` files with the Docker image below.
+
+The `Dockerfile` builds a test image with Node, PlantUML, Java and Graphviz:
+
+```
+docker build -t openapi-transformer-test .
+docker run --rm openapi-transformer-test
+docker run --rm -v "$PWD/example:/app/example" openapi-transformer-test \
+  plantuml -tpng example/vehicle.plantuml example/vehicle-details.plantuml
+```
+
+The second command runs lint and the tests; the third re-renders the example images.
+
+# Changelog
+
+## 0.12.0
+
+### Breaking changes
+- Requires Node 22.13 or newer (Node 18 and 20 are end-of-life).
+- Failures print a one-line `Error: ...` message naming the file and exit with code 1 (`--verbose` prints the stack trace). This covers unreadable files, invalid YAML/JSON, HTTP errors (non-2xx) and a spec without schemas, which now writes nothing.
+- Schemas that are neither an object nor an enum are no longer dropped silently: a `Warning:` line is printed on stderr, and another for each schema that refers to a schema that is not rendered (JSON Schema then allows any value there instead of emitting an invalid type or a dangling reference).
+- Enum values are no longer mixed with constraints. PlantUML shows `enum[a, b]` and Markdown lists the values separately from other constraints such as `minItems`; an empty `required` list means no required properties.
+- PlantUML no longer draws the `*<|-` "extension" relationship; inheritance is drawn as `Parent <|-- Child`, also for extra allOf parents.
+- Referenced `.yml` files are followed; a local reference such as `#/components/schemas/yamlThing` is no longer mistaken for a file.
+- Schemas from referenced files are listed in first-seen (depth-first) order, and referenced files are resolved relative to the spec's location (file or URL, including after HTTP redirects).
+- Library: `package.json` `main` points at `src/index.js`, so `require('openapi-transformer')` works and exports `loadYamlFile`, `generatePlantUml`, `generateMarkdown` and `generateJsonSchema`; `loadYamlFile(fileOrUrl, verbose, warnings)` takes an optional warnings array and no longer shares state between calls.
+- `nyc`, `sinon` and `util` are no longer runtime dependencies (only `commander` and `yaml` remain) and only `src` is published. commander is upgraded 2 to 15.
+
+### Fixes
+- Referenced files are awaited, so their schemas are no longer missing from the output.
+- In a reference cycle each file is loaded once, also when it is reached by another relative path (`./a.yaml` and `sub/../a.yaml`), so warnings are no longer repeated.
+- allOf: all inline members are combined into one schema (a property defined again by a later member replaces the earlier one in all three outputs) and parents in other files are loaded.
+- Top-level enum schemas are rendered (PlantUML `enum`, Markdown "Values", JSON Schema enum with the declared type) instead of being dropped.
+- Enums of numbers or booleans keep their type and their values in all three outputs.
+- JSON Schema: references to the first (root) schema point at `#`; arrays of primitives, `anyOf`, `oneOf` and `allOf` arrays, arrays without `items`, `binary` and `byte` strings, the `date` pattern and per-schema descriptions are generated correctly.
+- Empty input and schemas without `properties` no longer crash.
+
+### Additions
+- `-j, --jsonschema` and `-d, --details` are now documented in this README; the help text names all three output types and calls the program `openapi-transformer`, also when run as `node src/cli.js`.
+- The generated example outputs in `example` are checked by the tests so they cannot drift.
+- CI runs lint and tests on Node 22.13, 22.x, 24.x and 26.x.

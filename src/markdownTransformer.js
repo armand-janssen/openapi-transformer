@@ -57,8 +57,9 @@ function generateDetails(details, isEnum) {
 
 function generateProperty(property) {
   let markDownDetails = '';
-  if (property.type === 'enum') {
-    markDownDetails += generateDetails(property.details, true);
+  if (property.enumValues) {
+    markDownDetails += generateDetails(property.enumValues.map((value) => ({ value })), true);
+    if (property.details.length > 0) markDownDetails += generateDetails(property.details, false);
   } else if (property.type === 'date') {
     markDownDetails += generateDetails(property.details, false);
     markDownDetails += generateDetails([{ name: 'pattern', value: 'yyyy-MM-dd' }], false);
@@ -72,7 +73,7 @@ function generateProperty(property) {
     .replace(/todo/gi, '<span style="color:red"> **TODO** </span>');
   markDownDescription = escapePipe(markDownDescription);
 
-  let markDownExample = nbsp;
+  let markDownExample;
   if (property.type === 'date') {
     markDownExample = property.example === undefined ? '2020-12-31' : property.example.toString().replace(/\n/g, '<br/>');
   } else {
@@ -110,7 +111,10 @@ function generateSchema(schema) {
 
   md += lineBreak;
 
-  if (schema.properties === undefined || schema.properties.length === 0) {
+  if (schema.enumValues) {
+    md += `${lineBreak}## Values${lineBreak}`;
+    schema.enumValues.forEach((value) => { md += `- ${value}${lineBreak}`; });
+  } else if (schema.properties === undefined || schema.properties.length === 0) {
     md += lineBreak;
   } else {
     md += lineBreak;
@@ -126,7 +130,6 @@ function generateSchema(schema) {
 function generate(schemas) {
   let md = '';
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       md += generateSchema(schemas[schemaIndex]);

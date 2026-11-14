@@ -1,0 +1,14 @@
+{
+  "components": {
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "integer" },
+          "label": { "type": "string" }
+        }
+      }
+    }
+  }
+}

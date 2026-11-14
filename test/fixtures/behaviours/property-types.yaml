@@ -1,0 +1,67 @@
+components:
+  schemas:
+    Types:
+      type: object
+      required:
+        - name
+        - count
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 10
+          pattern: '^[a-z]+$'
+        born:
+          type: string
+          format: date
+        seen:
+          type: string
+          format: date-time
+        photo:
+          type: string
+          format: binary
+        secret:
+          type: string
+          format: byte
+        price:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100.5
+          multipleOf: 0.5
+        count:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 9
+        active:
+          type: boolean
+        tags:
+          type: array
+          minItems: 1
+          maxItems: 5
+          uniqueItems: true
+          items:
+            type: string
+        others:
+          type: array
+          items:
+            $ref: '#/components/schemas/Other'
+        mixed:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/Other'
+              - $ref: '#/components/schemas/Third'
+        single:
+          $ref: '#/components/schemas/Other'
+    Other:
+      type: object
+      properties:
+        id:
+          type: string
+    Third:
+      type: object
+      properties:
+        id:
+          type: string

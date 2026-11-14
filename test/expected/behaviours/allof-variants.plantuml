@@ -1,0 +1,40 @@
+@startuml
+
+class Parent {
+  id  : string
+
+}
+
+class OneInline {
+  a * : string
+
+}
+Parent <|-- OneInline
+
+class SeveralInline {
+  first * : string
+  second * : integer
+
+}
+Parent <|-- SeveralInline
+
+class SeveralParents {
+  own  : string
+  owner  : Parent
+
+}
+SeveralParents -- Parent  :  owner
+Parent <|-- SeveralParents
+OneInline <|-- SeveralParents
+
+class ParentInFile {
+  extra  : string
+
+}
+Base <|-- ParentInFile
+
+class Base {
+  baseId  : string
+
+}
+@enduml

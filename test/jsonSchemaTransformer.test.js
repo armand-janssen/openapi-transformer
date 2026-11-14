@@ -1,8 +1,9 @@
 const { assert, expect } = require('chai');
 const fs = require('fs');
-const jsonSchemaTransformer = require('../src/jsonSchemaTransformer');
+const path = require('path');
+const Ajv = require('ajv');
 
-const openApiGenerator = require('../src/index');
+const openApiGenerator = require('..');
 
 
 describe('openApiGenerator - test json transformer', () => {
@@ -10,7 +11,7 @@ describe('openApiGenerator - test json transformer', () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyNoRelationShipNoReferences.yaml', true);
     assert.isDefined(loadedSchemas);
 
-    const result = jsonSchemaTransformer.generate(loadedSchemas, true);
+    const result = openApiGenerator.generateJsonSchema(loadedSchemas, true);
     const expectedResult = fs.readFileSync('./test/resources/expectedResultPlantumlPropertyNoRelationShipNoReferences.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
@@ -20,7 +21,7 @@ describe('openApiGenerator - test json transformer', () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyFiveRelationShipThreeReferencesUsingExtension.test.yaml', true);
     assert.isDefined(loadedSchemas);
 
-    const result = jsonSchemaTransformer.generate(loadedSchemas);
+    const result = openApiGenerator.generateJsonSchema(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyFiveRelationShipThreeReferencesUsingExtension.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
@@ -30,9 +31,40 @@ describe('openApiGenerator - test json transformer', () => {
     const loadedSchemas = await openApiGenerator.loadYamlFile('./test/resources/propertyDateTime.yaml', true);
     assert.isDefined(loadedSchemas);
 
-    const result = jsonSchemaTransformer.generate(loadedSchemas);
+    const result = openApiGenerator.generateJsonSchema(loadedSchemas);
     const expectedResult = fs.readFileSync('./test/resources/expectedPropertyDateTime.json');
 
     expect(JSON.parse(result)).to.deep.equal(JSON.parse(expectedResult.toString()));
+  });
+});
+
+describe('Pinned JSON Schema expected files', () => {
+  const findJson = (dir) => fs.readdirSync(dir, { withFileTypes: true })
+    .flatMap((e) => (e.isDirectory() ? findJson(path.join(dir, e.name)) : [path.join(dir, e.name)]))
+    .filter((f) => f.endsWith('.json'));
+
+  [...findJson(path.join(__dirname, 'expected')), ...findJson(path.join(__dirname, '..', 'example'))].forEach((file) => {
+    it(`${path.relative(__dirname, file)} is a valid draft-07 schema`, () => {
+      const ajv = new Ajv({ strict: false });
+      assert.doesNotThrow(() => ajv.compile(JSON.parse(fs.readFileSync(file, 'utf8'))));
+    });
+
+    // ajv compiles lazily and skips definitions the root never reaches, so resolve every $ref by hand
+    it(`${path.relative(__dirname, file)} has no unresolvable $ref`, () => {
+      const root = JSON.parse(fs.readFileSync(file, 'utf8'));
+      const refs = [];
+      const walk = (node) => {
+        if (node && typeof node === 'object') {
+          if (typeof node.$ref === 'string') refs.push(node.$ref);
+          Object.values(node).forEach(walk);
+        }
+      };
+      walk(root);
+      refs.forEach((ref) => {
+        const target = ref.replace(/^#\/?/, '').split('/').filter(Boolean)
+          .reduce((node, key) => node?.[key], root);
+        assert.isObject(target, `${ref} does not resolve`);
+      });
+    });
   });
 });

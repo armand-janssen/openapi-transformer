@@ -1,0 +1,25 @@
+@startuml
+
+class allInOne {
+  vehicles  : array[] of vehicle/car
+
+}
+allInOne *-- vehicle  :  vehicles
+allInOne *-- car  :  vehicles
+
+class vehicle {
+  hasWheels  : boolean
+
+}
+
+class car {
+  type  : enum
+
+}
+vehicle <|-- car
+
+class bmw {
+
+}
+car <|-- bmw
+@enduml

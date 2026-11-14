@@ -1,0 +1,9 @@
+components:
+  schemas:
+    Child:
+      allOf:
+        - $ref: 'parent.yaml#/components/schemas/Parent'
+        - type: object
+          properties:
+            extra:
+              type: string

@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Owner",
+  "description": "The root description.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Identifier.",
+      "type": "string"
+    },
+    "pet": {
+      "$ref": "#/definitions/Pet"
+    },
+    "toys": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Toy"
+      }
+    },
+    "things": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/Pet"
+          },
+          {
+            "$ref": "#/definitions/Toy"
+          }
+        ]
+      }
+    },
+    "notes": {
+      "description": "First line.\nSecond line with a | pipe.\nTODO fix this later.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "Pet": {
+      "description": "A pet, with a multi-line description.\n| a | b |\ntodo: add more.\n",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Toy": {
+      "description": "A toy with a | pipe in its description.",
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "color"
+      ],
+      "additionalProperties": false
+    },
+    "Dog": {
+      "description": "A dog.",
+      "type": "object",
+      "properties": {
+        "bark": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+}

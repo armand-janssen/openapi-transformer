@@ -1,23 +1,20 @@
 
-function generateEnum(details) {
-  const array = [];
-  details.forEach((detail) => {
-    array.push(detail.value);
-  });
-  return array;
-}
+const JSON_TYPES = ['string', 'integer', 'boolean', 'object', 'null'];
 
 function generateProperty(property, listOfUsedSchemas) {
   const js = {};
   let processDetails = true;
+  // the root schema is addressed as '#'; a schema that is not rendered has no definition, so allow anything (the loader warns)
+  const ref = (name) => {
+    if (!listOfUsedSchemas.includes(name)) return {};
+    return { $ref: name === listOfUsedSchemas[0] ? '#' : `#/definitions/${name}` };
+  };
 
   if (property.description) {
     js.description = property.description;
   }
   if (property.type === 'enum') {
     js.type = 'string';
-    js.enum = generateEnum(property.details);
-    processDetails = false;
   } else if (property.type === 'number') {
     js.type = 'number';
     if (property.details) {
@@ -28,30 +25,31 @@ function generateProperty(property, listOfUsedSchemas) {
       });
       processDetails = false;
     }
-  } else if (property.type === 'string [byte]') {
+  } else if (property.type === 'string [byte]' || property.type === 'string [binary]') {
     js.type = 'string';
+    js.format = property.type.slice('string ['.length, -1);
   } else if (property.type === 'date') {
     js.type = 'string';
     js.format = 'date';
-    js.pattern = '^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$';
+    js.pattern = '^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$';
     processDetails = false;
   } else if (property.type === 'date-time') {
     js.type = 'string';
     js.format = 'date-time';
     js.pattern = '^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T[0-5][0-9]:[0-5][0-9]:[0-5][0-9]Z$';
     processDetails = false;
-  } else if (property.type.indexOf('array[] of ') > -1) {
+  } else if (property.items) {
     js.type = 'array';
-    js.items = {};
-    js.items.$ref = `#/definitions/${property.type.slice('11')}`;
+    const { items } = property;
+    if (items.type) js.items = { type: items.type };
+    else if (items.refs?.length === 1) js.items = ref(items.refs[0]);
+    else if (items.refs) js.items = { [items.combinator]: items.refs.map(ref) };
   } else {
     const { type } = property;
-    if (type && listOfUsedSchemas.includes(type)) {
-      js.$ref = `#/definitions/${type}`;
-    } else {
-      js.type = property.type;
-    }
+    if (JSON_TYPES.includes(type)) js.type = type;
+    else Object.assign(js, ref(type));
   }
+  if (property.enumValues) js.enum = property.enumValues;
   if (processDetails && property.details) {
     property.details.forEach((detail) => {
       js[detail.name] = detail.value;
@@ -85,40 +83,35 @@ function generate(schemas) {
   js.$schema = 'http://json-schema.org/draft-07/schema#';
 
   // used for rendering references easy and correctly
-  const listOfUsedSchemas = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const schemaIndex in schemas) {
-    if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      listOfUsedSchemas.push(schemaIndex);
-    }
-  }
+  const listOfUsedSchemas = Object.keys(schemas);
 
-  let firstProperty = true;
-  // eslint-disable-next-line no-restricted-syntax
-  for (const schemaIndex in schemas) {
-    if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
-      const schema = schemas[schemaIndex];
+  // fills the root or a definition: an enum, or an object with its properties
+  const fill = (target, schema) => {
+    if (schema.enumValues) {
+      if (schema.enumType) target.type = schema.enumType;
+      target.enum = schema.enumValues;
+    } else {
       const result = generateSchema(schema, listOfUsedSchemas);
-      if (firstProperty) {
-        js.title = schemaIndex;
-        js.description = schema.description;
-        js.type = 'object';
-        js.properties = result.js;
-        js.required = result.required;
-        js.additionalProperties = false;
-        js.definitions = {};
-      } else {
-        js.definitions[schemaIndex] = {};
-        const definition = js.definitions[schemaIndex];
-        js.description = schema.description;
-        definition.type = 'object';
-        definition.properties = result.js;
-        definition.required = result.required;
-        definition.additionalProperties = false;
-      }
-      firstProperty = false;
+      target.type = 'object';
+      target.properties = result.js;
+      target.required = result.required;
+      target.additionalProperties = false;
     }
-  }
+    return target;
+  };
+
+  listOfUsedSchemas.forEach((name, index) => {
+    const schema = schemas[name];
+    if (index === 0) {
+      // the first schema is the root, so a leading enum makes the whole document an enum
+      js.title = name;
+      js.description = schema.description;
+      fill(js, schema);
+      js.definitions = {};
+    } else {
+      js.definitions[name] = fill({ description: schema.description }, schema);
+    }
+  });
 
   return JSON.stringify(js, null, 2);
 }

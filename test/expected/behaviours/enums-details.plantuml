@@ -1,0 +1,15 @@
+@startuml
+
+class Enums {
+  plain  : enum[a, b]
+  withLength  : enum[x, y][minLength : 1, maxLength : 3]
+  withPattern  : enum[m, n][pattern : ^[a-z]$]
+
+}
+
+enum Color {
+  red
+  green
+
+}
+@enduml

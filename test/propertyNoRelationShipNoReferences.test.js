@@ -84,9 +84,8 @@ function assertPropertyGender(property) {
   assert.equal(property.description, 'the gender of the owner');
   assert.equal(property.example, undefined);
 
-  assert.equal(property.details.length, 2);
-  assertDetail(property.details[0], 'enumvalue', 'male');
-  assertDetail(property.details[1], 'enumvalue', 'female');
+  assert.equal(property.details.length, 0);
+  assert.deepEqual(property.enumValues, ['male', 'female']);
 }
 function assertPropertyFile1(property) {
   assert.equal(property.name, 'file1');

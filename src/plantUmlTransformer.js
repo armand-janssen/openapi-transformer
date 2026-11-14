@@ -1,14 +1,10 @@
 const { constants } = require('./constants');
 
-function generateParent(schemaName, parent) {
-  let uml = '';
-  if (parent !== undefined) {
-    uml += parent;
-    uml += ' <|-- ';
-    uml += schemaName;
-    uml += constants.lineBreak;
-  }
-  return uml;
+function generateParents(schema) {
+  return [schema.parent, ...(schema.additionalParents || [])]
+    .filter((parent) => parent !== undefined)
+    .map((parent) => `${parent} <|-- ${schema.name}${constants.lineBreak}`)
+    .join('');
 }
 function generateRelationShips(relationShips) {
   let uml = '';
@@ -18,8 +14,6 @@ function generateRelationShips(relationShips) {
 
       if (relationShip.type === constants.RELATIONSHIP_AGGREGATION) {
         uml += ' *-- ';
-      } else if (relationShip.type === constants.RELATIONSHIP_EXTENSION) {
-        uml += ' *<|- ';
       } else if (relationShip.type === constants.RELATIONSHIP_USE) {
         uml += ' -- ';
       }
@@ -62,8 +56,9 @@ function generateProperty(property, generateExtraDetails) {
   uml += property.type;
 
   if (generateExtraDetails) {
-    if (property.type === 'enum') {
-      uml += generateDetails(property.details, true);
+    if (property.enumValues) {
+      uml += generateDetails(property.enumValues.map((value) => ({ value })), true);
+      uml += generateDetails(property.details, false);
     } else if (property.type === 'date') {
       uml += generateDetails(property.details, false);
       uml += generateDetails([{ name: 'pattern', value: 'yyyy-MM-dd' }], false);
@@ -84,11 +79,14 @@ function generateProperty(property, generateExtraDetails) {
 }
 function generateSchema(schema, generateExtraDetails) {
   let uml = constants.lineBreak;
-  uml += 'class ';
+  uml += schema.enumValues ? 'enum ' : 'class ';
   uml += schema.name;
   uml += ' {';
   uml += constants.lineBreak;
 
+  if (schema.enumValues) {
+    schema.enumValues.forEach((value) => { uml += constants.tab + value + constants.lineBreak; });
+  }
   if (schema.properties !== undefined) {
     schema.properties.forEach((property) => {
       uml += generateProperty(property, generateExtraDetails);
@@ -100,14 +98,13 @@ function generateSchema(schema, generateExtraDetails) {
   uml += constants.lineBreak;
 
   uml += generateRelationShips(schema.relationShips);
-  uml += generateParent(schema.name, schema.parent);
+  uml += generateParents(schema);
 
   return uml;
 }
 
 function generate(schemas, generateExtraDetails) {
   let uml = `@startuml${constants.lineBreak}`;
-  // eslint-disable-next-line no-restricted-syntax
   for (const schemaIndex in schemas) {
     if (Object.prototype.hasOwnProperty.call(schemas, schemaIndex)) {
       uml += generateSchema(schemas[schemaIndex], generateExtraDetails);

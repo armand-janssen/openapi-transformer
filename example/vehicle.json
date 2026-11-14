@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "vehicle",
+  "description": "A generic vehicle. Multiline, just to prove it works :)\n",
+  "type": "object",
+  "properties": {
+    "type": {
+      "description": "Type of vehicle based on the movement technology. Hybrid vehicle is not possible.",
+      "type": "string",
+      "enum": [
+        "land",
+        "air",
+        "water"
+      ]
+    },
+    "owner": {
+      "description": "the history of owners",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/owner"
+      },
+      "minItems": 1
+    },
+    "registration": {
+      "$ref": "#/definitions/registration"
+    }
+  },
+  "required": [
+    "type",
+    "owner",
+    "registration"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "landVehicle": {
+      "description": "A vechicle that can drive.",
+      "type": "object",
+      "properties": {
+        "wheels": {
+          "description": "the number of wheels",
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 4,
+          "multipleOf": 2
+        }
+      },
+      "required": [
+        "wheels"
+      ],
+      "additionalProperties": false
+    },
+    "waterVehicle": {
+      "description": "A vechicle that can float.",
+      "type": "object",
+      "properties": {
+        "propeller": {
+          "description": "the number of propeller",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        }
+      },
+      "required": [
+        "propeller"
+      ],
+      "additionalProperties": false
+    },
+    "airVehicle": {
+      "description": "A vehicle that can fly.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "the name of this type of Air vehicle",
+          "type": "string",
+          "maxLength": 20
+        },
+        "engines": {
+          "description": "the number of engines",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "typeOfEngine": {
+          "description": "The type of engines",
+          "type": "string",
+          "enum": [
+            "turbojet",
+            "turboprop",
+            "turbofan",
+            "turboshaft"
+          ]
+        }
+      },
+      "required": [
+        "engines",
+        "typeOfEngine"
+      ],
+      "additionalProperties": false
+    },
+    "owner": {
+      "description": "Owner information",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "the name of the owner",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "from": {
+          "description": "the date the owner, bought the vehicle",
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
+        },
+        "to": {
+          "description": "the date the owner, sold the vehicle\n",
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
+        },
+        "age": {
+          "description": "the age of the owner\n\nTODO\nHowto determine age?\n",
+          "type": "integer",
+          "minimum": 15,
+          "maximum": 120,
+          "multipleOf": 1
+        },
+        "nicknames": {
+          "description": "the nicknames of the owner",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        "gender": {
+          "description": "the gender of the owner",
+          "type": "string",
+          "enum": [
+            "male",
+            "female"
+          ]
+        },
+        "file1": {
+          "type": "string",
+          "format": "binary"
+        },
+        "file2": {
+          "description": "the second file",
+          "type": "string",
+          "format": "byte"
+        },
+        "shoeSize": {
+          "type": "integer"
+        },
+        "someDouble": {
+          "type": "integer",
+          "format": "double"
+        }
+      },
+      "required": [
+        "name",
+        "from",
+        "age"
+      ],
+      "additionalProperties": false
+    },
+    "registration": {
+      "description": "The registration of a vehicle.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "the code of the vehicle",
+          "type": "string",
+          "maxLength": 12
+        },
+        "firstRegistration": {
+          "description": "first date of registration",
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
+        },
+        "registrationEnd": {
+          "description": "End date of registration",
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
+        },
+        "country": {
+          "description": "country of registration",
+          "type": "string",
+          "enum": [
+            "NL",
+            "BE",
+            "DE",
+            "FR",
+            "SP"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "firstRegistration",
+        "country"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
